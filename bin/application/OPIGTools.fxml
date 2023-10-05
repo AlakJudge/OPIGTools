@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="860.0" styleClass="AnchorPane" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+   <cursor>
+      <Cursor fx:constant="DEFAULT" />
+   </cursor>
+   <children>
+      <AnchorPane fx:id="titlePane" layoutY="25.0" prefHeight="61.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css">
+         <children>
+            <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="-10.0" prefHeight="61.0" prefWidth="870.0" styleClass="text-outline" stylesheets="@application.css" text="One Piece Idle Game Tools" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="40.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <MenuBar prefHeight="25.0" prefWidth="870.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#reset" text="Reload" />
+                  <MenuItem mnemonicParsing="false" onAction="#exit" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit" />
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <GridPane fx:id="menuGrid" layoutY="85.0" prefHeight="61.0" prefWidth="870.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="ruinsButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#ruinsVisible" prefHeight="65.0" prefWidth="200.0" text="Ruins Adventure Team Finder" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Button>
+            <Button fx:id="charCompButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#charComparisonVisible" prefHeight="65.0" prefWidth="200.0" text="Character Comparison" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Button>
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="200.0" text="Damage Simulator" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font></Button>
+            <Button ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="174.0" text="Team Simulator" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="3">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font></Button>
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="200.0" text="Haki Optimizer" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="4">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font></Button>
+         </children>
+      </GridPane>
+      <AnchorPane fx:id="paypalPane" layoutY="925.0" prefHeight="75.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css">
+         <children>
+            <Pane fx:id="paypalButton" layoutX="630.0" layoutY="12.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#paypalButton" prefHeight="55.0" prefWidth="155.0">
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor></Pane>
+            <Label alignment="CENTER" layoutX="41.0" layoutY="18.0" prefHeight="44.0" prefWidth="574.0" stylesheets="@application.css" text="Enjoying OPIGTools? Help us bring more exciting features by making a donation!" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="ruinsPane" layoutY="145.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="782.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css" visible="false" AnchorPane.bottomAnchor="73.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="145.0">
+         <children>
+            <Label fx:id="ruinsLabel" alignment="CENTER" layoutX="39.0" layoutY="-8.0" prefHeight="61.0" prefWidth="685.0" text="How many members would you like your team to have?" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="21.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="numMembersChoiceBox" layoutX="667.0" layoutY="9.0" prefHeight="32.0" prefWidth="44.0" />
+            <Button fx:id="sButton" layoutX="380.0" layoutY="46.0" mnemonicParsing="false" onAction="#sPaneVisible" text="S" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="ssButton" layoutX="427.0" layoutY="46.0" mnemonicParsing="false" onAction="#ssPaneVisible" text="SS" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="sssButton" layoutX="487.0" layoutY="46.0" mnemonicParsing="false" onAction="#sssPaneVisible" text="SSS" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Button>
+			<ToggleButton fx:id="orderAZButton" layoutX="794.0" layoutY="44.0" mnemonicParsing="false" onAction="#orderAZ" prefHeight="40.0" prefWidth="65.0" stylesheets="@application.css" text="A-Z" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font></ToggleButton>
+            <ScrollPane fx:id="sssCharSelectionScrollPane" hbarPolicy="NEVER" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="620.0" prefWidth="865.0" stylesheets="@application.css" vbarPolicy="ALWAYS" visible="false">
+               <content>        
+                  <FlowPane fx:id="sssCharSelectionPane" alignment="TOP_CENTER" columnHalignment="CENTER" prefHeight="780.0" prefWidth="870.0" visible="false">
+                     <children>
+                        <Button fx:id="allSSSButton" mnemonicParsing="false" onAction="#selectAllSSSCheckboxes" prefHeight="150.0" prefWidth="120.0" text="Select All" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="22.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </FlowPane>
+               </content>
+            </ScrollPane>
+            <FlowPane fx:id="ssCharSelectionPane" alignment="TOP_CENTER" columnHalignment="CENTER" layoutX="19.0" layoutY="97.0" prefHeight="780.0" prefWidth="870.0" visible="false" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="100.0">
+               <children>
+                  <Button fx:id="allSSButton" mnemonicParsing="false" onAction="#selectAllSSCheckboxes" prefHeight="150.0" prefWidth="120.0" text="Select All" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="22.0" />
+                     </font></Button>
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="sCharSelectionPane" alignment="TOP_CENTER" columnHalignment="CENTER" layoutX="19.0" layoutY="97.0" prefHeight="780.0" prefWidth="870.0" visible="false" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="100.0">
+               <children>
+                  <Button fx:id="allSButton" mnemonicParsing="false" onAction="#selectAllSCheckboxes" prefHeight="150.0" prefWidth="120.0" text="Select All" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="22.0" />
+                     </font></Button>
+               </children>
+            </FlowPane>
+            <Button fx:id="changeDPowerButton" layoutX="308.0" layoutY="732.0" mnemonicParsing="false" onAction="#changeDPower" prefHeight="50.0" prefWidth="120.0" text="Change DPower" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+            <Button fx:id="submitCharsButton" layoutX="461.0" layoutY="732.0" mnemonicParsing="false" onAction="#progressBar" prefHeight="50.0" prefWidth="120.0" text="Submit">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font></Button>
+            <Button fx:id="backToSelectionButton" cancelButton="true" layoutX="308.0" layoutY="732.0" mnemonicParsing="false" onAction="#backToSelection" prefHeight="50.0" prefWidth="120.0" text="Back to Selection" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+				<ScrollPane fx:id="changeDPowerScrollPane" hbarPolicy="NEVER" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="710.0" prefWidth="865.0" stylesheets="@application.css" vbarPolicy="ALWAYS" visible="false">
+			        <content>
+			            <FlowPane fx:id="changeDPowerPane" alignment="CENTER" columnHalignment="CENTER" prefWrapLength="850.0" />
+			        </content>
+		    	</ScrollPane>
+            <AnchorPane fx:id="bestTeamAnchorPane" prefHeight="788.0" prefWidth="870.0" styleClass="AnchorPane" visible="false" AnchorPane.rightAnchor="-1.0">
+               <children>
+                  <FlowPane fx:id="bestTeamPane" alignment="CENTER" columnHalignment="CENTER" layoutX="195.0" layoutY="140.0" prefHeight="300.0" prefWidth="480.0" />
+                  <Button fx:id="newTeamButton" layoutX="457.0" layoutY="580.0" mnemonicParsing="false" onAction="#reset" prefHeight="50.0" prefWidth="120.0" text="New Team" AnchorPane.rightAnchor="293.0">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font></Button>
+                  <Button fx:id="exitButton" layoutX="315.0" layoutY="580.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="120.0" text="Exit" AnchorPane.rightAnchor="435.0">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Button>
+                  <Label layoutX="243.0" layoutY="493.0" prefHeight="75.0" prefWidth="264.0" styleClass="text-outline" stylesheets="@application.css" text="Total dPower:" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="38.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="bestTeamPower" layoutX="513.0" layoutY="506.0" prefHeight="55.0" prefWidth="222.0" styleClass="text-outline" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="38.0" />
+                     </font>
+                  </Label>
+                  <ProgressBar fx:id="progressBar" cache="true" layoutX="310.0" layoutY="313.0" prefHeight="61.0" prefWidth="250.0" />
+               </children>
+            </AnchorPane>
+            <Button fx:id="loadCharsButton" alignment="CENTER" layoutX="680.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="85.0" text="Load Selection" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+            <Button fx:id="saveCharsButton" alignment="CENTER" layoutX="768.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#saveChars" prefHeight="50.0" prefWidth="85.0" text="Save Selection" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+       	  </children>
+     	</AnchorPane>
+      <AnchorPane fx:id="comparisonPane" layoutX="18.0" layoutY="166.0">
+         <children>
+            <StackPane layoutX="325.0" layoutY="200.0" prefHeight="400.0" prefWidth="180.0">
+               <children>
+                  <VBox fx:id="resultVBox" prefHeight="400.0" prefWidth="180.0">
+                     <children>
+                        <Label fx:id="charBLabelHP1" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="HP" textAlignment="CENTER" textFill="#00ff11">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="differenceLabelHPnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="charBLabelATK1" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="ATK" textAlignment="CENTER" textFill="RED">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="differenceLabelATKnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="charBLabelDEF1" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="DEF" textFill="#00dcff">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="differenceLabelDEFnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="charBLabelSPD1" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="SPEED" textAlignment="CENTER" textFill="#fffe00">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="differenceLabelSPDnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+            <SplitPane fx:id="splitPane" dividerPositions="0.5" prefHeight="670.0" prefWidth="830.0" styleClass="split-pane-divider" stylesheets="@application.css">
+              <items>
+                <AnchorPane fx:id="splitPaneB" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="407.0">
+                     <children>
+                        <TextField fx:id="charATextField" layoutX="131.0" layoutY="20.0" onKeyReleased="#charATextFieldAction" />
+                        <ListView fx:id="autocompleteBoxA" layoutX="131.0" layoutY="45.0" onKeyPressed="#charATextFieldAction" prefHeight="582.0" prefWidth="149.0" visible="false" />
+                        <ImageView fx:id="charAIcon" fitHeight="150.0" fitWidth="120.0" layoutX="146.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" />
+                        <VBox fx:id="charAVBox" layoutX="116.0" layoutY="245.0" mouseTransparent="true" prefHeight="400.0" prefWidth="180.0">
+                           <children>
+                              <Label fx:id="charALabelHP" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="HP" textAlignment="CENTER" textFill="#00ff11">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelHPnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelATK" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="ATK" textAlignment="CENTER" textFill="RED">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelATKnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelDEF" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="DEF" textFill="#00dcff">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelDEFnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelSPD" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="SPEED" textAlignment="CENTER" textFill="#fffe00">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charALabelSPDnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane fx:id="splitPaneA" focusTraversable="true" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <TextField fx:id="charBTextField" layoutX="131.0" layoutY="20.0" onKeyReleased="#charBTextFieldAction" />
+                        <ListView fx:id="autocompleteBoxB" layoutX="132.0" layoutY="44.0" onKeyPressed="#charATextFieldAction" prefHeight="544.0" prefWidth="149.0" visible="false" />
+                        <ImageView fx:id="charBIcon" fitHeight="150.0" fitWidth="120.0" layoutX="146.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" />
+                        <VBox fx:id="charBVBox" layoutX="116.0" layoutY="245.0" mouseTransparent="true" prefHeight="400.0" prefWidth="180.0">
+                           <children>
+                              <Label fx:id="charBLabelHP" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="HP" textAlignment="CENTER" textFill="#00ff11">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelHPnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelATK" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="ATK" textAlignment="CENTER" textFill="RED">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelATKnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelDEF" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="DEF" textFill="#00dcff">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelDEFnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelSPD" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="SPEED" textAlignment="CENTER" textFill="#fffe00">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="charBLabelSPDnumber" alignment="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="text-outline" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+            <Button fx:id="compareSkillsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="255.0" layoutY="675.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#progressBar" prefHeight="75.0" prefWidth="140.0" text="Compare Skills" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Button>
+            <Button fx:id="compareStatsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="435.0" layoutY="675.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#getCharInfo" prefHeight="75.0" prefWidth="140.0" text="Compare Stats" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

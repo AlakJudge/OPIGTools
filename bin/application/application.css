@@ -1,0 +1,59 @@
+.AnchorPane {
+    -fx-background-image: url('woodBG2.jpg');
+    -fx-background-repeat: repeat;
+    -fx-background-size: cover;
+}
+
+.scroll-pane{
+   -fx-background-color:transparent;
+}
+
+.split-pane {
+   -fx-background-color:transparent;
+}
+
+.split-pane .split-pane-divider{
+	-fx-background-color: transparent;
+	
+}
+
+.scroll-pane .viewport {
+       -fx-background-color: transparent;
+}
+
+.text-outline {
+    -fx-effect: dropshadow( one-pass-box , BLACK, 4, 1, 1, 1 );
+}
+
+.stat-text-outline {
+    -fx-effect: dropshadow( one-pass-box , BLACK, 4, 1, 1, 1);
+}
+
+.yellow-background {
+	-fx-background-color: bisque;
+}
+
+.green-background {
+	-fx-background-color: limegreen;
+}
+.red-background {
+	-fx-background-color: red;
+}
+
+.white-background {
+	-fx-background-color: white;
+}
+
+.toggle-button {
+    
+    -fx-text-fill: black;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #36b558;
+    -fx-text-fill: white;
+}
+
+.default-toggle-button {
+    -fx-text-fill: black;
+}

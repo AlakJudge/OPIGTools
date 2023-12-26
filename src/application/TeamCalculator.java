@@ -13,10 +13,12 @@ public class TeamCalculator {
 	static Character[][] tempTeams;
 	static Character[][] bestTeam;
 	static int topTeamsPowers[] = new int[teams];
-	static int totalNumberOfTeamsCounter = 0;
 
 	static int[] teamsPower = new int[teams];
 	static int lowest = 0;
+	static int highest = 0;
+	static int missionPowerHigh = 0;
+	static boolean done = false;
 
 	public static void compare(ArrayList<Character> characterList) {
 
@@ -26,28 +28,32 @@ public class TeamCalculator {
 		tempTeams = new Character[teams][numMembers];
 		bestTeam = new Character[teams][numMembers];
 		List<Character> currentTeam = new ArrayList<>();
-
+		
 		// find all the team combinations
 		generateTeams(0, currentTeam, characterList);
+		done = false;
 
 	}
 
 	private static void generateTeams(int startIndex, List<Character> currentTeam, ArrayList<Character> characterList) {
 
-		// only start the calculation once we have enough teams for comparison. Possibly
-		// to be used for future features too
+		// only start the calculation once we have enough teams for comparison. 
+		// Possibly to be used for future features too
 		if (allTeams.size() >= teams) {
-			calculate();
+			calculate();		
 		}
 
 		if (currentTeam.size() == numMembers) {
 			allTeams.add(new ArrayList<>(currentTeam)); // Found a valid group
-			totalNumberOfTeamsCounter++; // number of teams founds, might be used in progress bar change.
 			return;
 		}
+		
 		// add characters to current team, with different variations until all options
 		// are exhausted
 		for (int i = startIndex; i < characterList.size(); i++) {
+			if (done) {
+				break;
+			} 
 			currentTeam.add(characterList.get(i));
 			generateTeams(i + 1, currentTeam, characterList);
 			currentTeam.remove(currentTeam.size() - 1); // Backtrack
@@ -56,12 +62,33 @@ public class TeamCalculator {
 
 	private static void calculate() {
 		findTeamsPower();
-		// find the lowest power currently saved
-		for (int j = 0; j < teams; j++) {
-			if (topTeamsPowers[j] < topTeamsPowers[lowest]) {
-				lowest = j;
+		
+		// find the team with the closest power to target mission power	
+		if (Controller.missionPower != 0) {
+			for (int i = 0; i < teams; i++) {	
+				if (teamsPower[i] >= Controller.missionPower) {
+					for (int x = 1; x < 10; x++) { // find the closest 100 by 100					
+						missionPowerHigh = Controller.missionPower+(x*100);
+						if(teamsPower[i] < missionPowerHigh) {					
+							done = true;
+							highestPower = teamsPower[i];
+							for (int j = 0; j < numMembers; j++) {
+								bestTeam[0][j] = listOfTeams[i][j];
+							}			
+						break;
+						}				
+					}
+				}
 			}
-
+		}		
+		if (done)
+			return;			
+		
+		for (int j = 0; j < teams; j++) {				
+			// find the highest and lowest indexes for powers currently saved
+			if (topTeamsPowers[j] < topTeamsPowers[lowest]) {
+				lowest = j;	
+			}
 			// save the actual characters in the saved teams, before the removing/adding
 			for (int i = 0; i < numMembers; i++) {
 				tempTeams[j][i] = listOfTeams[j][i];
@@ -69,28 +96,17 @@ public class TeamCalculator {
 		}
 
 		for (int i = 0; i < teams; i++) {
-			// replacing the current lowest with the new top power teams
-			for (int j = 0; j < teams; j++) {
-				if (teamsPower[i] > topTeamsPowers[lowest]) {
-					for (int x = 0; x < numMembers; x++) {
-						tempTeams[lowest][x] = listOfTeams[i][x];
-					}
-
-					// tempTeams[lowest] = listOfTeams[i];
-					topTeamsPowers[lowest] = teamsPower[i];
+			// replacing the current lowest power team
+			if (teamsPower[i] >= topTeamsPowers[lowest]) {
+				for (int x = 0; x < numMembers; x++) {
+					tempTeams[lowest][x] = listOfTeams[i][x];
 				}
-			}
-			// find the lowest power currently saved
-			for (int j = 0; j < teams; j++) {
-				if (topTeamsPowers[j] < topTeamsPowers[lowest]) {
-					lowest = j;
-				}
+				topTeamsPowers[lowest] = teamsPower[i];				
 			}
 		}
-
+		
 		for (int i = 0; i < teams; i++) {
-			// compare the powers of all teams and save the total number + its index (in
-			// order to find the chars)
+			// compare the powers of both teams and save the total number + its index (in order to find the chars)
 			if (topTeamsPowers[i] > highestPower) {
 				highestPower = topTeamsPowers[i];
 				highestPowerTeamIndex = i;
@@ -122,6 +138,5 @@ public class TeamCalculator {
 		topTeamsPowers = new int[teams];
 		teamsPower = new int[teams];
 		lowest = 0;
-		totalNumberOfTeamsCounter = 0;
 	}
 }

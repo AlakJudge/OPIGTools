@@ -1,15 +1,22 @@
 package application;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
+import java.util.prefs.Preferences;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +32,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
@@ -41,9 +50,10 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -56,17 +66,19 @@ public class Controller implements Initializable {
 	@FXML
 	FlowPane sssCharSelectionPane, ssCharSelectionPane, sCharSelectionPane, changeDPowerPane, bestTeamPane;
 	@FXML
-	ScrollPane changeDPowerScrollPane, sssCharSelectionScrollPane;
+	ScrollPane sssCharSelectionScrollPane, changeDPowerScrollPane;
 	@FXML
-	Label bestTeamPower, ruinsLabel;
+	Label bestTeamPower, ruinsLabel, bonus;
 	@FXML
-	Button backToSelectionButton, submitCharsButton, changeDPowerButton, allSSSButton, allSSButton, allSButton, sButton,
-			ssButton, sssButton, exitButton;
+	Button changeLevelButton, backToSelectionButton, submitCharsButton, changeDPowerButton, allSSSButton, allSSButton, allSButton, sButton,	
+			ssButton, sssButton, exitButton, findNextBestTeam, changeAllLevelsButton, changeAlldPowersButton;
 	@FXML
 	ToggleButton orderAZButton;
 	@FXML
 	ProgressBar progressBar = new ProgressBar();
-
+	@FXML
+	TextField missionPowerTextField, changeAllTextField;
+		
 	ArrayList<CheckBoxImage> originalOrderSSS;
 	ArrayList<CheckBoxImage> originalOrderSS;
 	ArrayList<CheckBoxImage> originalOrderS;
@@ -85,22 +97,31 @@ public class Controller implements Initializable {
 	ArrayList<String> charNames = new ArrayList<>();
 	Character[] unit;
 	Pane currentPane;
-	Boolean ruinsToggle = false;
-
+	boolean ruinsToggle = false;
+	boolean savedLevelChanged = false;
+	boolean savedDPowerChanged = false;
+	boolean converted = false;
+	
 	TextField[] powerTextField;
 	Character character[];
-	String sPower[];
+	static int missionPower = 0;
+	static boolean changeLevel = false;
+	static boolean changeDPower = false;
+	static double totalBonus;
+	static String[] charLevel;
+	
+	int lastNumMembers;
 
 	final int MAX_WIDTH = 120;
 	final int MAX_HEIGHT = 150;
 
 	// SSS CHACACTER ICONS
-	String[] sssImageTooltips = { "Prime Whitebeard", "Zephyr", "Robin - Christmas", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
+	String[] sssImageTooltips = { "Chopper (Christmas)", "Zoro Asura", "General Franky", "Shirahoshi", "Prime Whitebeard", "Zephyr", "Robin - Christmas", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
 			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
 			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
 			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
 
-	String[] sssSelectedImagePaths = { "resources/Prime WhitebeardBW.png", "resources/ZephyrBW.png", "resources/Robin - ChristmasBW.png", "resources/YamatoBW.png",
+	String[] sssSelectedImagePaths = { "resources/Chopper (Christmas)BW.png", "resources/Zoro AsuraBW.png", "resources/General FrankyBW.png", "resources/ShirahoshiBW.png", "resources/Prime WhitebeardBW.png", "resources/ZephyrBW.png", "resources/Robin - ChristmasBW.png", "resources/YamatoBW.png",
 			"resources/Mihawk (Summit War)BW.png", "resources/God UsoppBW.png", "resources/Sanji GermaBW.png",
 			"resources/Enma ZoroBW.png", "resources/OdenBW.png", "resources/Nami (Valentine's Day)BW.png",
 			"resources/CarrotBW.png", "resources/KaidoBW.png", "resources/MagellanBW.png",
@@ -111,7 +132,7 @@ public class Controller implements Initializable {
 			"resources/SengokuBW.png", "resources/WhitebeardBW.png", "resources/AkainuBW.png", "resources/GarpBW.png",
 			"resources/MihawkBW.png"};
 
-	String[] sssImagePaths = { "resources/Prime Whitebeard.png", "resources/Zephyr.png", "resources/Robin - Christmas.png", "resources/Yamato.png",
+	String[] sssImagePaths = { "resources/Chopper (Christmas).png", "resources/Zoro Asura.png", "resources/General Franky.png", "resources/Shirahoshi.png", "resources/Prime Whitebeard.png", "resources/Zephyr.png", "resources/Robin - Christmas.png", "resources/Yamato.png",
 			"resources/Mihawk (Summit War).png", "resources/God Usopp.png", "resources/Sanji Germa.png",
 			"resources/Enma Zoro.png", "resources/Oden.png", "resources/Nami (Valentine's Day).png",
 			"resources/Carrot.png", "resources/Kaido.png", "resources/Magellan.png",
@@ -159,116 +180,164 @@ public class Controller implements Initializable {
 			"resources/CrocodileBW.png", "resources/Franky (Supernova)BW.png", "resources/VistaBW.png",
 			"resources/JimbeiBW.png", "resources/Vinsmoke ReijuBW.png" };
 
+	
 	boolean allSelectedSSS = false;
 	boolean allSelectedSS = false;
 	boolean allSelectedS = false;
-	CheckBoxImage[] checkboxImageSSS = new CheckBoxImage[29];
-	CheckBoxImage[] checkboxImageSS = new CheckBoxImage[14];
-	CheckBoxImage[] checkboxImageS = new CheckBoxImage[20];
-	Tooltip tooltipSSS[] = new Tooltip[29];
-	Tooltip tooltipSS[] = new Tooltip[14];
-	Tooltip tooltipS[] = new Tooltip[20];
+	CheckBoxImage[] checkboxImageSSS = new CheckBoxImage[sssImageTooltips.length];
+	CheckBoxImage[] checkboxImageSS = new CheckBoxImage[ssImageTooltips.length];
+	CheckBoxImage[] checkboxImageS = new CheckBoxImage[sImageTooltips.length];
+	Tooltip tooltipSSS[] = new Tooltip[sssImageTooltips.length];
+	Tooltip tooltipSS[] = new Tooltip[ssImageTooltips.length];
+	Tooltip tooltipS[] = new Tooltip[sImageTooltips.length];
 	Integer[] numMembersNumbers = { 2, 3, 4, 5, 6, 7, 8 };
-
+	Integer[] threePacksBought = { 0, 1, 2, 3};
+	Integer[] fivePacksBought = { 0, 1, 2, 3, 4, 5};
+	Integer[] sixPacksBought = { 0, 1, 2, 3, 4, 5, 6};
+	Integer[] tenPacksBought = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	
 	private static final String TOOLTIP = "tooltip";
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+
+		prefs = Preferences.userRoot().node(getClass().getName());
+		loadState();
+		if (secs > 0 || mins > 0 || hrs > 0) {			
+			if (!timerStopped) {		
+				startTimer();			
+			}
+		}
+        // Register a shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            saveState();
+        }));
+		
+		changeAllTextField.setVisible(false);
+		changeAllLevelsButton.setVisible(false);
+		changeAlldPowersButton.setVisible(false);
+		missionPowerTextField.setVisible(false);
 		numMembersChoiceBox.getItems().addAll(numMembersNumbers);
 		numMembersChoiceBox.setOnAction(this::setNumMembers);
 		numMembersChoiceBox.setValue(7);
+		
+		// setting up brooks calculator values
+		oneThousandGemsPack.getItems().addAll(sixPacksBought);
+		oneThousandGemsPack.setValue(0);
+		fiveThousandGemsPack.getItems().addAll(fivePacksBought);
+		fiveThousandGemsPack.setValue(0);
+		money299pack.getItems().addAll(threePacksBought);
+		money299pack.setValue(0);
+		money999pack.getItems().addAll(fivePacksBought);
+		money999pack.setValue(0);
+		money2999pack.getItems().addAll(fivePacksBought);
+		money2999pack.setValue(0);
+		money9999pack.getItems().addAll(tenPacksBought);
+		money9999pack.setValue(0);
+		oneThousandGemsPack.setValue(0);
+		fiveThousandGemsPack.setValue(0);
+		money299pack.setValue(0);
+		money2999pack.setValue(0);
+		money999pack.setValue(0);
+		money9999pack.setValue(0);
+		
 		changeDPowerScrollPane.setVisible(false);
 		bestTeamAnchorPane.setVisible(false);
 		backToSelectionButton.setVisible(false);
 		orderAZButton.setVisible(false);
 		comparisonPane.setVisible(false);
+		calculatorPane.setVisible(false);
 		splitPane.setDividerPosition(0, 0.5);
 		SplitPane.setResizableWithParent(splitPane.getItems().get(0), false);
 		
-		unit = new Character[63];
+		unit = new Character[67];
 
-		// SSS chars
-		unit[0] = new Character("Aokiji", "SSS", 157, "marines", "swordsmaster", "piratesSH", 2567159, 167898, 24983,
-				445);
-		unit[1] = new Character("Mihawk", "SSS", 157, "marines", "swordsmaster", "will", 1724031, 180936, 11659, 395);
-		unit[2] = new Character("Golden Lion", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 410);
-		unit[3] = new Character("Fujitora", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 425);
-		unit[4] = new Character("Kizaru", "SSS", 157, "wayOfFreedom", 1159997, 146539, 10553, 425);
-		unit[5] = new Character("Snakeman Luffy", "SSS", 157, "swordsmaster", "colonel", 2425897, 98896, 13385, 421);
-		unit[6] = new Character("Shanks", "SSS", 157, "swordsmaster", "will", 1159997, 146539, 10553, 414);
-		unit[7] = new Character("Akainu", "SSS", 157, "swordsmaster", 2425907, 98913, 13324, 409);
-		unit[8] = new Character("Sengoku", "SSS", 157, "will", "marineShichibukai", 2635858, 108099, 16239, 415);
-		unit[9] = new Character("Garp", "SSS", 157, "will", "marineShichibukai", 2248187, 112009, 12491, 419);
-		unit[10] = new Character("Whitebeard", "SSS", 157, "piratesPursuit", 1724031, 180936, 11659, 421);
-		unit[11] = new Character("Rayleigh", "SSS", 157, "yonko", 1359739, 180902, 11712, 415);
-		unit[12] = new Character("Kaido", "SSS", 157, "yonko", 2635841, 93116, 16313, 415);
-		unit[13] = new Character("Oden", "SSS", 157, "breakthrough", 1724108, 180902, 11712, 419);
-		unit[14] = new Character("Swimsuit - Hancock", "SSS", 157, "cyborg", 2567264, 167852, 25097, 416);
-		unit[15] = new Character("Robin - Christmas", "SSS", 157, "SHparamecia", 3908232, 134164, 25097, 420);
-		unit[16] = new Character("Blackbeard", "SSS", 157, "shichibukaiVinsmoke", 2567264, 167898, 25097, 425);
-		unit[17] = new Character("Nami (Valentine's Day)", "SSS", 157, "piratesSH", 2567264, 167852, 25097, 423);
-		unit[18] = new Character("Yamato", "SSS", 157, "will", 1882743, 180936, 12548, 419);
-		unit[19] = new Character("God Usopp", "SSS", 157, "breakthrough", 1563294, 103564, 25097, 408);
-		unit[20] = new Character("Sanji Germa", "SSS", 157, "breakthrough", 2390912, 127959, 11712, 409);
-		unit[21] = new Character("Enma Zoro", "SSS", 157, "breakthrough", 1359739, 180936, 11712, 418);
-		unit[22] = new Character("Carrot", "SSS", 157, "cyborg", 2425897, 98896, 13385, 417);
-		unit[23] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", 1359739, 180936, 11712, 418);
-		unit[24] = new Character("Charlotte Linlin", "SSS", 157, "yonko", 2567159, 167898, 24983, 410);
-		unit[25] = new Character("Mihawk (Summit War)", "SSS", 157, "shichibukai", 1922920, 127959, 11712, 412);
-		unit[26] = new Character("Magellan", "SSS", 157, "paramecia", 2635841, 108082, 16313, 420);
-		unit[27] = new Character("Prime Whitebeard", "SSS", 157, "paramecia", "captain", "yonko", 1901456, 158585, 12139, 415);
-		unit[28] = new Character("Zephyr", "SSS", 157, "marines", "marineShichibukai", 2345424, 125630, 12548, 425);
-		// SS chars
-		unit[29] = new Character("Zoro (Supernova)", "SS", 105, "swordsmaster", "SHsupernova", 1091668, 112980, 11659,
-				415);
-		unit[30] = new Character("Ace", "SS", 105, "swordsmaster", 1091668, 112980, 11659, 407);
-		unit[31] = new Character("Doflamingo", "SS", 105, "swordsmaster", "will", "shichibukaiVinsmoke", 1091668,
-				112980, 11659, 415);
-		unit[32] = new Character("Sabo", "SS", 105, "swordsmaster", "piratesSH", 1091668, 112980, 11659, 417);
-		unit[33] = new Character("Enel", "SS", 105, "swordsmaster", "skypiea", 1617146, 105743, 24983, 425);
-		unit[34] = new Character("Katakuri", "SS", 105, "SHparamecia", "vinsmoke", "will", 1617216, 105715, 25097, 409);
-		unit[35] = new Character("Kuma", "SS", 105, "will", "marineShichibukai", 1413372, 70888, 12491, 419);
-		unit[36] = new Character("Marco", "SS", 105, "will", "paramecia", "thrillerBark", "colonel", 1491760, 70888,
-				17322, 410);
-		unit[37] = new Character("Boa Hancock", "SS", 105, "will", "shichibukaiVinsmoke", "shichibukai", 1130454, 68517,
-				31090, 397);
-		unit[38] = new Character("Nightmare Luffy", "SS", 105, "will", 1617146, 105743, 24983, 366);
-		unit[39] = new Character("Law (Supernova)", "SS", 105, "captain", 1617216, 105715, 25097, 400);
-		unit[40] = new Character("Vinsmoke Ichiji", "SS", 105, "will", "vinsmoke", "shichibukaiVinsmoke", 862119,
-				112957, 11712, 415);
-		unit[41] = new Character("Law", "SS", 105, "marines", "shichibukai", 1617146, 105743, 24983, 400);
-		unit[42] = new Character("Sanji (Supernova)", "SS", 105, "marines", "swordsmaster", "piratesSH", 1617146,
-				105743, 24983, 441);
 		// S chars
-		unit[43] = new Character("Bartolomeo", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 406);
-		unit[44] = new Character("Cavendish", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 404);
-		unit[45] = new Character("Vista", "S", 63, "swordsmaster", "colonel", 540452, 52669, 11659, 401);
-		unit[46] = new Character("Buggy", "S", 63, "SHparamecia", "will", "thrillerBark", "paramecia", 469621, 33950,
-				16239, 370);
-		unit[47] = new Character("Jozu", "S", 63, "will", "paramecia", "thrillerBark", "SHparamecia", 540452, 52669,
-				11659, 390);
-		unit[48] = new Character("Smoker", "S", 63, "will", "paramecia", "thrillerBark", "colonel", 769621, 33950,
-				16239, 400);
-		unit[49] = new Character("Lucci", "S", 63, "will", "vinsmoke", 540452, 52669, 11659, 400);
-		unit[50] = new Character("Crocodile", "S", 63, "will", "paramecia", "vinsmoke", "shichibukaiVinsmoke", 707375,
-				46247, 24983, 398);
-		unit[51] = new Character("Franky (Supernova)", "S", 63, "will", "piratesRevolutionaries", "cyborg", 757904, 36500, 13324,
-				390);
-		unit[52] = new Character("Vinsmoke Reiju", "S", 63, "will", "piratesPursuit", "vinsmoke", 540452, 52669, 11659,
-				405);
-		unit[53] = new Character("Jimbei", "S", 63, "piratesPursuit", "SHsupernova", 540452, 52669, 11659, 380);
-		unit[54] = new Character("Moria", "S", 63, "paramecia", "thrillerBark", 540846, 33586, 35532, 382);
-		unit[55] = new Character("Hawkins", "S", 63, "paramecia", "thrillerBark", 540452, 52669, 11659, 408);
-		unit[56] = new Character("Kid", "S", 63, "paramecia", "thrillerBark", "breakthrough", 540452, 52669, 11659,
-				408);
-		unit[57] = new Character("Nami (Supernova)", "S", 63, "SHparamecia", "breakthrough", 707375, 46247, 24983, 380);
-		unit[58] = new Character("Ivankov", "S", 63, "piratesRevolutionaries", 707375, 46247, 24983, 380);
-		unit[59] = new Character("Chopper (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 380);
-		unit[60] = new Character("Robin (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 406);
-		unit[61] = new Character("Luffy (Supernova)", "S", 63, "swordsmaster", "SHsupernova", 757904, 36500, 13324,
-				400);
-		unit[62] = new Character("Usopp (Supernova)", "S", 63, "swordsmaster", 540452, 52669, 11659, 398);			
-		
+		unit[0] = new Character("Cavendish", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 404, 1);
+		unit[1] = new Character("Vista", "S", 63, "swordsmaster", "colonel", 540452, 52669, 11659, 401, 1);
+		unit[2] = new Character("Buggy", "S", 63, "SHparamecia", "will", "thrillerBark", "paramecia", 469621, 33950,
+				16239, 370, 1);
+		unit[3] = new Character("Jozu", "S", 63, "will", "paramecia", "thrillerBark", "SHparamecia", 540452, 52669,
+				11659, 390, 1);
+		unit[4] = new Character("Smoker", "S", 63, "will", "paramecia", "thrillerBark", "colonel", 769621, 33950,
+				16239, 400, 1);
+		unit[5] = new Character("Lucci", "S", 63, "will", "vinsmoke", 540452, 52669, 11659, 400, 1);
+		unit[6] = new Character("Crocodile", "S", 63, "will", "paramecia", "vinsmoke", "shichibukaiVinsmoke", 707375,
+				46247, 24983, 398, 1);
+		unit[7] = new Character("Franky (Supernova)", "S", 63, "will", "piratesRevolutionaries", "cyborg", 757904, 36500, 13324,
+				390, 1);
+		unit[8] = new Character("Vinsmoke Reiju", "S", 63, "will", "piratesPursuit", "vinsmoke", 540452, 52669, 11659,
+				405, 1);
+		unit[9] = new Character("Jimbei", "S", 63, "piratesPursuit", "SHsupernova", 540452, 52669, 11659, 380, 1);
+		unit[10] = new Character("Moria", "S", 63, "paramecia", "thrillerBark", 540846, 33586, 35532, 382, 1);
+		unit[11] = new Character("Hawkins", "S", 63, "paramecia", "thrillerBark", 540452, 52669, 11659, 408, 1);
+		unit[12] = new Character("Kid", "S", 63, "paramecia", "thrillerBark", "breakthrough", 540452, 52669, 11659,
+				408, 1);
+		unit[13] = new Character("Nami (Supernova)", "S", 63, "SHparamecia", "breakthrough", 707375, 46247, 24983, 380, 1);
+		unit[14] = new Character("Ivankov", "S", 63, "piratesRevolutionaries", 707375, 46247, 24983, 380, 1);
+		unit[15] = new Character("Chopper (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 380, 1);
+		unit[16] = new Character("Robin (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 406, 1);
+		unit[17] = new Character("Luffy (Supernova)", "S", 63, "swordsmaster", "SHsupernova", 757904, 36500, 13324,
+				400, 1);
+		unit[18] = new Character("Usopp (Supernova)", "S", 63, "swordsmaster", 540452, 52669, 11659, 398, 1);	
+		unit[19] = new Character("Bartolomeo", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 406, 1);
+		// SS chars
+		unit[20] = new Character("Ace", "SS", 105, "swordsmaster", 1091668, 112980, 11659, 407, 1);
+		unit[21] = new Character("Doflamingo", "SS", 105, "swordsmaster", "will", "shichibukaiVinsmoke", 1091668,
+				112980, 11659, 415, 1);
+		unit[22] = new Character("Sabo", "SS", 105, "swordsmaster", "piratesSH", 1091668, 112980, 11659, 417, 1);
+		unit[23] = new Character("Enel", "SS", 105, "swordsmaster", "skypiea", 1617146, 105743, 24983, 425, 1);
+		unit[24] = new Character("Katakuri", "SS", 105, "SHparamecia", "vinsmoke", "will", 1617216, 105715, 25097, 409, 1);
+		unit[25] = new Character("Kuma", "SS", 105, "will", "marineShichibukai", 1413372, 70888, 12491, 419, 1);
+		unit[26] = new Character("Marco", "SS", 105, "will", "paramecia", "thrillerBark", "colonel", 1491760, 70888,
+				17322, 410, 1);
+		unit[27] = new Character("Boa Hancock", "SS", 105, "will", "shichibukaiVinsmoke", "shichibukai", 1130454, 68517,
+				31090, 397, 1);
+		unit[28] = new Character("Nightmare Luffy", "SS", 105, "will", 1617146, 105743, 24983, 366, 1);
+		unit[29] = new Character("Law (Supernova)", "SS", 105, "captain", 1617216, 105715, 25097, 400, 1);
+		unit[30] = new Character("Vinsmoke Ichiji", "SS", 105, "will", "vinsmoke", "shichibukaiVinsmoke", 862119,
+				112957, 11712, 415, 1);
+		unit[31] = new Character("Law", "SS", 105, "marines", "shichibukai", 1617146, 105743, 24983, 400, 1);
+		unit[32] = new Character("Sanji (Supernova)", "SS", 105, "marines", "swordsmaster", "piratesSH", 1617146,
+				105743, 24983, 441, 1);
+		unit[33] = new Character("Zoro (Supernova)", "SS", 105, "swordsmaster", "SHsupernova", 1091668, 112980, 11659,
+				415, 1);
+		// SSS chars
+		unit[34] = new Character("Aokiji", "SSS", 157, "marines", "swordsmaster", "piratesSH", 2567159, 167898, 24983,
+				445, 1);
+		unit[35] = new Character("Mihawk", "SSS", 157, "marines", "swordsmaster", "will", 1724031, 180936, 11659, 395, 1);
+		unit[36] = new Character("Golden Lion", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 410, 1);
+		unit[37] = new Character("Fujitora", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 425, 1);
+		unit[38] = new Character("Kizaru", "SSS", 157, "wayOfFreedom", 1159997, 146539, 10553, 425, 1);
+		unit[39] = new Character("Snakeman Luffy", "SSS", 157, "swordsmaster", "colonel", 2425897, 98896, 13385, 421, 1);
+		unit[40] = new Character("Shanks", "SSS", 157, "swordsmaster", "will", 1159997, 146539, 10553, 414, 1);
+		unit[41] = new Character("Akainu", "SSS", 157, "swordsmaster", 2425907, 98913, 13324, 409, 1);
+		unit[42] = new Character("Sengoku", "SSS", 157, "will", "marineShichibukai", 2635858, 108099, 16239, 415, 1);
+		unit[43] = new Character("Garp", "SSS", 157, "will", "marineShichibukai", 2248187, 112009, 12491, 419, 1);
+		unit[44] = new Character("Whitebeard", "SSS", 157, "piratesPursuit", 1724031, 180936, 11659, 421, 1);
+		unit[45] = new Character("Rayleigh", "SSS", 157, "yonko", 1359739, 180902, 11712, 415, 1);
+		unit[46] = new Character("Kaido", "SSS", 157, "yonko", 2635841, 93116, 16313, 415, 1);
+		unit[47] = new Character("Oden", "SSS", 157, "breakthrough", 1724108, 180902, 11712, 419, 1);
+		unit[48] = new Character("Swimsuit - Hancock", "SSS", 157, "cyborg", 2567264, 167852, 25097, 416, 1);
+		unit[49] = new Character("Robin - Christmas", "SSS", 157, "SHparamecia", 3908232, 134164, 25097, 420, 1);
+		unit[50] = new Character("Blackbeard", "SSS", 157, "shichibukaiVinsmoke", 2567264, 167898, 25097, 425, 1);
+		unit[51] = new Character("Nami (Valentine's Day)", "SSS", 157, "piratesSH", 2567264, 167852, 25097, 423, 1);
+		unit[52] = new Character("Yamato", "SSS", 157, "will", 1882743, 180936, 12548, 419, 1);
+		unit[53] = new Character("God Usopp", "SSS", 157, "breakthrough", 1563294, 103564, 25097, 408, 1);
+		unit[54] = new Character("Sanji Germa", "SSS", 157, "breakthrough", 2390912, 127959, 11712, 409, 1);
+		unit[55] = new Character("Enma Zoro", "SSS", 157, "breakthrough", 1359739, 180936, 11712, 418, 1);
+		unit[56] = new Character("Carrot", "SSS", 157, "cyborg", 2425897, 98896, 13385, 417, 1);
+		unit[57] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", 1359739, 180936, 11712, 418, 1);
+		unit[58] = new Character("Charlotte Linlin", "SSS", 157, "yonko", 2567159, 167898, 24983, 410, 1);
+		unit[59] = new Character("Mihawk (Summit War)", "SSS", 157, "shichibukai", 1922920, 127959, 11712, 412, 1);
+		unit[60] = new Character("Magellan", "SSS", 157, "paramecia", 2635841, 108082, 16313, 420, 1);
+		unit[61] = new Character("Prime Whitebeard", "SSS", 157, "paramecia", "captain", "yonko", 1901456, 158585, 12139, 415, 1);
+		unit[62] = new Character("Zephyr", "SSS", 157, "marines", "marineShichibukai", 2345424, 125630, 12548, 425, 1);
+		unit[63] = new Character("Shirahoshi", "SSS", 157, "will", 3225503, 152923, 25097, 423, 1);
+		unit[64] = new Character("General Franky", "SSS", 157, "will", "piratesSH", "cyborg", 3226319, 98408, 30064, 424, 1);
+		unit[65] = new Character("Zoro Asura", "SSS", 157, "swordsmaster", "breakthrough", 1131856, 123449, 25045, 415, 1);
+		unit[66] = new Character("Chopper (Christmas)", "SSS", 157, "piratesSH", "breakthrough", 2857454, 158808, 38822, 415, 1);
+				
 		// adding all characters to a list
 		for (Character character : unit) {
 			unitList.add(character);
@@ -277,12 +346,11 @@ public class Controller implements Initializable {
 		// adding all character names to a list of names
 		for (int i = 0; i < unit.length; i++) {
 			charNames.add(unit[i].getName());
-		}
+		}				
 		
 		// setting up the initial setup of the program
 		powerTextField = new TextField[unitList.size()];
 		character = new Character[unitList.size()];
-		sPower = new String[unitList.size()];
 		createSCheckboxes();
 		createSSCheckboxes();
 		createSSSCheckboxes();
@@ -313,11 +381,11 @@ public class Controller implements Initializable {
 	public void ruinsVisible() { // methods button use to the the main ruins feature pane visible
 		ruinsPane.setVisible(true);
 		comparisonPane.setVisible(false);
+		calculatorPane.setVisible(false);
 	}
 
 	public void setNumMembers(ActionEvent e) { // get the vale from the choice box and make sure it's set to the correct variable when needed
-		int selectedValue = numMembersChoiceBox.getValue();
-		Main.numMembers = selectedValue;
+		Main.numMembers = numMembersChoiceBox.getValue();
 	}
 
 	public class CheckBoxImage extends Pane { // creating custom checkbox class that adds an image instead of a box
@@ -606,7 +674,17 @@ public class Controller implements Initializable {
 	}
 
 	public void changeDPower() { // method to run after selecting the characters
-
+		
+		charsSelected.clear();
+		removeAllChildren(changeDPowerPane);
+		removeAllChildren(bestTeamPane);
+		changeAllTextField.clear();
+		changeAllTextField.setVisible(true);
+		changeAlldPowersButton.setVisible(true);	
+		
+		changeDPower=true;
+		changeLevel=false;
+		
 		// adding all selected chars to the CharsSelected array
 		for (CheckBoxImage element : checkboxImageSSS) {
 			if (element.isSelected()) {
@@ -630,7 +708,52 @@ public class Controller implements Initializable {
 			showErrorPopup("Error", "Not enough characters selected!");
 			charsSelected.clear();
 		} else { 
+			characterList.clear();
+			convertCharsSelected(charsSelected);
 			loadSelectedChars(); 
+			missionPowerTextField.setVisible(true);
+		}
+	}
+	
+	public void changeLevel() { // method to run after selecting the characters and choosing to change the level
+		
+		charsSelected.clear();
+		removeAllChildren(changeDPowerPane);
+		removeAllChildren(bestTeamPane);
+		changeAllTextField.clear();
+		changeAllTextField.setVisible(true);
+		changeAllLevelsButton.setVisible(true);
+	
+		changeLevel=true;
+		changeDPower=false;
+		
+		// adding all selected chars to the CharsSelected array
+		for (CheckBoxImage element : checkboxImageSSS) {
+			if (element.isSelected()) {
+				charsSelected.add(element.getTooltipText());
+			}
+
+		}
+		for (CheckBoxImage element : checkboxImageSS) {
+			if (element.isSelected()) {
+				charsSelected.add(element.getTooltipText());
+			}
+		}
+		for (CheckBoxImage element : checkboxImageS) {
+			if (element.isSelected()) {
+				charsSelected.add(element.getTooltipText());
+			}
+		}
+		
+		// only load the selected chars if the number selected is higher than the min number of members a team must have
+		if (charsSelected.size() <= Main.numMembers) {
+			showErrorPopup("Error", "Not enough characters selected!");
+			charsSelected.clear();
+		} else { 
+			characterList.clear();
+			convertCharsSelected(charsSelected);
+			loadSelectedChars(); 
+			missionPowerTextField.setVisible(true);
 		}
 	}
 
@@ -638,22 +761,24 @@ public class Controller implements Initializable {
 
 		toggleRuinsPane("off");
 		changeDPowerScrollPane.setVisible(true);
+		missionPowerTextField.setVisible(true);
 		sssPaneInvisible();
 		ssPaneInvisible();
 		sPaneInvisible();
 
 		changeDPowerButton.setVisible(false);
+		changeLevelButton.setVisible(false);
 		backToSelectionButton.setVisible(true);
 
 		int numElements = charsSelected.size();
 		String name[] = new String[numElements];
-		Integer power[] = new Integer[numElements];
+		String defaultPower[] = new String[numElements];
+		String currentLevel[] = new String[numElements];
+		String currentPower[] = new String[numElements];
 		Image icon[] = new Image[numElements];
 		ImageView iconView[] = new ImageView[numElements];
 		VBox vbox[] = new VBox[numElements];
-
-		convertCharsSelected(charsSelected); // converst name list to character object list
-
+			
 		// loop creating each imagecheckbox and the textfield under it with the power
 		for (int i = 0; i < numElements; i++) { 
 
@@ -662,10 +787,10 @@ public class Controller implements Initializable {
 			powerTextField[i].setPrefSize(MAX_WIDTH, 10);
 			name[i] = charsSelected.get(i);
 			character[i] = findUnit(name[i], unitList); // finding the character
-			power[i] = character[i].getDefaultPower(); // getting default power
-			if (sPower[i] == null) {
-				sPower[i] = power[i].toString(); // converting to string in order to set as textbox default text
-			}
+			defaultPower[i] = Integer.toString(character[i].getDefaultPower()); // getting default power
+			currentLevel[i] = Integer.toString(character[i].getLevel()); // getting default level
+			currentPower[i] = Integer.toString(character[i].getdPower()); // getting default power
+			
 			// loops getting the char icons
 			for (CheckBoxImage element : checkboxImageSSS) {
 				if (name[i].equals(element.getTooltipText())) {
@@ -673,14 +798,12 @@ public class Controller implements Initializable {
 					break;
 				}
 			}
-
 			for (CheckBoxImage element : checkboxImageSS) {
 				if (name[i].equals(element.getTooltipText())) {
 					icon[i] = element.getImage();
 					break;
 				}
 			}
-
 			for (CheckBoxImage element : checkboxImageS) {
 				if (name[i].equals(element.getTooltipText())) {
 					icon[i] = element.getImage();
@@ -692,9 +815,28 @@ public class Controller implements Initializable {
 			iconView[i].setPreserveRatio(true);
 			iconView[i].setFitWidth(MAX_WIDTH);
 			iconView[i].setFitHeight(MAX_HEIGHT);
-			powerTextField[i].setText(sPower[i]);
+			
+			// Set default level if not loading levels from file
+			if (changeLevel) {
+				if (savedLevelChanged) {
+					powerTextField[i].setText(currentLevel[i]);
+				}
+				else {
+					powerTextField[i].setText("1");
+				}
+			} 
+			
+			// Set default dpower if not loading dpower from file
+			else if (changeDPower) {
+				if (savedDPowerChanged) {
+					powerTextField[i].setText(currentPower[i]);
+				}
+				else {
+					powerTextField[i].setText(defaultPower[i]);
+				}
+			}
+			
 			powerTextField[i].setAlignment(Pos.CENTER);
-
 			vbox[i].getChildren().addAll(iconView[i], powerTextField[i]);
 			changeDPowerPane.getChildren().add(vbox[i]);
 		}
@@ -709,7 +851,7 @@ public class Controller implements Initializable {
 			bestTeamPane.setVisible(true);
 			int numMembers = Main.numMembers;
 			String name[] = new String[numMembers];
-			String sPower[] = new String[numMembers];
+			String finalCharPower[] = new String[numMembers];
 			Image icon[] = new Image[numMembers];
 			ImageView iconView[] = new ImageView[numMembers];
 			Label powerLabel[] = new Label[numMembers];
@@ -718,9 +860,16 @@ public class Controller implements Initializable {
 			for (int i = 0; i < numMembers; i++) {
 
 				// getting the name and power of the chars in the best team
-				sPower[i] = Integer.toString(TeamCalculator.bestTeam[0][i].dPower);
+				if (changeLevel || (savedLevelChanged && !changeDPower)) {
+					finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[0][i].getLevel());
+					
+				}
+				else {
+					finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[0][i].dPower);
+				}		
+				
 				name[i] = TeamCalculator.bestTeam[0][i].name;
-
+				
 				// loops getting the char icons
 				for (CheckBoxImage element : checkboxImageSSS) {
 					if (name[i].equals(element.getTooltipText())) {
@@ -749,7 +898,7 @@ public class Controller implements Initializable {
 				iconView[i].setPreserveRatio(true);
 				iconView[i].setFitWidth(MAX_WIDTH);
 				iconView[i].setFitHeight(MAX_HEIGHT);
-				powerLabel[i].setText(sPower[i]);
+				powerLabel[i].setText(finalCharPower[i]);
 				powerLabel[i].setPrefSize(MAX_WIDTH, 10);
 				powerLabel[i].setFont(Font.font("Palatino", 18));
 				powerLabel[i].setStyle("-fx-font-weight: bold;");
@@ -761,7 +910,10 @@ public class Controller implements Initializable {
 			}
 			String highestPower = Integer.toString(TeamCalculator.highestPower);
 			bestTeamPower.setText(highestPower);
-
+			
+			if (missionPower != 0 && TeamCalculator.highestPower < missionPower) {
+				showWarningPopup("Warning", "Your best team does not have enough power for this mission :(");
+			}
 		});
 	}
 
@@ -800,16 +952,12 @@ public class Controller implements Initializable {
 	public void toggleRuinsPane(String status) { //method to make easier the transition of the ruins feature
 
 		if (status.equals("off")) {
-			ruinsLabel.setVisible(false);
-			numMembersChoiceBox.setVisible(false);
 			sButton.setVisible(false);
 			ssButton.setVisible(false);
 			sssButton.setVisible(false);
 			orderAZButton.setVisible(false);
 			ruinsToggle = false;
 		} else if (status.equals("on")) {
-			ruinsLabel.setVisible(true);
-			numMembersChoiceBox.setVisible(true);
 			sButton.setVisible(true);
 			ssButton.setVisible(true);
 			sssButton.setVisible(true);
@@ -829,13 +977,20 @@ public class Controller implements Initializable {
 		sCharSelectionPane.setVisible(false);
 		bestTeamAnchorPane.setVisible(false);
 		changeDPowerScrollPane.setVisible(false);
+		missionPowerTextField.setVisible(false);
 		backToSelectionButton.setVisible(false);
 		changeDPowerButton.setVisible(true);
+		changeLevelButton.setVisible(true);
 		submitCharsButton.setVisible(true);
 		orderAZButton.setVisible(false);
+		converted = false;
+		changeDPower = false;
+		changeLevel = false;
+		savedLevelChanged = false;
+		savedDPowerChanged = false;
 		powerTextField = new TextField[unitList.size()];
 		character = new Character[unitList.size()];
-		sPower = new String[unitList.size()];
+		missionPowerTextField.clear();
 		deselectAllCheckboxes();
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
@@ -845,37 +1000,44 @@ public class Controller implements Initializable {
 	public void backToSelection() { // button to retun to selection after having pressed to change the dpower
 		backToSelectionButton.setVisible(false);
 		changeDPowerButton.setVisible(true);
+		changeLevelButton.setVisible(true);
 		orderAZButton.setVisible(true);
 		changeDPowerScrollPane.setVisible(false);
+		missionPowerTextField.setVisible(false);
+		changeAllTextField.setVisible(false);
+		changeAllLevelsButton.setVisible(false);
+		changeAlldPowersButton.setVisible(false);
+		toggleRuinsPane("on");
 		
 		// making sure to go back to the last selected pane
-		if (currentPane != null)
-			currentPane.setVisible(true);
-		// unless you loaded the chars from a file and there was no lsat pane, then load the SSS one
-		else
-			sssCharSelectionPane.setVisible(true);
-
-		characterList.clear();
-		charsSelected.clear();
-		removeAllChildren(changeDPowerPane);
-		removeAllChildren(bestTeamPane);
-		toggleRuinsPane("on");
-
+		if (currentPane != null) {		
+			if (currentPane == sssCharSelectionPane) {
+				sssCharSelectionPane.setVisible(true);
+				sssCharSelectionScrollPane.setVisible(true);
+			}
+			else
+				currentPane.setVisible(true);
+		}
+		// unless you loaded the chars from a file and there was no last pane, then load the SSS one
+		else 
+			sssPaneVisible();
+		
+				
 		for (CheckBoxImage checkBox : checkboxImageSSS) {
 			String charName = checkBox.getTooltipText();
-			if (loadedCharsSelected.contains(charName)) {
+			if (charsSelected.contains(charName)) {
 				checkBox.setSelected(true);
 			}
 		}
 		for (CheckBoxImage checkBox : checkboxImageSS) {
 			String charName = checkBox.getTooltipText();
-			if (loadedCharsSelected.contains(charName)) {
+			if (charsSelected.contains(charName)) {
 				checkBox.setSelected(true);
 			}
 		}
 		for (CheckBoxImage checkBox : checkboxImageS) {
 			String charName = checkBox.getTooltipText();
-			if (loadedCharsSelected.contains(charName)) {
+			if (charsSelected.contains(charName)) {
 				checkBox.setSelected(true);
 			}
 		}
@@ -1062,9 +1224,21 @@ public class Controller implements Initializable {
 		}
 	}
 
-	public void progressBar() { // intermittent progress bar being loaded and bes team calculations being executed at the same time
+	public void progressBar() { // progress bar being loaded and best team calculations being executed at the same time
+		
+		lastNumMembers = Main.numMembers;
+		charLevel = new String[charsSelected.size()];
+		
+		if (!missionPowerTextField.getText().isEmpty()) {
+			try {
+			    missionPower = Integer.parseInt(missionPowerTextField.getText());
+			} catch (NumberFormatException e) {
+				showErrorPopup("Error", "Minimum Mission DPower can only contain numbers!");
+			}
+		}
+			
 		CountDownLatch latch = new CountDownLatch(1);
-
+		
 		calculationThread = new Thread(new CalculationRunnable(latch)); // calculations for the best team running on a new thread
 
 		Task<Void> task = new Task<Void>() {
@@ -1073,20 +1247,23 @@ public class Controller implements Initializable {
 				calculationThread.start();
 				latch.await(); // making sure the calculation finishes before updating the UI
 				updateUI();
-
 				return null;
 			}
 		};
 		Thread taskThread = new Thread(task);
 
-		if (characterList.isEmpty()) { //only run calculations if the user has selected chars and reached the changedpower page
-			showErrorPopup("Error", "Select your characters and their dPower first!");
+		if (characterList.isEmpty() || (!changeDPower && !changeLevel)) { //only run calculations if the user has selected chars and reached the changedpower page
+			showErrorPopup("Error", "Select your characters and their level/dPower first!");
 		} else {
-			bestTeamAnchorPane.setVisible(true);
+			changeAllTextField.clear();
+			changeAllTextField.setVisible(false);
+			changeAllLevelsButton.setVisible(false);			
 			changeDPowerScrollPane.setVisible(false);
-			bestTeamPane.setVisible(false);
-			progressBar.setVisible(true);
+			bestTeamPane.setVisible(false);			
 			bestTeamPower.setVisible(false);
+			progressBar.setVisible(true);
+			bestTeamAnchorPane.setVisible(true);
+
 			taskThread.start();
 		}
 	}
@@ -1103,23 +1280,87 @@ public class Controller implements Initializable {
 		public void run() {
 			// replacing the default power with whatever the user enters in the textfield
 			for (int i = 0; i < charsSelected.size(); i++) {
-				character[i].setdPower(Integer.parseInt(powerTextField[i].getText()));
-			}
+				
+				if (changeLevel || (savedLevelChanged && !changeDPower)) {
+					
+					float tempPower =  Float.parseFloat(powerTextField[i].getText());
+					charLevel[i] = powerTextField[i].getText();
+					character[i].setLevel(Integer.parseInt(charLevel[i])); // set character levels
+					
+					if (tempPower == 1) {
+						character[i].setdPower(character[i].getDefaultPower());		
+					}
+					else {
+						if (character[i].getType().equals("SSS")) {
+							
+							tempPower = (float) Math.ceil((tempPower * 7.5 - 7.5) + 157);
+							character[i].setdPower((int)tempPower);
+							 
+						}
+						else if (character[i].getType().equals("SS")) {
+							character[i].setdPower(((int)tempPower * 5 - 5) + 105);
+						}
+						else if (character[i].getType().equals("S")) {
+							character[i].setdPower(((int)tempPower * 3 - 3) + 63);
+						}
+					}
+				}
+				else {
+					character[i].setdPower(Integer.parseInt(powerTextField[i].getText()));
+				}				
+			}			
 			TeamCalculator.compare(characterList);
 			latch.countDown(); 
+		}		
+	}
+	
+	public void findNextBestTeam() {
+		List<Character> charsToRemove = new ArrayList<>();
+		
+		//Main.numMembers = numMembersChoiceBox.getValue();
+		for (int i = 0; i < characterList.size(); i++) {
+			for (int j = 0; j < lastNumMembers; j++) {		
+				if (characterList.get(i).getName().equals(TeamCalculator.bestTeam[0][j].getName())) {
+					charsToRemove.add(characterList.get(i));
+				}
+			}	
+		}	
+		characterList.removeAll(charsToRemove);
+		if (characterList.size() > Main.numMembers) {
+			TeamCalculator.resetBest();
+			removeAllChildren(bestTeamPane);
+			progressBar();
+		} 
+		else {
+			showErrorPopup("Error", "Not enough characters to compare!");
 		}
 	}
 
 	public void loadChars() { // loading chars and their dpower from SER file user may have saved.
-
+		
 		CharSelection selection = new CharSelection();
 		try {
 			selection.loadSelection();
 		} catch (ClassNotFoundException | IOException e1) {
 			e1.printStackTrace();
 		}
-
+		
 		if (!CharSelection.cancelled) {
+			
+			// If the char levels were saved, toggle that, or toggle the dpower instead
+			// Also toggle the changelevel or dpower buttons if each perspective one was saved
+			if (selection.levelSaved == 1) {
+				savedLevelChanged = true;
+				savedDPowerChanged = false;
+				changeLevel = true;
+				changeDPower = false;
+			}
+			else {
+				savedLevelChanged = false;
+				savedDPowerChanged = true;
+				changeLevel = false;
+				changeDPower = true;
+			}
 
 			charsSelected.clear();
 			characterList.clear();
@@ -1130,40 +1371,73 @@ public class Controller implements Initializable {
 			for (Character character : unitList) {
 				character.setdPower(character.defaultPower);
 			}
-			loadedCharsSelected.addAll(selection.charsSelected);
-			charsSelected.addAll(selection.charsSelected);
-			loadSelectedChars();
+			
+			charsSelected.addAll(selection.charsSelected);			
+			convertCharsSelected(charsSelected);
+			converted = true;
+									
 			for (int i = 0; i < charsSelected.size(); i++) {
-				sPower[i] = Integer.toString(selection.dPower[i]);
-				powerTextField[i].setText(sPower[i]);
-				character[i].setdPower(selection.dPower[i]);
+				if (savedLevelChanged) 
+					characterList.get(i).setLevel(selection.savedInput[i]);
+				else if (savedDPowerChanged) 
+					characterList.get(i).setdPower(selection.savedInput[i]);
 			}
+
+			loadSelectedChars();
 		}
 	}
 
 	public void saveChars() { // saving chars and their dpower to SER file
-
+		
+		int levelSaved;
+		int powerSaved;
+		if (changeLevel)
+			levelSaved = 1;
+		else
+			levelSaved = 0;
+		
+		if (changeDPower)
+			powerSaved = 1;
+		else
+			powerSaved = 0;
+		
 		CharSelection selection = new CharSelection();
-		int[] saveDPower = new int[charsSelected.size()];
+		int[] savedInput = new int[charsSelected.size()];
 
 		if (!charsSelected.isEmpty()) {
 			for (int i = 0; i < charsSelected.size(); i++) {
-
-				saveDPower[i] = Integer.parseInt(powerTextField[i].getText());
+					savedInput[i] = Integer.parseInt(powerTextField[i].getText());
 			}
 
 			try {
-				selection.saveSelection(charsSelected, saveDPower);
+				selection.saveSelection(charsSelected, savedInput, levelSaved, powerSaved);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
 	}
 
+	public void changeAllLevels() {
+		
+		String changeAllTarget = changeAllTextField.getText();
+		
+		for (int i = 0; i < charsSelected.size(); i++) {
+			powerTextField[i].setText(changeAllTarget);
+		}
+	}
+	
+	public void changeAlldPowers() {
+		
+		String changeAllTarget = changeAllTextField.getText();
+		
+		for (int i = 0; i < charsSelected.size(); i++) {
+			powerTextField[i].setText(changeAllTarget);
+		}
+	}
+	
 	public void exit() {
 		System.exit(0);
 	}
-	
 	
 	//Char comparison feature stars here
 	@FXML
@@ -1188,6 +1462,10 @@ public class Controller implements Initializable {
 	VBox charAVBox, charBVBox, resultVBox;
 	@FXML
 	ListView<String> autocompleteBoxA, autocompleteBoxB;
+	@FXML
+	GridPane skillsGridPaneA, skillsGridPaneB;
+	@FXML
+	StackPane differenceStackPane;
 	
 	String choiceA, choiceB, charAName, charBName, searchInput;
 	Character charChoiceA;
@@ -1201,16 +1479,79 @@ public class Controller implements Initializable {
 		);
 	Border border = new Border(borderStroke);
 	
+	final int SKILL_MAX_HEIGHT = 110;
+	final int SKILL_MAX_WIDTH= 130;
+	
+	
+	String[] sssSkillIcons = { "Prime Whitebeard skill 1", "Prime Whitebeard skill 2", "Prime Whitebeard skill 3", "Prime Whitebeard skill 4", "Zephyr skill 1", "Zephyr skill 2",
+			"Zephyr skill 3", "Zephyr skill 4", "Robin - Christmas skill 1", "Robin - Christmas skill 2", "Robin - Christmas skill 3", "Robin - Christmas skill 4", 
+			"Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
+			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
+			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
+			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
+	
+	String[] sssSkillIconsPaths = { "resources/skills/Prime Whitebeard skill 1.png", "resources/skills/Prime Whitebeard skill 2", "resources/skills/Prime Whitebeard skill 3", 
+			"resources/skills/Prime Whitebeard skill 4", "resources/skills/Zephyr skill 1", "resources/skills/Zephyr skill 2", "resources/skills/Zephyr skill 3", 
+			"resources/skills/Zephyr skill 4", "resources/skills/Robin - Christmas skill 1", "resources/skills/Robin - Christmas skill 2", "resources/skills/Robin - Christmas skill 3", 
+			"resources/skills/Robin - Christmas skill 4", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
+			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
+			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
+			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
+	
+	public void setCharSkills() {
+		// Prime Whitebeard
+		Skills murakumogiri = new Skills();
+		murakumogiri.setAtk(275);
+		murakumogiri.setMiscEffect1("If \"Heal Reduction\" is applied, deal " + 315 +" dmg instead");
+		Skills theStrongestMan = new Skills();
+		theStrongestMan.setBreakRate(30);
+		theStrongestMan.setMiscEffect1("Immune to debuffs while above 70% HP from the beginning of the turn until you attack");
+		Skills earthManipulation = new Skills();
+		earthManipulation.setCritRate(20);
+		earthManipulation.setSpd(-15);
+		earthManipulation.setDmgToTarget(50);
+		Skills vibrationWave = new Skills();
+		vibrationWave.setHealProhibit(true);	
+		
+		for (int i=0; i<unit.length;i++) {
+			if (unit[i].getName().equals("Prime Whitebeard")) {
+				unit[i].setSkill1("Total of " + NumberFormat.getNumberInstance().format(Math.abs(unit[i].getAtk()*(murakumogiri.getAtk()/100))) + " single target damage\n" + murakumogiri.getMiscEffect1());
+				unit[i].setSkill2("+" + theStrongestMan.getBreakRate() + "% Break Rate\n" + theStrongestMan.getMiscEffect1());
+				unit[i].setSkill3("+" + earthManipulation.getCritRate() + "% Crit Rate\n" + earthManipulation.getSpd() + "Speed\n" + "+" + earthManipulation.getDmgToTarget()
+				 + "% Damage to the target");
+				unit[i].setSkill4("Applies Heal Prohibit");
+			}
+			if (unit[i].getName().equals("Zephyr")) {
+				unit[i].setSkill1("Total of " + unit[i].getAtk()*(murakumogiri.getAtk()/100) + " damage\n" + "");
+				unit[i].setSkill2("");
+				unit[i].setSkill3("");
+				unit[i].setSkill4("");
+			}
+			if (unit[i].getName().equals("Robin - Christmas")) {
+				unit[i].setSkill1("Total of " + unit[i].getAtk()*(murakumogiri.getAtk()/100) + " damage");
+				unit[i].setSkill2("");
+				unit[i].setSkill3("");
+				unit[i].setSkill4("");
+			}
+		}
+	}
 	
 	public void charComparisonVisible() {
 		comparisonPane.setVisible(true);
 		ruinsPane.setVisible(false);
+		calculatorPane.setVisible(false);
 		charAVBox.setBorder(border);
 		charBVBox.setBorder(border);	
 		resultVBox.setBorder(border);
 	}
 	
 	public void getCharInfo() {
+		
+		differenceStackPane.setVisible(true);
+		charAVBox.setVisible(true);
+		charBVBox.setVisible(true);
+		skillsGridPaneA.setVisible(false);
+		skillsGridPaneB.setVisible(false);
 		
 		charAName = charATextField.getText().toLowerCase();
 		charBName = charBTextField.getText().toLowerCase();
@@ -1391,6 +1732,7 @@ public class Controller implements Initializable {
 	    	autocompleteBoxA.setVisible(false);
 	    } else {
 	    	autocompleteBoxA.setVisible(true);
+	    	autocompleteBoxA.toFront();
 	    }
 	}
 	
@@ -1436,6 +1778,502 @@ public class Controller implements Initializable {
 	    	autocompleteBoxB.setVisible(false);
 	    } else {
 	    	autocompleteBoxB.setVisible(true);
+	    	autocompleteBoxB.toFront();
 	    }
 	}		
+
+	public void getSkilsInfo () {
+		
+		differenceStackPane.setVisible(false);
+		charAVBox.setVisible(false);
+		charBVBox.setVisible(false);
+		skillsGridPaneA.setVisible(true);
+		skillsGridPaneB.setVisible(true);
+
+		setCharSkills();
+		
+		charAName = charATextField.getText().toLowerCase();
+		charBName = charBTextField.getText().toLowerCase();
+
+			
+		for (int i = 0; i < charNames.size(); i++) {
+			if (charAName.equals(charNames.get(i).toLowerCase()))
+				choiceA = charNames.get(i);
+		}
+		for (int i = 0; i < charNames.size(); i++) {
+			if (charBName.equals(charNames.get(i).toLowerCase()))
+				choiceB = charNames.get(i);
+		}
+		
+		charChoiceA = findUnit(choiceA, unitList);
+		charChoiceB = findUnit(choiceB, unitList);
+		
+		String imagePathA = "resources/" + choiceA + ".png";
+		Image imageA = new Image(getClass().getResourceAsStream(imagePathA));
+		charAIcon.setImage(imageA);
+		
+		String imagePathB = "resources/" + choiceB + ".png";
+		Image imageB = new Image(getClass().getResourceAsStream(imagePathB));
+		charBIcon.setImage(imageB);
+		
+		Image[] skillA = new Image[4];
+		ImageView[] skillIconA = new ImageView[4];
+		Image[] skillB = new Image[4];
+		ImageView[] skillIconB = new ImageView[4];
+		
+		for (int i = 0; i < 4; i++) {
+			final int index = i;
+			
+			skillA[i] = new Image(getClass().getResourceAsStream("resources/skills/" + choiceA + " skill " + (i + 1) + ".png"));
+			skillIconA[i] = new ImageView(skillA[i]);
+			skillIconA[i].setFitHeight(SKILL_MAX_HEIGHT);
+			skillIconA[i].setFitWidth(SKILL_MAX_WIDTH);
+			
+			skillB[i] = new Image(getClass().getResourceAsStream("resources/skills/" + choiceB + " skill " + (i + 1) + ".png"));
+			skillIconB[i] = new ImageView(skillB[i]);
+			skillIconB[i].setFitHeight(SKILL_MAX_HEIGHT);
+			skillIconB[i].setFitWidth(SKILL_MAX_WIDTH);			
+			
+			skillsGridPaneA.add(skillIconA[i], 2, i);			
+			skillsGridPaneB.add(skillIconB[i], 0, i);
+			
+			zoomSkillBoxes(skillIconA[index], skillIconA[index], skillIconB[index], index);
+			zoomSkillBoxes(skillIconB[index], skillIconA[index], skillIconB[index], index);
+			
+		}
+		
+		// 2nd column. Skill numbers
+		Label skill1TextA = new Label(charChoiceA.getSkill1()); 
+		Label skill2TextA = new Label(charChoiceA.getSkill2()); 
+		Label skill3TextA = new Label(charChoiceA.getSkill3()); 
+		Label skill4TextA = new Label(charChoiceA.getSkill4()); 
+		skillsGridPaneA.add(skill1TextA, 1, 0);
+		skillsGridPaneA.add(skill2TextA, 1, 1);
+		skillsGridPaneA.add(skill3TextA, 1, 2);
+		skillsGridPaneA.add(skill4TextA, 1, 3);
+		
+		Label skill1TextB = new Label(charChoiceB.getSkill1()); 
+		Label skill2TextB = new Label(charChoiceB.getSkill2()); 
+		Label skill3TextB = new Label(charChoiceB.getSkill3()); 
+		Label skill4TextB = new Label(charChoiceB.getSkill4()); 
+		skillsGridPaneB.add(skill1TextB, 1, 0);
+		skillsGridPaneB.add(skill2TextB, 1, 1);
+		skillsGridPaneB.add(skill3TextB, 1, 2);
+		skillsGridPaneB.add(skill4TextB, 1, 3);
+				
+	}
+	public void zoomSkillBoxes(Node hovered, Node boxA, Node boxB, int index) {
+		hovered.setOnMouseEntered(event -> {
+			boxA.setScaleX(2.0);   
+			boxA.setScaleY(2.0);   
+			boxA.toFront();
+			boxB.setScaleX(2.0);   
+			boxB.setScaleY(2.0);   
+			boxB.toFront();
+			if (index == 0) {
+				boxA.setTranslateX(-60);
+				boxA.setTranslateY(45);
+				boxB.setTranslateX(50);
+				boxB.setTranslateY(45);
+			}
+			else if (index == 3) {
+				boxA.setTranslateX(-60);
+				boxA.setTranslateY(-60);
+				boxB.setTranslateX(50);
+				boxB.setTranslateY(-50);
+			}
+			else
+				boxA.setTranslateX(-60);
+				boxB.setTranslateX(50);
+		});			
+		hovered.setOnMouseExited(event -> {
+			boxA.setScaleX(1.0);   
+			boxA.setScaleY(1.0);
+			boxA.setTranslateX(0);
+			boxA.setTranslateY(0);
+			boxB.setScaleX(1.0);   
+			boxB.setScaleY(1.0);
+			boxB.setTranslateX(0);
+			boxB.setTranslateY(0);
+		});
+	}
+
+	// Event Calculators starts here
+	@FXML 
+	AnchorPane calculatorPane;
+	@FXML
+	Button eventCalcButton, brooksCalcButton, setSailCalcButton, resetBrooksButton, calculateBrooksButton, startTimer, stopTimer;
+	@FXML
+	DatePicker brooksEndDate;
+	@FXML
+	CheckBox dailiesDoneCheckbox;
+	@FXML
+	TextField currentGemsTextfield, currentWinesTextfield, extraInstancesTextfield, wineGoalTextfield,
+	textfield1k, textfield5k, textfield299, textfield999, textfield2999, textfield9999;
+	@FXML
+	ChoiceBox<Integer> oneThousandGemsPack, fiveThousandGemsPack, money299pack, money2999pack, money999pack, money9999pack;
+	@FXML
+	Label idlingWinesLabel, dailiesWinesLabel, totalWinesLabel, timerDisplay, remainingTimerDisplay, availableWines;
+	
+	int totalWines, totalIdlingWines, totalDailiesWines, totalGemsWines, totalPacksWines, currentWines, currentGems, wineGoal;
+	int extraInstanceChances = 0;
+	int sssCost = 10000;
+	int pack1k = 300;
+	int pack5k = 1200;
+	int pack299 = 200;
+	int pack999 = 360;
+	int pack2999 = 1080;
+	int pack9999 = 4000;
+	
+	Boolean timerStopped = true;
+	
+	public void eventCalculatorsVisible() {
+		calculatorPane.setVisible(true);
+		comparisonPane.setVisible(false);
+		ruinsPane.setVisible(false);
+	}
+	
+	public void calculateBrooks() {
+		
+		int instanceChances = 12;
+		int winesPerInstance = 3;
+		
+		LocalDate today = LocalDate.now();
+		LocalDateTime endOfDay = LocalDateTime.of(today, LocalTime.MAX);
+		
+        // Calculate the difference in days
+        long daysUntilTarget = ChronoUnit.DAYS.between(today, brooksEndDate.getValue());
+        // Calculate the minutes until the end of today
+        long minutesUntilMidnight = (ChronoUnit.SECONDS.between(LocalDateTime.now(), endOfDay)) / 60;       
+        // calcaulate minutes left until the end of Brooks
+        int minutesOfBrooksLeft = (int) (daysUntilTarget * 24 * 60) + (int) minutesUntilMidnight;        
+        // total of wines possible to get until the end of the event + 10% adjustment as some may be missed
+        totalIdlingWines = (int) ((minutesOfBrooksLeft / 6) * 0.9);
+        
+        // calculating the the total of wines you can get from daily instances
+        
+        if (dailiesDoneCheckbox.isSelected()) {
+        	extraInstanceChances = Integer.parseInt(extraInstancesTextfield.getText());
+        	// instance chances, plus any extra, times the winer per instance. Then times that by the numbers of day left for the event
+        	totalDailiesWines = ((instanceChances + extraInstanceChances) * winesPerInstance) * ((int) daysUntilTarget);
+        }
+        else {
+        	extraInstanceChances = Integer.parseInt(extraInstancesTextfield.getText());
+        	totalDailiesWines = ((instanceChances + extraInstanceChances) * winesPerInstance) * ((int) daysUntilTarget + 1);;
+        }        	
+        
+        // Get the current gems and wines 
+        currentWines = Integer.parseInt(currentWinesTextfield.getText());
+        currentGems = Integer.parseInt(currentGemsTextfield.getText());
+        
+        // Get the total amount of wines you get per gem and $$ pack you bought
+        totalGemsWines = (oneThousandGemsPack.getValue() * pack1k) + (fiveThousandGemsPack.getValue() * pack5k);
+        totalPacksWines = 
+        		(money299pack.getValue() * pack299) + 
+        		(money999pack.getValue() * pack999) +
+        		(money2999pack.getValue() * pack2999) +
+        		(money9999pack.getValue() * pack9999);
+        
+        
+        totalWines = currentWines + totalIdlingWines + totalDailiesWines + totalPacksWines;
+        calculateBrooksPurchases();
+        
+	}
+	
+	public void calculateBrooksPurchases() {
+		
+		int packsNeeded1k = 0;
+		int packsNeeded5k = 0;
+		int packsNeeded299 = 0;
+		int packsNeeded999 = 0;
+		int packsNeeded2999 = 0;
+		int packsNeeded9999 = 0;	
+		
+		int winesNeeded = sssCost - totalWines;	
+		int packsAvailable1k = 6 - oneThousandGemsPack.getValue();
+		int packsAvailable5k = 5 - fiveThousandGemsPack.getValue();
+		int packsAvailable299 = 3 - money299pack.getValue();
+		int packsAvailable999 = 5 - money999pack.getValue();
+		int packsAvailable2999 = 5 - money2999pack.getValue();
+		int packsAvailable9999 = 10 - money9999pack.getValue();
+
+		
+		// If player wants to set their own goal, it's set here. Otherwise it will be 10k for an SSS
+		wineGoal = Integer.parseInt(wineGoalTextfield.getText());
+		if(wineGoal > 0) {
+			winesNeeded = wineGoal - totalWines;
+		}
+		else
+			winesNeeded = sssCost - totalWines;
+		
+		// Calculation
+		while (winesNeeded >= 0 && currentGems >= 1000 && packsAvailable1k > 0) {						
+			winesNeeded -= pack1k;	
+			totalWines += pack1k;
+			currentGems -= 1000;
+			packsAvailable1k--;
+			packsNeeded1k++;
+			
+		}
+		while (winesNeeded >= 0 && currentGems >= 1000 && packsAvailable5k > 0) {						
+			winesNeeded -= pack5k;	
+			totalWines += pack5k;
+			currentGems -= 5000;
+			packsAvailable5k--;
+			packsNeeded5k++;
+		}
+		
+		while (winesNeeded > 0 && packsAvailable299 > 0) {						
+			winesNeeded -= pack299;	
+			totalWines += pack299;
+			packsAvailable299--;
+			packsNeeded299++;
+		}
+		
+		while (winesNeeded > 0 && packsAvailable999 > 0) {						
+			winesNeeded -= pack999;	
+			totalWines += pack999;
+			packsAvailable999--;
+			packsNeeded999++;
+		}
+		
+		while (winesNeeded > 0 && packsAvailable2999 > 0) {						
+			winesNeeded -= pack2999;
+			totalWines += pack2999;
+			packsAvailable2999--;
+			packsNeeded2999++;
+		}
+		
+		while (winesNeeded > 0 && packsAvailable9999 > 0) {			
+			winesNeeded -= pack9999;
+			totalWines += pack9999;
+			packsAvailable9999--;
+			packsNeeded9999++;
+		}
+		
+		
+		textfield1k.setText(packsNeeded1k + "");
+		textfield5k.setText(packsNeeded5k + "");
+		textfield299.setText(packsNeeded299 + "");
+		textfield999.setText(packsNeeded999 + "");
+		textfield2999.setText(packsNeeded2999 + "");
+		textfield9999.setText(packsNeeded9999 + "");
+		idlingWinesLabel.setText(""+totalIdlingWines);
+        dailiesWinesLabel.setText(""+totalDailiesWines);
+		totalWinesLabel.setText("" + NumberFormat.getNumberInstance().format(Math.abs(totalWines)));	
+	}
+	
+	public void resetBrooks() {
+		totalWines = 0;
+		wineGoal = 0;
+		totalIdlingWines = 0;
+		totalDailiesWines = 0;
+		totalGemsWines = 0;
+		totalPacksWines = 0;
+		currentWines = 0;
+		currentGems = 0;
+		extraInstanceChances = 0;
+		wineGoalTextfield.setText("0");
+		currentGemsTextfield.setText("0");
+		currentWinesTextfield.setText("0");
+		extraInstancesTextfield.setText("0");
+		dailiesDoneCheckbox.setSelected(false);
+		oneThousandGemsPack.setValue(0);
+		fiveThousandGemsPack.setValue(0);
+		money299pack.setValue(0);
+		money2999pack.setValue(0);
+		money999pack.setValue(0);
+		money9999pack.setValue(0);
+		textfield1k.setText("0");
+		textfield5k.setText("0");
+		textfield299.setText("0");
+		textfield999.setText("0");
+		textfield2999.setText("0");
+		textfield9999.setText("0");
+	}
+
+		long timestamp;
+	    long secs = 0;
+	    long hrs = 0;
+	    long mins = 0;
+	    long remainingSecs = 3;
+	    long remainingMins = 0;
+	    String seconds = "00";
+	    String minutes = "00";
+	    String hours = "00";
+	    String remainingSeconds = "00";
+	    String remainingMinutes = "00";
+	    long fraction = 0;	     
+	    Preferences prefs;	    
+	    LocalDateTime savedTime;
+	    long savedMillis;
+	    long loadedTime;
+	    int availableWinesToCollect = 0;
+
+
+	    AnimationTimer timer = new AnimationTimer() {   
+
+		    @Override
+		    public void start() {
+		        // current time adjusted by remaining time from last run
+		        timestamp = System.currentTimeMillis() - fraction;
+		        super.start();
+		    }
+
+		    @Override
+		    public void stop() {
+		        super.stop();
+		        // save leftover time not handled with the last update
+		        fraction = System.currentTimeMillis() - timestamp;
+		    }
+
+		    @Override
+		    public void handle(long now) {
+		        long newTime = System.currentTimeMillis();
+		        if (timestamp + 1000 <= newTime) {
+		        	long deltaT = (newTime - timestamp) / 1000;
+		            secs += deltaT;
+		            remainingSecs -= deltaT;
+		            timestamp += 1000 * deltaT;
+		            Platform.runLater(() -> {
+		                displayTimer();
+		                displayNextWineTimer();
+		            });
+		        }
+		    }
+		};	
+		
+		public void startTimer() {
+			timer.start();	
+			timerStopped = false;
+		}
+		
+		public void stopTimer() {
+			timer.stop();	
+			timerStopped = true;
+		}
+		
+		public void resetTimer() {
+			secs = 0;
+			mins = 0;
+			hrs = 0;
+		    remainingSecs = 0;
+			remainingMins = 6;
+			fraction = 0;
+			savedMillis = 0;
+			availableWinesToCollect = 0;
+			availableWines.setText("0");
+	        displayTimer();
+	        displayNextWineTimer();
+		}
+		
+		private void loadState() {
+			timerStopped = prefs.getBoolean("timerStopped", timerStopped);
+			if (!timerStopped) {
+		        secs = prefs.getLong("secs", 0);
+		        mins = prefs.getLong("mins", 0);
+		        hrs = prefs.getLong("hrs", 0);
+		        remainingSecs = prefs.getLong("remainingSecs", 0);
+				remainingMins = prefs.getLong("remainingMins", 0);
+		        fraction = prefs.getLong("fraction", 0);	
+		        availableWinesToCollect = prefs.getInt("availableWinesToCollect", 0);
+		        
+		    	savedMillis  = prefs.getLong("savedMillis", 0);	        
+		    	Instant instant = Instant.ofEpochMilli(savedMillis);
+		        savedTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());	    	
+		    	long secondsEllapsed = (ChronoUnit.SECONDS.between(savedTime, LocalDateTime.now()));
+		    	 
+		    	hrs += secondsEllapsed / 3600;
+		    	long savedRemainingSeconds = secondsEllapsed % 3600;
+		    	mins += savedRemainingSeconds / 60;
+		    	secs += savedRemainingSeconds % 60;
+		    		        	    	
+		    	long savedRemainingMinutes = secondsEllapsed / 60;
+		    	availableWinesToCollect += savedRemainingMinutes / 6;
+		    	remainingMins -= savedRemainingMinutes % 6;
+		    	if (remainingMins < 0) {
+		    		availableWinesToCollect++;
+		    		remainingMins += 6;
+		    	}
+		    	remainingSecs -= secondsEllapsed % 60;
+		    	if (remainingSecs < 0) {
+		    		if (remainingMins == 0) {
+			    		availableWinesToCollect++;
+		    		}
+		    		remainingMins += 6;
+		    	}
+		    	availableWines.setText("" + availableWinesToCollect);
+		        displayTimer();
+		        displayNextWineTimer();
+			}
+	    }
+
+	   private void saveState() {
+	        prefs.putLong("secs", secs);
+	        prefs.putLong("mins", mins);
+	        prefs.putLong("hrs", hrs);
+	        prefs.putLong("remainingSecs", remainingSecs);
+			prefs.putLong("remainingMins", remainingMins);
+	        prefs.putLong("fraction", fraction);     
+	        
+	        savedMillis = System.currentTimeMillis();
+	        prefs.putLong("savedMillis", savedMillis);
+
+	        prefs.putInt("availableWinesToCollect", availableWinesToCollect);
+	        prefs.putBoolean("timerStopped", timerStopped);
+	    }		
+	    
+	   public void displayTimer() {
+			 
+		   if (secs >= 60) {
+				mins++;
+				secs = 0;
+			}			
+			
+			if (mins >= 60) {
+				hrs ++;
+				mins = 0;
+			}
+			
+			if (secs < 10)
+				seconds = "0" + secs;
+			else 
+				seconds = "" + secs;
+			
+			if (mins < 10)
+				minutes = "0" + mins;
+			else 
+				minutes = "" + mins;
+			
+			if (hrs < 10)
+				hours = "0" + hrs;
+			else 
+				hours = "" + hrs;		
+			
+			timerDisplay.setText(hours + ":" + minutes + ":" + seconds); 
+			
+		}
+	   
+	   public void displayNextWineTimer() {
+		   
+			if (remainingSecs < 0) {
+				remainingMins--;
+				remainingSecs = 59;
+			}	
+			
+			if (remainingSecs < 10)
+				remainingSeconds = "0" + remainingSecs;
+			else 
+				remainingSeconds = "" + remainingSecs;
+			
+			remainingMinutes = "0" + remainingMins;
+		
+			if (remainingMins == 0 && remainingSecs == 0) {
+				availableWinesToCollect++;
+				remainingMins = 6;			
+				availableWines.setText("" + availableWinesToCollect);
+			}
+		   
+		   remainingTimerDisplay.setText(remainingMinutes + ":" + remainingSeconds);
+	   }
 }

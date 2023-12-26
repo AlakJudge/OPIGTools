@@ -3,7 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -14,6 +16,8 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -75,15 +79,15 @@
                <font>
                   <Font name="System Bold" size="16.0" />
                </font></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="200.0" text="Damage Simulator" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
+            <Button fx:id="eventCalcButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#eventCalculatorsVisible" prefHeight="65.0" prefWidth="200.0" text="Event Calculators" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font></Button>
-            <Button ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="174.0" text="Team Simulator" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="3">
+            <Button ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="174.0" text="TBA" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="3">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="200.0" text="Haki Optimizer" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="4">
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="65.0" prefWidth="200.0" text="TBA" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="4">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font></Button>
@@ -91,11 +95,11 @@
       </GridPane>
       <AnchorPane fx:id="paypalPane" layoutY="925.0" prefHeight="75.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css">
          <children>
-            <Pane fx:id="paypalButton" layoutX="630.0" layoutY="12.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#paypalButton" prefHeight="55.0" prefWidth="155.0">
+            <Pane fx:id="paypalButton" layoutX="630.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#paypalButton" prefHeight="65.0" prefWidth="155.0">
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
                </cursor></Pane>
-            <Label alignment="CENTER" layoutX="41.0" layoutY="18.0" prefHeight="44.0" prefWidth="574.0" stylesheets="@application.css" text="Enjoying OPIGTools? Help us bring more exciting features by making a donation!" textAlignment="CENTER" textFill="WHITE">
+            <Label alignment="CENTER" layoutX="39.0" layoutY="18.0" prefHeight="44.0" prefWidth="586.0" style="-fx-background-color: green;" styleClass="text-outline" stylesheets="@application.css" text="Enjoying OPIGTools? Help us bring more exciting features by making a donation!" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
@@ -105,14 +109,8 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="ruinsPane" layoutY="145.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="782.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css" visible="false" AnchorPane.bottomAnchor="73.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="145.0">
+      <AnchorPane fx:id="ruinsPane" layoutY="145.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="782.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css" AnchorPane.bottomAnchor="73.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="145.0">
          <children>
-            <Label fx:id="ruinsLabel" alignment="CENTER" layoutX="39.0" layoutY="-8.0" prefHeight="61.0" prefWidth="685.0" text="How many members would you like your team to have?" textFill="WHITE" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="21.0" />
-               </font>
-            </Label>
-            <ChoiceBox fx:id="numMembersChoiceBox" layoutX="667.0" layoutY="9.0" prefHeight="32.0" prefWidth="44.0" />
             <Button fx:id="sButton" layoutX="380.0" layoutY="46.0" mnemonicParsing="false" onAction="#sPaneVisible" text="S" textAlignment="CENTER">
                <font>
                   <Font name="System Bold" size="20.0" />
@@ -132,9 +130,9 @@
                <font>
                   <Font name="System Bold" size="20.0" />
                </font></ToggleButton>
-            <ScrollPane fx:id="sssCharSelectionScrollPane" hbarPolicy="NEVER" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="620.0" prefWidth="865.0" stylesheets="@application.css" vbarPolicy="ALWAYS" visible="false">
+            <ScrollPane fx:id="sssCharSelectionScrollPane" hbarPolicy="NEVER" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" pannable="true" prefHeight="620.0" prefWidth="865.0" stylesheets="@application.css" visible="false">
                <content>        
-                  <FlowPane fx:id="sssCharSelectionPane" alignment="TOP_CENTER" columnHalignment="CENTER" prefHeight="780.0" prefWidth="870.0" visible="false">
+                  <FlowPane fx:id="sssCharSelectionPane" alignment="CENTER" columnHalignment="CENTER" prefWrapLength="850.0" visible="false">
                      <children>
                         <Button fx:id="allSSSButton" mnemonicParsing="false" onAction="#selectAllSSSCheckboxes" prefHeight="150.0" prefWidth="120.0" text="Select All" textAlignment="CENTER" wrapText="true">
                            <font>
@@ -161,31 +159,41 @@
                      </font></Button>
                </children>
             </FlowPane>
-            <Button fx:id="changeDPowerButton" layoutX="308.0" layoutY="732.0" mnemonicParsing="false" onAction="#changeDPower" prefHeight="50.0" prefWidth="120.0" text="Change DPower" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font></Button>
-            <Button fx:id="submitCharsButton" layoutX="461.0" layoutY="732.0" mnemonicParsing="false" onAction="#progressBar" prefHeight="50.0" prefWidth="120.0" text="Submit">
+            <Button fx:id="submitCharsButton" layoutX="480.0" layoutY="732.0" mnemonicParsing="false" onAction="#progressBar" prefHeight="50.0" prefWidth="120.0" text="Submit">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font></Button>
-            <Button fx:id="backToSelectionButton" cancelButton="true" layoutX="308.0" layoutY="732.0" mnemonicParsing="false" onAction="#backToSelection" prefHeight="50.0" prefWidth="120.0" text="Back to Selection" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="backToSelectionButton" cancelButton="true" layoutX="328.0" layoutY="732.0" mnemonicParsing="false" onAction="#backToSelection" prefHeight="50.0" prefWidth="120.0" text="Back to Selection" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />
-               </font></Button>
-				<ScrollPane fx:id="changeDPowerScrollPane" hbarPolicy="NEVER" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="710.0" prefWidth="865.0" stylesheets="@application.css" vbarPolicy="ALWAYS" visible="false">
+               </font>
+            </Button>
+				<ScrollPane fx:id="changeDPowerScrollPane" hbarPolicy="NEVER" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" pannable="true" prefHeight="620.0" prefWidth="865.0" stylesheets="@application.css" vbarPolicy="ALWAYS" visible="false">
 			        <content>
 			            <FlowPane fx:id="changeDPowerPane" alignment="CENTER" columnHalignment="CENTER" prefWrapLength="850.0" />
 			        </content>
 		    	</ScrollPane>
-            <AnchorPane fx:id="bestTeamAnchorPane" prefHeight="788.0" prefWidth="870.0" styleClass="AnchorPane" visible="false" AnchorPane.rightAnchor="-1.0">
+            <Button fx:id="loadCharsButton" alignment="CENTER" layoutX="680.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="85.0" text="Load Selection" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+            <Button fx:id="changeDPowerButton" layoutX="304.0" layoutY="732.0" mnemonicParsing="false" onAction="#changeDPower" prefHeight="50.0" prefWidth="76.0" text="Change DPower" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+            <Button fx:id="changeLevelButton" layoutX="388.0" layoutY="732.0" mnemonicParsing="false" onAction="#changeLevel" prefHeight="50.0" prefWidth="76.0" text="Change Level" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <AnchorPane fx:id="bestTeamAnchorPane" blendMode="SRC_ATOP" prefHeight="788.0" prefWidth="870.0" styleClass="AnchorPane" visible="false" AnchorPane.rightAnchor="-1.0">
                <children>
                   <FlowPane fx:id="bestTeamPane" alignment="CENTER" columnHalignment="CENTER" layoutX="195.0" layoutY="140.0" prefHeight="300.0" prefWidth="480.0" />
                   <Button fx:id="newTeamButton" layoutX="457.0" layoutY="580.0" mnemonicParsing="false" onAction="#reset" prefHeight="50.0" prefWidth="120.0" text="New Team" AnchorPane.rightAnchor="293.0">
                      <font>
                         <Font name="System Bold" size="17.0" />
                      </font></Button>
-                  <Button fx:id="exitButton" layoutX="315.0" layoutY="580.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="120.0" text="Exit" AnchorPane.rightAnchor="435.0">
+                  <Button fx:id="exitButton" layoutX="308.0" layoutY="580.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="120.0" text="Exit" AnchorPane.rightAnchor="442.0">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font></Button>
@@ -199,22 +207,61 @@
                         <Font name="System Bold" size="38.0" />
                      </font>
                   </Label>
-                  <ProgressBar fx:id="progressBar" cache="true" layoutX="310.0" layoutY="313.0" prefHeight="61.0" prefWidth="250.0" />
+                  <ProgressBar fx:id="progressBar" cache="true" focusTraversable="false" layoutX="310.0" layoutY="313.0" mouseTransparent="true" prefHeight="61.0" prefWidth="250.0" />
+                  <Button fx:id="findNextBestTeam" layoutX="367.0" layoutY="646.0" mnemonicParsing="false" onAction="#findNextBestTeam" prefHeight="80.0" prefWidth="149.0" text="Find your Next Best Team" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Button>
+                  <Label fx:id="bonus" layoutX="613.0" layoutY="430.0" prefHeight="55.0" prefWidth="222.0" styleClass="text-outline" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="38.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
-            <Button fx:id="loadCharsButton" alignment="CENTER" layoutX="680.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="85.0" text="Load Selection" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font></Button>
             <Button fx:id="saveCharsButton" alignment="CENTER" layoutX="768.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#saveChars" prefHeight="50.0" prefWidth="85.0" text="Save Selection" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />
-               </font></Button>
+               </font>
+            </Button>
+            <ChoiceBox fx:id="numMembersChoiceBox" layoutX="654.0" layoutY="9.0" prefHeight="32.0" prefWidth="44.0" />
+            <TextField fx:id="missionPowerTextField" alignment="CENTER" layoutX="330.0" layoutY="46.0" onKeyReleased="#charATextFieldAction" prefHeight="44.0" prefWidth="200.0" promptText="Mission DPower Requirement">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#fff83d" height="41.76" radius="15.19" spread="0.17" />
+               </effect>
+            </TextField>
+            <TextField fx:id="changeAllTextField" alignment="CENTER" layoutX="28.0" layoutY="57.0" onKeyReleased="#charATextFieldAction" prefHeight="30.0" prefWidth="88.0" promptText="Change ALL">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#62fff2" height="41.76" radius="15.19" spread="0.17" />
+               </effect>
+            </TextField>
+            <Button fx:id="changeAllLevelsButton" layoutX="122.0" layoutY="57.0" mnemonicParsing="false" onAction="#changeAllLevels" prefHeight="30.0" prefWidth="74.0" text="Levels" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Button>
+            <Label fx:id="ruinsLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="80.0" layoutY="-5.0" prefHeight="61.0" prefWidth="565.0" text="How many members would you like your team to have?" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="21.0" />
+               </font>
+            </Label>
+            <Button fx:id="changeAlldPowersButton" layoutX="122.0" layoutY="57.0" mnemonicParsing="false" onAction="#changeAlldPowers" prefHeight="30.0" prefWidth="74.0" text="dPower" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Button>
        	  </children>
      	</AnchorPane>
-      <AnchorPane fx:id="comparisonPane" layoutX="18.0" layoutY="166.0">
+      <AnchorPane fx:id="comparisonPane" layoutX="18.0" layoutY="166.0" visible="false">
          <children>
-            <StackPane layoutX="325.0" layoutY="200.0" prefHeight="400.0" prefWidth="180.0">
+            <StackPane fx:id="differenceStackPane" layoutX="325.0" layoutY="235.0" prefHeight="400.0" prefWidth="180.0" visible="false">
                <children>
                   <VBox fx:id="resultVBox" prefHeight="400.0" prefWidth="180.0">
                      <children>
@@ -268,8 +315,8 @@
                      <children>
                         <TextField fx:id="charATextField" layoutX="131.0" layoutY="20.0" onKeyReleased="#charATextFieldAction" />
                         <ListView fx:id="autocompleteBoxA" layoutX="131.0" layoutY="45.0" onKeyPressed="#charATextFieldAction" prefHeight="582.0" prefWidth="149.0" visible="false" />
-                        <ImageView fx:id="charAIcon" fitHeight="150.0" fitWidth="120.0" layoutX="146.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" />
-                        <VBox fx:id="charAVBox" layoutX="116.0" layoutY="245.0" mouseTransparent="true" prefHeight="400.0" prefWidth="180.0">
+                        <ImageView fx:id="charAIcon" fitHeight="150.0" fitWidth="120.0" layoutX="146.0" layoutY="60.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" />
+                        <VBox fx:id="charAVBox" layoutX="116.0" layoutY="235.0" mouseTransparent="true" prefHeight="400.0" prefWidth="180.0" visible="false">
                            <children>
                               <Label fx:id="charALabelHP" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="HP" textAlignment="CENTER" textFill="#00ff11">
                                  <font>
@@ -313,14 +360,27 @@
                               </Label>
                            </children>
                         </VBox>
+                        <GridPane fx:id="skillsGridPaneA" alignment="CENTER" layoutX="13.0" layoutY="223.0" prefHeight="446.0" prefWidth="390.0" styleClass="stats-text" stylesheets="@application.css">
+                          <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
                      </children>
                   </AnchorPane>
                 <AnchorPane fx:id="splitPaneA" focusTraversable="true" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
                         <TextField fx:id="charBTextField" layoutX="131.0" layoutY="20.0" onKeyReleased="#charBTextFieldAction" />
                         <ListView fx:id="autocompleteBoxB" layoutX="132.0" layoutY="44.0" onKeyPressed="#charATextFieldAction" prefHeight="544.0" prefWidth="149.0" visible="false" />
-                        <ImageView fx:id="charBIcon" fitHeight="150.0" fitWidth="120.0" layoutX="146.0" layoutY="75.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" />
-                        <VBox fx:id="charBVBox" layoutX="116.0" layoutY="245.0" mouseTransparent="true" prefHeight="400.0" prefWidth="180.0">
+                        <ImageView fx:id="charBIcon" fitHeight="150.0" fitWidth="120.0" layoutX="146.0" layoutY="60.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" />
+                        <VBox fx:id="charBVBox" layoutX="116.0" layoutY="235.0" mouseTransparent="true" prefHeight="400.0" prefWidth="180.0" visible="false">
                            <children>
                               <Label fx:id="charBLabelHP" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="stat-text-outline" text="HP" textAlignment="CENTER" textFill="#00ff11">
                                  <font>
@@ -364,11 +424,24 @@
                               </Label>
                            </children>
                         </VBox>
+                        <GridPane fx:id="skillsGridPaneB" alignment="CENTER" layoutX="13.0" layoutY="223.0" prefHeight="446.0" prefWidth="390.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
                      </children>
                   </AnchorPane>
               </items>
             </SplitPane>
-            <Button fx:id="compareSkillsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="255.0" layoutY="675.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#progressBar" prefHeight="75.0" prefWidth="140.0" text="Compare Skills" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="compareSkillsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="255.0" layoutY="675.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#getSkilsInfo" prefHeight="75.0" prefWidth="140.0" text="Compare Skills" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font>
@@ -380,5 +453,442 @@
             </Button>
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="calculatorPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
+         <children>
+            <Button fx:id="brooksCalcButton" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Button>
+            <Button fx:id="setSailCalcButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="533.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Setting Sail Calculator" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Button>
+            <GridPane alignment="CENTER" layoutX="30.0" layoutY="120.0" prefHeight="640.0" prefWidth="800.0" style="-fx-border-color: white;">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <FlowPane alignment="CENTER">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="200.0" styleClass="text-outline" text="Date the event ends:" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font></Label>
+                        <DatePicker fx:id="brooksEndDate" prefHeight="32.0" prefWidth="151.0" />
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER" GridPane.columnIndex="1">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="275.0" styleClass="text-outline" text="Today's daily instances done?" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font></Label>
+                        <CheckBox fx:id="dailiesDoneCheckbox" mnemonicParsing="false" textAlignment="CENTER" />
+                        <Label prefHeight="30.0" prefWidth="291.0" styleClass="text-outline" text="Daily extra instances purchased" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="extraInstancesTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="44.0" promptText="Extra Chances Purchased" text="0" />
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="130.0" styleClass="text-outline" text="Current Gems" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="gemsImageView" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@resources/gems.png" />
+                           </image></ImageView>
+                        <TextField fx:id="currentGemsTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                           <FlowPane.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </FlowPane.margin></TextField>
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE;" GridPane.rowIndex="4">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="51.0" text="Wines earned until end of event" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="25.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets top="-23.0" />
+                           </padding>
+                        </Label>
+                        <GridPane alignment="CENTER" prefHeight="160.0" prefWidth="394.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints />
+                            <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="2.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="45.0" styleClass="text-outline" text="Idling Wines:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font></Label>
+                              <Label fx:id="idlingWinesLabel" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin></Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Dailies Wines:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin></Label>
+                              <Label fx:id="dailiesWinesLabel" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin></Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Total Wines:" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="totalWinesLabel" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="(with packs needed)" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets top="-10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="130.0" styleClass="text-outline" text="Current Wines" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <ImageView fx:id="wineImageView1" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@resources/wine.png" />
+                           </image></ImageView>
+                        <TextField fx:id="currentWinesTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Wines" text="0">
+                           <FlowPane.margin>
+                              <Insets left="10.0" />
+                           </FlowPane.margin></TextField>
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_RIGHT" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <children>
+                        <Label focusTraversable="false" prefHeight="30.0" styleClass="text-outline" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <padding>
+                              <Insets left="-100.0" />
+                           </padding>
+                        </Label>
+                        <GridPane prefHeight="75.0" prefWidth="157.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <ChoiceBox fx:id="fiveThousandGemsPack" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ChoiceBox fx:id="oneThousandGemsPack" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="1" />
+                              <Label styleClass="text-outline" text="1k Gems" textFill="WHITE">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="text-outline" text="5k Gems" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="-40.0" />
+                     </padding>
+                     <GridPane.margin>
+                        <Insets right="90.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <children>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="30.0" styleClass="text-outline" text="Number of Packs already bought" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets bottom="10.0" />
+                           </FlowPane.margin>
+                           <padding>
+                              <Insets right="-50.0" />
+                           </padding>
+                        </Label>
+                        <GridPane prefHeight="75.0" prefWidth="428.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <ChoiceBox fx:id="money999pack" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="5.0" />
+                                 </GridPane.margin></ChoiceBox>
+                              <ChoiceBox fx:id="money299pack" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="5.0" />
+                                 </GridPane.margin></ChoiceBox>
+                              <ChoiceBox fx:id="money2999pack" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="5.0" />
+                                 </GridPane.margin></ChoiceBox>
+                              <ChoiceBox fx:id="money9999pack" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="5.0" />
+                                 </GridPane.margin></ChoiceBox>
+                              <Label styleClass="text-outline" text="\$2.99 Pack" textFill="WHITE">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="text-outline" text="\$29.99 Pack bought" textFill="WHITE" GridPane.columnIndex="2">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
+                              </Label>
+                              <Label styleClass="text-outline" text="\$9.99 Pack" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="text-outline" text="\$99.99 Pack bought" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets right="-150.0" />
+                     </padding>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE;" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="51.0" text="Packs needed to reach goal" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="27.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </Label>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - 1k Gems" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font></Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - 5k Gems" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $2.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $9.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $29.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $99.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="textfield5k" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></TextField>
+                              <TextField fx:id="textfield1k" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></TextField>
+                              <TextField fx:id="textfield299" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></TextField>
+                              <TextField fx:id="textfield999" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></TextField>
+                              <TextField fx:id="textfield2999" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></TextField>
+                              <TextField fx:id="textfield9999" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></TextField>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <GridPane.margin>
+                        <Insets left="35.0" />
+                     </GridPane.margin>
+                  </FlowPane>
+                  <AnchorPane GridPane.rowIndex="3">
+                     <children>
+                        <Button fx:id="resetBrooksButton" layoutX="325.0" layoutY="18.0" mnemonicParsing="false" onAction="#resetBrooks" prefHeight="32.0" prefWidth="76.0" text="Reset" />
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <children>
+                        <Button fx:id="calculateBrooksButton" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#calculateBrooks" prefHeight="42.0" prefWidth="88.0" style="-fx-background-color: lawngreen;" text="Calculate">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font></Button>
+                        <TextField fx:id="wineGoalTextfield" alignment="CENTER" layoutX="300.0" layoutY="23.0" prefHeight="25.0" prefWidth="80.0" promptText="Current Wines" text="0" />
+                        <Label layoutX="185.0" layoutY="20.0" prefHeight="31.0" prefWidth="109.0" styleClass="text-outline" text="Wine Goal" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="21.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </GridPane>
+            <AnchorPane layoutX="58.0" layoutY="16.0">
+               <children>
+                  <Label fx:id="timerDisplay" alignment="CENTER" layoutX="3.0" layoutY="32.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="00:00:00" textFill="WHITE">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="startTimer" layoutX="55.0" layoutY="68.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="20.0" prefWidth="45.0" styleClass="green-background" text="Start" />
+                  <Button fx:id="resetTimer" layoutX="110.0" layoutY="68.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: khaki;" text="Reset" />
+                  <Button fx:id="stopTimer" layoutY="68.0" mnemonicParsing="false" onAction="#stopTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: indianred;" text="Stop" />
+                  <Label alignment="CENTER" layoutX="4.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="Idling Timer" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="26.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="280.0" layoutY="26.0">
+               <children>
+                  <ImageView fx:id="wineImageView" fitHeight="50.0" fitWidth="40.0" layoutX="90.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@resources/wine.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" prefHeight="30.0" prefWidth="180.0" styleClass="text-outline" text="Available to collect" textFill="WHITE">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="availableWines" alignment="CENTER" layoutX="50.0" layoutY="40.0" prefHeight="30.0" prefWidth="40.0" styleClass="text-outline" text="0" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="remainingTimerDisplay" alignment="CENTER" layoutX="-32.0" layoutY="61.0" prefHeight="30.0" prefWidth="74.0" styleClass="text-outline" text="00:00" textFill="WHITE">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" layoutX="-27.0" layoutY="44.0" prefHeight="30.0" prefWidth="65.0" styleClass="text-outline" text="Next in:" textFill="#96eaff">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children></AnchorPane>
    </children>
 </AnchorPane>

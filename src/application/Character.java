@@ -15,6 +15,11 @@ public class Character {
 	int atk;
 	int def;
 	int speed;
+	String skill1;
+	String skill2;
+	String skill3;
+	String skill4;
+	int level;
 
 	public int getHp() {
 		return hp;
@@ -114,7 +119,53 @@ public class Character {
 
 	//overloaded constructors for the characters with their name, default power, type (rarity), stats, and affiliations. 
 	
-	Character(String name, String type, int defaultPower, int hp, int atk, int def, int speed) {
+	public String getSkill1() {
+		return skill1;
+	}
+
+	public void setSkill1(String skill1) {
+		this.skill1 = skill1;
+	}
+
+	public String getSkill2() {
+		return skill2;
+	}
+
+	public void setSkill2(String skill2) {
+		this.skill2 = skill2;
+	}
+
+	public String getSkill3() {
+		return skill3;
+	}
+
+	public void setSkill3(String skill3) {
+		this.skill3 = skill3;
+	}
+
+	public String getSkill4() {
+		return skill4;
+	}
+
+	public void setSkill4(String skill4) {
+		this.skill4 = skill4;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	Character (String name, int dPower, int level) {
+		this.setName(name);
+		this.setdPower(dPower);
+		this.setLevel(level);
+	}
+	
+	Character(String name, String type, int defaultPower, int hp, int atk, int def, int speed, int level) {
 
 		this.setName(name);
 		this.setDefaultPower(defaultPower);
@@ -123,9 +174,10 @@ public class Character {
 		this.setAtk(atk);
 		this.setDef(def);
 		this.setSpeed(speed);
+		this.setLevel(level);
 	}
 
-	Character(String name, String type, int defaultPower, String affiliation, int hp, int atk, int def, int speed) {
+	Character(String name, String type, int defaultPower, String affiliation, int hp, int atk, int def, int speed, int level) {
 
 		this.setName(name);
 		this.setDefaultPower(defaultPower);
@@ -135,11 +187,11 @@ public class Character {
 		this.setAtk(atk);
 		this.setDef(def);
 		this.setSpeed(speed);
-
+		this.setLevel(level);
 	}
 
 	Character(String name, String type, int defaultPower, String affiliation1, String affiliation2, int hp, int atk,
-			int def, int speed) {
+			int def, int speed, int level) {
 
 		this.setName(name);
 		this.setDefaultPower(defaultPower);
@@ -150,11 +202,11 @@ public class Character {
 		this.setAtk(atk);
 		this.setDef(def);
 		this.setSpeed(speed);
-
+		this.setLevel(level);
 	}
 
 	Character(String name, String type, int defaultPower, String affiliation1, String affiliation2, String affiliation3,
-			int hp, int atk, int def, int speed) {
+			int hp, int atk, int def, int speed, int level) {
 
 		this.setName(name);
 		this.setDefaultPower(defaultPower);
@@ -166,10 +218,11 @@ public class Character {
 		this.setAtk(atk);
 		this.setDef(def);
 		this.setSpeed(speed);
+		this.setLevel(level);
 	}
 
 	Character(String name, String type, int defaultPower, String affiliation1, String affiliation2, String affiliation3,
-			String affiliation4, int hp, int atk, int def, int speed) {
+			String affiliation4, int hp, int atk, int def, int speed, int level) {
 
 		this.setName(name);
 		this.setDefaultPower(defaultPower);
@@ -182,5 +235,6 @@ public class Character {
 		this.setAtk(atk);
 		this.setDef(def);
 		this.setSpeed(speed);
+		this.setLevel(level);
 	}
 }

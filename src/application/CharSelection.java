@@ -16,20 +16,24 @@ import javafx.stage.Stage;
 public class CharSelection implements Serializable {
 
 	private static final long serialVersionUID = 7504656738084623494L;
-
+	
 	String name;
 	ArrayList<String> charsSelected;
-	int[] dPower;
+	int[] savedInput;
 	static boolean cancelled = false;
+	int levelSaved;
+	int dPowerSaved;
 
 	// constructor of what will be saved
 	public CharSelection() {
 		charsSelected = new ArrayList<>();
-		dPower = new int[0];
+		savedInput = new int[0];
+		levelSaved = 0;
+		dPowerSaved = 0;
 	}
 
 	// save feature
-	public void saveSelection(ArrayList<String> charsSelected, int[] dPower) throws IOException {
+	public void saveSelection(ArrayList<String> charsSelected, int[] savedInput, int levelSaved, int dPowerSaved) throws IOException {
 
 		// Create a FileChooser
 		FileChooser fileChooser = new FileChooser();
@@ -47,7 +51,9 @@ public class CharSelection implements Serializable {
 				// Write the object to the output stream
 				CharSelection selection = new CharSelection();
 				selection.charsSelected = charsSelected;
-				selection.dPower = dPower;
+				selection.savedInput = savedInput;
+				selection.levelSaved = levelSaved;
+				selection.dPowerSaved = dPowerSaved;
 				out.writeObject(selection);
 			}
 		}
@@ -75,7 +81,9 @@ public class CharSelection implements Serializable {
 
 				// Assign the loaded values to the current instance
 				this.charsSelected = selection.charsSelected;
-				this.dPower = selection.dPower;
+				this.savedInput = selection.savedInput;
+				this.dPowerSaved = selection.dPowerSaved;
+				this.levelSaved = selection.levelSaved;
 			}
 		} else {
 			cancelled = true;

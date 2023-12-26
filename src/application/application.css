@@ -4,6 +4,12 @@
     -fx-background-size: cover;
 }
 
+.AnchorPane2 {
+    -fx-background-image: url('resources/purpleBG.jpg');
+    -fx-background-repeat: repeat;
+    -fx-background-size: cover;
+}
+
 .scroll-pane{
    -fx-background-color:transparent;
 }
@@ -22,11 +28,15 @@
 }
 
 .text-outline {
-    -fx-effect: dropshadow( one-pass-box , BLACK, 4, 1, 1, 1 );
+    -fx-effect: dropshadow(one-pass-box , BLACK, 4, 1, 1, 1 );
 }
 
-.stat-text-outline {
-    -fx-effect: dropshadow( one-pass-box , BLACK, 4, 1, 1, 1);
+.stats-text {
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(one-pass-box, BLACK, 1, 1, 1, 1);
+	-fx-font-size: 15px;
+	-fx-alignment: center-right;
+	-fx-wrap-text: true;
 }
 
 .yellow-background {

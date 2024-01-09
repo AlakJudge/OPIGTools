@@ -453,7 +453,7 @@
             </Button>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="calculatorPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
+      <AnchorPane fx:id="calculatorPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2">
          <children>
             <Button fx:id="brooksCalcButton" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
                <font>

@@ -1940,13 +1940,21 @@ public class Controller implements Initializable {
 		
 		LocalDate today = LocalDate.now();
 		LocalDateTime endOfDay = LocalDateTime.of(today, LocalTime.MAX);
+		LocalDateTime timeNow = LocalDateTime.now();
 		
+		// Specify the timezone ID for China
+        String chinaTimeZoneId = "Asia/Bangkok";
+        // Get the current time in the specified timezone
+        LocalDateTime chinaTime = LocalDateTime.now(ZoneId.of(chinaTimeZoneId));
+		// Going to add the minutes of timezone difference into the calculation. To get Server time.
+        long timeZoneMinutesDifference = ChronoUnit.MINUTES.between(timeNow, chinaTime);
+
         // Calculate the difference in days
         long daysUntilTarget = ChronoUnit.DAYS.between(today, brooksEndDate.getValue());
         // Calculate the minutes until the end of today
         long minutesUntilMidnight = (ChronoUnit.SECONDS.between(LocalDateTime.now(), endOfDay)) / 60;       
         // calcaulate minutes left until the end of Brooks
-        int minutesOfBrooksLeft = (int) (daysUntilTarget * 24 * 60) + (int) minutesUntilMidnight;        
+        int minutesOfBrooksLeft = (int) (daysUntilTarget * 24 * 60) + (int) minutesUntilMidnight + (int) timeZoneMinutesDifference;        
         // total of wines possible to get until the end of the event + 10% adjustment as some may be missed
         totalIdlingWines = (int) ((minutesOfBrooksLeft / 6) * 0.9);
         
@@ -1975,7 +1983,7 @@ public class Controller implements Initializable {
         		(money9999pack.getValue() * pack9999);
         
         
-        totalWines = currentWines + totalIdlingWines + totalDailiesWines + totalPacksWines;
+        totalWines = currentWines + totalIdlingWines + totalDailiesWines;
         calculateBrooksPurchases();
         
 	}
@@ -2015,7 +2023,7 @@ public class Controller implements Initializable {
 			packsNeeded1k++;
 			
 		}
-		while (winesNeeded >= 0 && currentGems >= 1000 && packsAvailable5k > 0) {						
+		while (winesNeeded >= 0 && currentGems >= 5000 && packsAvailable5k > 0) {						
 			winesNeeded -= pack5k;	
 			totalWines += pack5k;
 			currentGems -= 5000;
@@ -2111,7 +2119,7 @@ public class Controller implements Initializable {
 	    int availableWinesToCollect = 0;
 
 
-	    AnimationTimer timer = new AnimationTimer() {   
+	    AnimationTimer timer = new AnimationTimer() {
 
 		    @Override
 		    public void start() {

@@ -9,6 +9,7 @@ public class Character {
 	String affiliation2;
 	String affiliation3;
 	String affiliation4;
+	String affiliation5;
 	int dPower;
 	String type;
 	int hp;
@@ -115,6 +116,14 @@ public class Character {
 
 	public void setAffiliation4(String affiliation4) {
 		this.affiliation4 = affiliation4;
+	}
+	
+	public String getAffiliation5() {
+		return affiliation5;
+	}
+
+	public void setAffiliation5(String affiliation5) {
+		this.affiliation5 = affiliation5;
 	}
 
 	//overloaded constructors for the characters with their name, default power, type (rarity), stats, and affiliations. 
@@ -231,6 +240,23 @@ public class Character {
 		this.setAffiliation2(affiliation2);
 		this.setAffiliation3(affiliation3);
 		this.setAffiliation4(affiliation4);
+		this.setHp(hp);
+		this.setAtk(atk);
+		this.setDef(def);
+		this.setSpeed(speed);
+		this.setLevel(level);
+	}
+	Character(String name, String type, int defaultPower, String affiliation1, String affiliation2, String affiliation3,
+			String affiliation4, String affiliation5, int hp, int atk, int def, int speed, int level) {
+
+		this.setName(name);
+		this.setDefaultPower(defaultPower);
+		this.setType(type);
+		this.setAffiliation1(affiliation1);
+		this.setAffiliation2(affiliation2);
+		this.setAffiliation3(affiliation3);
+		this.setAffiliation4(affiliation4);
+		this.setAffiliation5(affiliation5);
 		this.setHp(hp);
 		this.setAtk(atk);
 		this.setDef(def);

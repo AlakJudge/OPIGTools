@@ -41,7 +41,8 @@ public class TeamPower {
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("marines")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("marines")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("marines")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("marines"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("marines")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("marines"))
 					marinesCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("wayOfFreedom")
@@ -50,7 +51,9 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("wayOfFreedom")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("wayOfFreedom"))
+								&& currentTeam[x][i].affiliation4.equals("wayOfFreedom")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("wayOfFreedom"))
 					wayOfFreedomCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("swordsmaster")
@@ -59,13 +62,16 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("swordsmaster")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("swordsmaster"))
+								&& currentTeam[x][i].affiliation4.equals("swordsmaster")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("swordsmaster"))
 					swordsmasterCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("will")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("will")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("will")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("will"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("will")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("will"))
 					willCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("piratesPursuit")
@@ -74,13 +80,16 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("piratesPursuit")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("piratesPursuit"))
+								&& currentTeam[x][i].affiliation4.equals("piratesPursuit")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("piratesPursuit"))
 					pursuitCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("paramecia")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("paramecia")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("paramecia")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("paramecia"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("paramecia")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("paramecia"))
 					parameciaCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("shichibukai")
@@ -89,19 +98,23 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("shichibukai")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("shichibukai"))
+								&& currentTeam[x][i].affiliation4.equals("shichibukai")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("shichibukai"))
 					shichibukaiCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("vinsmoke")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("vinsmoke")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("vinsmoke")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("vinsmoke"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("vinsmoke")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("vinsmoke"))
 					vinsmokeCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("piratesSH")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("piratesSH")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("piratesSH")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("piratesSH"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("piratesSH")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("piratesSH"))
 					piratesShCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("thrillerBark")
@@ -110,7 +123,9 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("thrillerBark")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("thrillerBark"))
+								&& currentTeam[x][i].affiliation4.equals("thrillerBark")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("thrillerBark"))
 					thrillerBarkCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("marineShichibukai")
@@ -119,13 +134,16 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("marineShichibukai")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("marineShichibukai"))
+								&& currentTeam[x][i].affiliation4.equals("marineShichibukai")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("marineShichibukai"))
 					marineShichibukaiCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("colonel")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("colonel")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("colonel")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("colonel"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("colonel")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("colonel"))
 					colonelCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("SHparamecia")
@@ -134,19 +152,23 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("SHparamecia")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("SHparamecia"))
+								&& currentTeam[x][i].affiliation4.equals("SHparamecia")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("SHparamecia"))
 					SHparameciaCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("skypiea")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("skypiea")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("skypiea")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("skypiea"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("skypiea")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("skypiea"))
 					skypieaCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("captain")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("captain")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("captain")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("captain"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("captain")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("captain"))
 					captainCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null
@@ -156,7 +178,9 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("shichibukaiVinsmoke")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("shichibukaiVinsmoke"))
+								&& currentTeam[x][i].affiliation4.equals("shichibukaiVinsmoke")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("shichibukaiVinsmoke"))
 					shichibukaiVinsmokeCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null
@@ -166,7 +190,9 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("piratesRevolutionaries")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("piratesRevolutionaries"))
+								&& currentTeam[x][i].affiliation4.equals("piratesRevolutionaries")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("piratesRevolutionaries"))
 					piratesRevolutionariesCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("SHsupernova")
@@ -175,7 +201,9 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("SHsupernova")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("SHsupernova"))
+								&& currentTeam[x][i].affiliation4.equals("SHsupernova")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("SHsupernova"))
 					ShSupernovaCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("breakthrough")
@@ -184,19 +212,23 @@ public class TeamPower {
 						|| currentTeam[x][i].affiliation3 != null
 								&& currentTeam[x][i].affiliation3.equals("breakthrough")
 						|| currentTeam[x][i].affiliation4 != null
-								&& currentTeam[x][i].affiliation4.equals("breakthrough"))
+								&& currentTeam[x][i].affiliation4.equals("breakthrough")
+						|| currentTeam[x][i].affiliation5 != null
+								&& currentTeam[x][i].affiliation5.equals("breakthrough"))
 					breakthroughCounter++;
 
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("yonko")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("yonko")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("yonko")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("yonko"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("yonko")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("yonko"))
 					yonkoCounter++;
 				
 				if (currentTeam[x][i].affiliation1 != null && currentTeam[x][i].affiliation1.equals("cyborg")
 						|| currentTeam[x][i].affiliation2 != null && currentTeam[x][i].affiliation2.equals("cyborg")
 						|| currentTeam[x][i].affiliation3 != null && currentTeam[x][i].affiliation3.equals("cyborg")
-						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("cyborg"))
+						|| currentTeam[x][i].affiliation4 != null && currentTeam[x][i].affiliation4.equals("cyborg")
+						|| currentTeam[x][i].affiliation5 != null && currentTeam[x][i].affiliation5.equals("cyborg"))
 					cyborgCounter++;
 
 				teamPower += currentTeam[x][i].dPower;

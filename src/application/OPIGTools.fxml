@@ -159,11 +159,11 @@
                      </font></Button>
                </children>
             </FlowPane>
-            <Button fx:id="submitCharsButton" layoutX="480.0" layoutY="732.0" mnemonicParsing="false" onAction="#progressBar" prefHeight="50.0" prefWidth="120.0" text="Submit">
+            <Button fx:id="submitCharsButton" alignment="CENTER" layoutX="480.0" layoutY="732.0" mnemonicParsing="false" onAction="#progressBar" prefHeight="50.0" prefWidth="120.0" text="Submit" textAlignment="CENTER">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font></Button>
-            <Button fx:id="backToSelectionButton" cancelButton="true" layoutX="328.0" layoutY="732.0" mnemonicParsing="false" onAction="#backToSelection" prefHeight="50.0" prefWidth="120.0" text="Back to Selection" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="backToSelectionButton" layoutX="328.0" layoutY="732.0" mnemonicParsing="false" onAction="#backToSelection" prefHeight="50.0" prefWidth="120.0" text="Back to Selection" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -453,7 +453,7 @@
             </Button>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="calculatorPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2">
+      <AnchorPane fx:id="calculatorPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
          <children>
             <Button fx:id="brooksCalcButton" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
                <font>
@@ -829,7 +829,7 @@
                   </AnchorPane>
                   <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <children>
-                        <Button fx:id="calculateBrooksButton" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#calculateBrooks" prefHeight="42.0" prefWidth="88.0" style="-fx-background-color: lawngreen;" text="Calculate">
+                        <Button fx:id="calculateBrooksButton" defaultButton="true" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#calculateBrooks" prefHeight="42.0" prefWidth="88.0" style="-fx-background-color: lawngreen;" text="Calculate">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font></Button>
@@ -890,5 +890,460 @@
                </children>
             </AnchorPane>
          </children></AnchorPane>
+      <AnchorPane fx:id="calculatorPane1" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
+         <children>
+            <Button fx:id="brooksCalcButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Button>
+            <Button fx:id="setSailCalcButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="533.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Setting Sail Calculator" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Button>
+            <FlowPane alignment="CENTER" layoutX="43.0" layoutY="195.0">
+               <children>
+                  <Label prefHeight="30.0" prefWidth="200.0" styleClass="text-outline" text="Date the event ends:" textFill="WHITE">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <DatePicker fx:id="brooksEndDate1" prefHeight="32.0" prefWidth="151.0" />
+               </children>
+            </FlowPane>
+            <GridPane alignment="CENTER" layoutX="21.0" layoutY="552.0" prefHeight="210.0" prefWidth="800.0" style="-fx-border-color: white;">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE;">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="51.0" text="Items earned until end of event" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="25.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets top="-23.0" />
+                           </padding>
+                        </Label>
+                        <GridPane alignment="CENTER" prefHeight="160.0" prefWidth="394.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints />
+                              <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="2.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="45.0" styleClass="text-outline" text="Idling Wines:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="idlingWinesLabel1" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Dailies Wines:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="dailiesWinesLabel1" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Total Wines:" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="totalWinesLabel1" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="(with packs needed)" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets top="-10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE;" GridPane.columnIndex="1">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="51.0" text="Packs needed to reach goal" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="27.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </Label>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - 1k Gems" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - 5k Gems" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $2.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $9.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $29.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $99.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="textfield5k1" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="textfield1k1" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="textfield2991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="textfield9991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="textfield29991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="textfield99991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <GridPane.margin>
+                        <Insets left="35.0" />
+                     </GridPane.margin>
+                  </FlowPane>
+               </children>
+            </GridPane>
+            <AnchorPane layoutX="42.0" layoutY="16.0" prefHeight="102.0" prefWidth="420.0" style="-fx-border-color: white;">
+               <children>
+                  <AnchorPane layoutX="10.0" layoutY="2.0">
+                     <children>
+                        <Label fx:id="timerDisplay1" alignment="CENTER" layoutX="3.0" layoutY="32.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="00:00:00" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="startTimer1" layoutX="55.0" layoutY="68.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="20.0" prefWidth="45.0" styleClass="green-background" text="Start" />
+                        <Button fx:id="resetTimer1" layoutX="110.0" layoutY="68.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: khaki;" text="Reset" />
+                        <Button fx:id="stopTimer1" layoutY="68.0" mnemonicParsing="false" onAction="#stopTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: indianred;" text="Stop" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="38.0" prefWidth="155.0" styleClass="text-outline" text="Idling Timer" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="26.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane layoutX="222.0">
+                     <children>
+                        <ImageView fx:id="wineImageView1" fitHeight="50.0" fitWidth="40.0" layoutX="87.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@resources/sea%20maps.PNG" />
+                           </image>
+                        </ImageView>
+                        <Label alignment="CENTER" layoutY="5.0" prefHeight="30.0" prefWidth="180.0" styleClass="text-outline" text="Available to collect" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="availableWines1" alignment="CENTER" layoutX="47.0" layoutY="45.0" prefHeight="30.0" prefWidth="40.0" styleClass="text-outline" text="0" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="remainingTimerDisplay1" alignment="CENTER" layoutX="-44.0" layoutY="62.0" prefHeight="30.0" prefWidth="74.0" styleClass="text-outline" text="00:00" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutX="-40.0" layoutY="45.0" prefHeight="30.0" prefWidth="65.0" styleClass="text-outline" text="Next in:" textFill="#96eaff">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+            <FlowPane alignment="CENTER" layoutY="130.0" prefHeight="51.0" prefWidth="870.0" style="-fx-border-color: White;">
+               <children>
+                  <Label prefHeight="30.0" prefWidth="231.0" styleClass="text-outline" text="Current Quantity Owned:" textFill="WHITE">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fx:id="gemsImageView1" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@resources/sea%20maps.PNG" />
+                     </image>
+                     <FlowPane.margin>
+                        <Insets left="10.0" />
+                     </FlowPane.margin>
+                  </ImageView>
+                  <TextField fx:id="currentGemsTextfield1" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                     <FlowPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </FlowPane.margin>
+                  </TextField>
+                  <ImageView fx:id="gemsImageView11" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@resources/telescope.PNG" />
+                     </image>
+                     <FlowPane.margin>
+                        <Insets left="20.0" />
+                     </FlowPane.margin>
+                  </ImageView>
+                  <TextField fx:id="currentGemsTextfield11" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                     <FlowPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </FlowPane.margin>
+                  </TextField>
+                  <ImageView fx:id="gemsImageView111" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@resources/rum.PNG" />
+                     </image>
+                     <FlowPane.margin>
+                        <Insets left="20.0" />
+                     </FlowPane.margin>
+                  </ImageView>
+                  <TextField fx:id="currentGemsTextfield111" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                     <FlowPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </FlowPane.margin>
+                  </TextField>
+               </children>
+            </FlowPane>
+            <AnchorPane layoutY="247.0" prefWidth="872.0" style="-fx-border-color: white;">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="360.0" prefHeight="31.0" prefWidth="171.0" styleClass="text-outline" text="Bounty Quests" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="23.0" />
+                     </font>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </Label>
+                  <FlowPane alignment="CENTER" layoutY="36.0" prefWidth="870.0">
+                     <children>
+                        <Label styleClass="text-outline" text="Market Purchases" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="10.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <ChoiceBox fx:id="oneThousandGemsPack1" prefHeight="25.0" prefWidth="50.0">
+                           <FlowPane.margin>
+                              <Insets left="5.0" />
+                           </FlowPane.margin>
+                        </ChoiceBox>
+                        <Label styleClass="text-outline" text="Skypiea Challenge" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <ChoiceBox fx:id="fiveThousandGemsPack1" prefHeight="25.0" prefWidth="50.0">
+                           <FlowPane.margin>
+                              <Insets left="5.0" />
+                           </FlowPane.margin>
+                        </ChoiceBox>
+                        <Label styleClass="text-outline" text="Ranking Like" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <ChoiceBox fx:id="money999pack1" prefHeight="25.0" prefWidth="50.0">
+                           <FlowPane.margin>
+                              <Insets left="5.0" />
+                           </FlowPane.margin>
+                        </ChoiceBox>
+                        <Label styleClass="text-outline" text="Bountry Quest" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <ChoiceBox fx:id="money299pack1" prefHeight="25.0" prefWidth="50.0">
+                           <FlowPane.margin>
+                              <Insets left="5.0" />
+                           </FlowPane.margin>
+                        </ChoiceBox>
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </FlowPane>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </AnchorPane>
+            <AnchorPane layoutY="335.0" style="-fx-border-color: white;">
+               <children>
+                  <FlowPane alignment="CENTER" layoutY="32.0" prefHeight="47.0" prefWidth="870.0">
+                     <children>
+                        <ImageView fx:id="gemsImageView11" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@resources/sea%20maps.PNG" />
+                           </image>
+                           <FlowPane.margin>
+                              <Insets left="10.0" />
+                           </FlowPane.margin>
+                        </ImageView>
+                        <TextField fx:id="currentGemsTextfield11" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                           <FlowPane.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </FlowPane.margin>
+                        </TextField>
+                        <ImageView fx:id="gemsImageView111" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@resources/telescope.PNG" />
+                           </image>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </ImageView>
+                        <TextField fx:id="currentGemsTextfield111" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                           <FlowPane.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </FlowPane.margin>
+                        </TextField>
+                        <ImageView fx:id="gemsImageView1111" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@resources/rum.PNG" />
+                           </image>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </ImageView>
+                        <TextField fx:id="currentGemsTextfield1111" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                           <FlowPane.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </FlowPane.margin>
+                        </TextField>
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </FlowPane>
+                  <Label layoutX="385.0" layoutY="-3.0" prefHeight="36.0" prefWidth="130.0" styleClass="text-outline" text="Item Goals" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="23.0" />
+                     </font>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </AnchorPane>
+            <Button fx:id="calculateBrooksButton1" defaultButton="true" layoutX="443.0" layoutY="443.0" mnemonicParsing="false" onAction="#calculateBrooks" prefHeight="42.0" prefWidth="88.0" style="-fx-background-color: lawngreen;" text="Calculate">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="resetBrooksButton1" layoutX="357.0" layoutY="448.0" mnemonicParsing="false" onAction="#resetBrooks" prefHeight="32.0" prefWidth="76.0" text="Reset" />
+            <CheckBox fx:id="dailiesDoneCheckbox1" layoutX="790.0" layoutY="202.0" mnemonicParsing="false" textAlignment="CENTER" />
+            <Label alignment="CENTER" layoutX="472.0" layoutY="196.0" prefHeight="30.0" prefWidth="309.0" styleClass="text-outline" text="Today's daily Benefit Drops Done?" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

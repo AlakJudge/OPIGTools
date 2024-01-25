@@ -32,7 +32,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -116,12 +115,12 @@ public class Controller implements Initializable {
 	final int MAX_HEIGHT = 150;
 
 	// SSS CHACACTER ICONS
-	String[] sssImageTooltips = { "Chopper (Christmas)", "Zoro Asura", "General Franky", "Shirahoshi", "Prime Whitebeard", "Zephyr", "Robin - Christmas", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
+	String[] sssImageTooltips = { "Eustass Kid (New World)", "Chopper (Christmas)", "Zoro Asura", "General Franky", "Shirahoshi", "Prime Whitebeard", "Zephyr", "Robin - Christmas", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
 			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
 			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
 			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
 
-	String[] sssSelectedImagePaths = { "resources/Chopper (Christmas)BW.png", "resources/Zoro AsuraBW.png", "resources/General FrankyBW.png", "resources/ShirahoshiBW.png", "resources/Prime WhitebeardBW.png", "resources/ZephyrBW.png", "resources/Robin - ChristmasBW.png", "resources/YamatoBW.png",
+	String[] sssSelectedImagePaths = { "resources/Eustass Kid (New World)BW.png", "resources/Chopper (Christmas)BW.png", "resources/Zoro AsuraBW.png", "resources/General FrankyBW.png", "resources/ShirahoshiBW.png", "resources/Prime WhitebeardBW.png", "resources/ZephyrBW.png", "resources/Robin - ChristmasBW.png", "resources/YamatoBW.png",
 			"resources/Mihawk (Summit War)BW.png", "resources/God UsoppBW.png", "resources/Sanji GermaBW.png",
 			"resources/Enma ZoroBW.png", "resources/OdenBW.png", "resources/Nami (Valentine's Day)BW.png",
 			"resources/CarrotBW.png", "resources/KaidoBW.png", "resources/MagellanBW.png",
@@ -132,7 +131,7 @@ public class Controller implements Initializable {
 			"resources/SengokuBW.png", "resources/WhitebeardBW.png", "resources/AkainuBW.png", "resources/GarpBW.png",
 			"resources/MihawkBW.png"};
 
-	String[] sssImagePaths = { "resources/Chopper (Christmas).png", "resources/Zoro Asura.png", "resources/General Franky.png", "resources/Shirahoshi.png", "resources/Prime Whitebeard.png", "resources/Zephyr.png", "resources/Robin - Christmas.png", "resources/Yamato.png",
+	String[] sssImagePaths = { "resources/Eustass Kid (New World).png", "resources/Chopper (Christmas).png", "resources/Zoro Asura.png", "resources/General Franky.png", "resources/Shirahoshi.png", "resources/Prime Whitebeard.png", "resources/Zephyr.png", "resources/Robin - Christmas.png", "resources/Yamato.png",
 			"resources/Mihawk (Summit War).png", "resources/God Usopp.png", "resources/Sanji Germa.png",
 			"resources/Enma Zoro.png", "resources/Oden.png", "resources/Nami (Valentine's Day).png",
 			"resources/Carrot.png", "resources/Kaido.png", "resources/Magellan.png",
@@ -250,12 +249,12 @@ public class Controller implements Initializable {
 		splitPane.setDividerPosition(0, 0.5);
 		SplitPane.setResizableWithParent(splitPane.getItems().get(0), false);
 		
-		unit = new Character[67];
+		unit = new Character[68];
 
 		// S chars
 		unit[0] = new Character("Cavendish", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 404, 1);
 		unit[1] = new Character("Vista", "S", 63, "swordsmaster", "colonel", 540452, 52669, 11659, 401, 1);
-		unit[2] = new Character("Buggy", "S", 63, "SHparamecia", "will", "thrillerBark", "paramecia", 469621, 33950,
+		unit[2] = new Character("Buggy", "S", 63, "SHparamecia", "will", "thrillerBark", "paramecia", "captain", 469621, 33950,
 				16239, 370, 1);
 		unit[3] = new Character("Jozu", "S", 63, "will", "paramecia", "thrillerBark", "SHparamecia", 540452, 52669,
 				11659, 390, 1);
@@ -269,7 +268,7 @@ public class Controller implements Initializable {
 		unit[8] = new Character("Vinsmoke Reiju", "S", 63, "will", "piratesPursuit", "vinsmoke", 540452, 52669, 11659,
 				405, 1);
 		unit[9] = new Character("Jimbei", "S", 63, "piratesPursuit", "SHsupernova", 540452, 52669, 11659, 380, 1);
-		unit[10] = new Character("Moria", "S", 63, "paramecia", "thrillerBark", 540846, 33586, 35532, 382, 1);
+		unit[10] = new Character("Moria", "S", 63, "paramecia", "thrillerBark", "captain", 540846, 33586, 35532, 382, 1);
 		unit[11] = new Character("Hawkins", "S", 63, "paramecia", "thrillerBark", 540452, 52669, 11659, 408, 1);
 		unit[12] = new Character("Kid", "S", 63, "paramecia", "thrillerBark", "breakthrough", 540452, 52669, 11659,
 				408, 1);
@@ -277,13 +276,14 @@ public class Controller implements Initializable {
 		unit[14] = new Character("Ivankov", "S", 63, "piratesRevolutionaries", 707375, 46247, 24983, 380, 1);
 		unit[15] = new Character("Chopper (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 380, 1);
 		unit[16] = new Character("Robin (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 406, 1);
-		unit[17] = new Character("Luffy (Supernova)", "S", 63, "swordsmaster", "SHsupernova", 757904, 36500, 13324,
+		unit[17] = new Character("Luffy (Supernova)", "S", 63, "swordsmaster", "SHsupernova", "captain", 757904, 36500, 13324,
 				400, 1);
 		unit[18] = new Character("Usopp (Supernova)", "S", 63, "swordsmaster", 540452, 52669, 11659, 398, 1);	
 		unit[19] = new Character("Bartolomeo", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 406, 1);
+		
 		// SS chars
 		unit[20] = new Character("Ace", "SS", 105, "swordsmaster", 1091668, 112980, 11659, 407, 1);
-		unit[21] = new Character("Doflamingo", "SS", 105, "swordsmaster", "will", "shichibukaiVinsmoke", 1091668,
+		unit[21] = new Character("Doflamingo", "SS", 105, "swordsmaster", "will", "shichibukaiVinsmoke", "captain", 1091668,
 				112980, 11659, 415, 1);
 		unit[22] = new Character("Sabo", "SS", 105, "swordsmaster", "piratesSH", 1091668, 112980, 11659, 417, 1);
 		unit[23] = new Character("Enel", "SS", 105, "swordsmaster", "skypiea", 1617146, 105743, 24983, 425, 1);
@@ -291,17 +291,18 @@ public class Controller implements Initializable {
 		unit[25] = new Character("Kuma", "SS", 105, "will", "marineShichibukai", 1413372, 70888, 12491, 419, 1);
 		unit[26] = new Character("Marco", "SS", 105, "will", "paramecia", "thrillerBark", "colonel", 1491760, 70888,
 				17322, 410, 1);
-		unit[27] = new Character("Boa Hancock", "SS", 105, "will", "shichibukaiVinsmoke", "shichibukai", 1130454, 68517,
+		unit[27] = new Character("Boa Hancock", "SS", 105, "will", "shichibukaiVinsmoke", "shichibukai", "captain", 1130454, 68517,
 				31090, 397, 1);
-		unit[28] = new Character("Nightmare Luffy", "SS", 105, "will", 1617146, 105743, 24983, 366, 1);
+		unit[28] = new Character("Nightmare Luffy", "SS", 105, "will", "captain", 1617146, 105743, 24983, 366, 1);
 		unit[29] = new Character("Law (Supernova)", "SS", 105, "captain", 1617216, 105715, 25097, 400, 1);
 		unit[30] = new Character("Vinsmoke Ichiji", "SS", 105, "will", "vinsmoke", "shichibukaiVinsmoke", 862119,
 				112957, 11712, 415, 1);
-		unit[31] = new Character("Law", "SS", 105, "marines", "shichibukai", 1617146, 105743, 24983, 400, 1);
+		unit[31] = new Character("Law", "SS", 105, "marines", "shichibukai", "captain", 1617146, 105743, 24983, 400, 1);
 		unit[32] = new Character("Sanji (Supernova)", "SS", 105, "marines", "swordsmaster", "piratesSH", 1617146,
 				105743, 24983, 441, 1);
 		unit[33] = new Character("Zoro (Supernova)", "SS", 105, "swordsmaster", "SHsupernova", 1091668, 112980, 11659,
 				415, 1);
+		
 		// SSS chars
 		unit[34] = new Character("Aokiji", "SSS", 157, "marines", "swordsmaster", "piratesSH", 2567159, 167898, 24983,
 				445, 1);
@@ -309,25 +310,25 @@ public class Controller implements Initializable {
 		unit[36] = new Character("Golden Lion", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 410, 1);
 		unit[37] = new Character("Fujitora", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 425, 1);
 		unit[38] = new Character("Kizaru", "SSS", 157, "wayOfFreedom", 1159997, 146539, 10553, 425, 1);
-		unit[39] = new Character("Snakeman Luffy", "SSS", 157, "swordsmaster", "colonel", 2425897, 98896, 13385, 421, 1);
-		unit[40] = new Character("Shanks", "SSS", 157, "swordsmaster", "will", 1159997, 146539, 10553, 414, 1);
+		unit[39] = new Character("Snakeman Luffy", "SSS", 157, "swordsmaster", "colonel", "captain", 2425897, 98896, 13385, 421, 1);
+		unit[40] = new Character("Shanks", "SSS", 157, "swordsmaster", "will", "captain", 1159997, 146539, 10553, 414, 1);
 		unit[41] = new Character("Akainu", "SSS", 157, "swordsmaster", 2425907, 98913, 13324, 409, 1);
 		unit[42] = new Character("Sengoku", "SSS", 157, "will", "marineShichibukai", 2635858, 108099, 16239, 415, 1);
 		unit[43] = new Character("Garp", "SSS", 157, "will", "marineShichibukai", 2248187, 112009, 12491, 419, 1);
-		unit[44] = new Character("Whitebeard", "SSS", 157, "piratesPursuit", 1724031, 180936, 11659, 421, 1);
+		unit[44] = new Character("Whitebeard", "SSS", 157, "piratesPursuit", "captain", 1724031, 180936, 11659, 421, 1);
 		unit[45] = new Character("Rayleigh", "SSS", 157, "yonko", 1359739, 180902, 11712, 415, 1);
-		unit[46] = new Character("Kaido", "SSS", 157, "yonko", 2635841, 93116, 16313, 415, 1);
+		unit[46] = new Character("Kaido", "SSS", 157, "yonko", "captain", 2635841, 93116, 16313, 415, 1);
 		unit[47] = new Character("Oden", "SSS", 157, "breakthrough", 1724108, 180902, 11712, 419, 1);
 		unit[48] = new Character("Swimsuit - Hancock", "SSS", 157, "cyborg", 2567264, 167852, 25097, 416, 1);
 		unit[49] = new Character("Robin - Christmas", "SSS", 157, "SHparamecia", 3908232, 134164, 25097, 420, 1);
-		unit[50] = new Character("Blackbeard", "SSS", 157, "shichibukaiVinsmoke", 2567264, 167898, 25097, 425, 1);
+		unit[50] = new Character("Blackbeard", "SSS", 157, "shichibukaiVinsmoke", "captain", 2567264, 167898, 25097, 425, 1);
 		unit[51] = new Character("Nami (Valentine's Day)", "SSS", 157, "piratesSH", 2567264, 167852, 25097, 423, 1);
 		unit[52] = new Character("Yamato", "SSS", 157, "will", 1882743, 180936, 12548, 419, 1);
 		unit[53] = new Character("God Usopp", "SSS", 157, "breakthrough", 1563294, 103564, 25097, 408, 1);
 		unit[54] = new Character("Sanji Germa", "SSS", 157, "breakthrough", 2390912, 127959, 11712, 409, 1);
 		unit[55] = new Character("Enma Zoro", "SSS", 157, "breakthrough", 1359739, 180936, 11712, 418, 1);
 		unit[56] = new Character("Carrot", "SSS", 157, "cyborg", 2425897, 98896, 13385, 417, 1);
-		unit[57] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", 1359739, 180936, 11712, 418, 1);
+		unit[57] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", "captain", 1359739, 180936, 11712, 418, 1);
 		unit[58] = new Character("Charlotte Linlin", "SSS", 157, "yonko", 2567159, 167898, 24983, 410, 1);
 		unit[59] = new Character("Mihawk (Summit War)", "SSS", 157, "shichibukai", 1922920, 127959, 11712, 412, 1);
 		unit[60] = new Character("Magellan", "SSS", 157, "paramecia", 2635841, 108082, 16313, 420, 1);
@@ -337,6 +338,7 @@ public class Controller implements Initializable {
 		unit[64] = new Character("General Franky", "SSS", 157, "will", "piratesSH", "cyborg", 3226319, 98408, 30064, 424, 1);
 		unit[65] = new Character("Zoro Asura", "SSS", 157, "swordsmaster", "breakthrough", 1131856, 123449, 25045, 415, 1);
 		unit[66] = new Character("Chopper (Christmas)", "SSS", 157, "piratesSH", "breakthrough", 2857454, 158808, 38822, 415, 1);
+		unit[67] = new Character("Eustass Kid (New World)", "SSS", 157, "paramecia", "breakthrough", 2669814, 143069, 33114, 415, 1);
 				
 		// adding all characters to a list
 		for (Character character : unit) {
@@ -678,9 +680,6 @@ public class Controller implements Initializable {
 		charsSelected.clear();
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
-		changeAllTextField.clear();
-		changeAllTextField.setVisible(true);
-		changeAlldPowersButton.setVisible(true);	
 		
 		changeDPower=true;
 		changeLevel=false;
@@ -708,6 +707,9 @@ public class Controller implements Initializable {
 			showErrorPopup("Error", "Not enough characters selected!");
 			charsSelected.clear();
 		} else { 
+			changeAllTextField.clear();
+			changeAllTextField.setVisible(true);
+			changeAlldPowersButton.setVisible(true);	
 			characterList.clear();
 			convertCharsSelected(charsSelected);
 			loadSelectedChars(); 
@@ -720,9 +722,6 @@ public class Controller implements Initializable {
 		charsSelected.clear();
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
-		changeAllTextField.clear();
-		changeAllTextField.setVisible(true);
-		changeAllLevelsButton.setVisible(true);
 	
 		changeLevel=true;
 		changeDPower=false;
@@ -750,6 +749,9 @@ public class Controller implements Initializable {
 			showErrorPopup("Error", "Not enough characters selected!");
 			charsSelected.clear();
 		} else { 
+			changeAllTextField.clear();
+			changeAllTextField.setVisible(true);
+			changeAllLevelsButton.setVisible(true);
 			characterList.clear();
 			convertCharsSelected(charsSelected);
 			loadSelectedChars(); 
@@ -1257,7 +1259,8 @@ public class Controller implements Initializable {
 		} else {
 			changeAllTextField.clear();
 			changeAllTextField.setVisible(false);
-			changeAllLevelsButton.setVisible(false);			
+			changeAllLevelsButton.setVisible(false);
+			changeAlldPowersButton.setVisible(false);
 			changeDPowerScrollPane.setVisible(false);
 			bestTeamPane.setVisible(false);			
 			bestTeamPower.setVisible(false);
@@ -1268,6 +1271,7 @@ public class Controller implements Initializable {
 		}
 	}
 
+	
 	private class CalculationRunnable implements Runnable {
 		private CountDownLatch latch;
 

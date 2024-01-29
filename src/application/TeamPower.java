@@ -1,6 +1,8 @@
 package application;
 
 public class TeamPower {
+	
+	//static int testC = 0;
 
 	public static int[] Formula(Character currentTeam[][]) {
 		int[] total = new int[currentTeam.length];
@@ -34,6 +36,8 @@ public class TeamPower {
 			int breakthroughCounter = 0;
 			int yonkoCounter = 0;
 			int cyborgCounter = 0;
+			
+			
 
 			// add a counter for each affiliation each character of the team possesses
 			for (int i = 0; i < numMembers; i++) {
@@ -233,14 +237,19 @@ public class TeamPower {
 
 				teamPower += currentTeam[x][i].dPower;
 			}
+			//System.out.println("("+testC+")");
+		    //testC++;
+
 			// Calculation of the total bonus
 			if (marinesCounter >= 4)
 				bonus += 0.72;
 			else if (marinesCounter >= 2)
 				bonus += 0.36;
+			//System.out.println("marines " + marinesCounter);
 
 			if (wayOfFreedomCounter >= 2)
 				bonus += 0.36;
+			//System.out.println("wayOfFreedom " + wayOfFreedomCounter);
 
 			if (swordsmasterCounter >= 6)
 				bonus += 0.87;
@@ -248,33 +257,39 @@ public class TeamPower {
 				bonus += 0.58;
 			else if (swordsmasterCounter >= 2)
 				bonus += 0.29;
+			//System.out.println("swordsmaster " + swordsmasterCounter);
 
 			if (willCounter >= 6)
 				bonus += 0.48;
 			else if (willCounter >= 3)
 				bonus += 0.24;
-
+			//System.out.println("will " + willCounter);
+			
 			if (pursuitCounter >= 6)
 				bonus += 0.72;
 			else if (pursuitCounter >= 4)
 				bonus += 0.48;
 			else if (pursuitCounter >= 2)
 				bonus += 0.24;
-
+			//System.out.println("pursuit " + pursuitCounter);
+			
 			if (parameciaCounter >= 6)
 				bonus += 0.72;
 			else if (parameciaCounter >= 4)
 				bonus += 0.48;
 			else if (parameciaCounter >= 2)
 				bonus += 0.24;
+			//System.out.println("paramecia " + parameciaCounter);
 
 			if (shichibukaiCounter >= 2)
 				bonus += 0.29;
+			//System.out.println("shichibukai " + shichibukaiCounter);
 
 			if (vinsmokeCounter >= 4)
 				bonus += 0.48;
 			else if (vinsmokeCounter >= 2)
 				bonus += 0.24;
+			//System.out.println("vinsmoke " + vinsmokeCounter);
 
 			if (piratesShCounter >= 6)
 				bonus += 0.72;
@@ -282,30 +297,37 @@ public class TeamPower {
 				bonus += 0.48;
 			else if (piratesShCounter >= 2)
 				bonus += 0.24;
+			//System.out.println("piratesSH " + piratesShCounter);
 
 			if (thrillerBarkCounter >= 6)
 				bonus += 0.36;
 			else if (thrillerBarkCounter >= 3)
 				bonus += 0.18;
+			//System.out.println("thrillerBark " + thrillerBarkCounter);
 
 			if (marineShichibukaiCounter >= 2)
 				bonus += 0.36;
+			//System.out.println("marinesShichibukai " + marineShichibukaiCounter);
 
 			if (colonelCounter >= 4)
 				bonus += 0.58;
 			else if (colonelCounter >= 2)
 				bonus += 0.29;
+			//System.out.println("colonel " + colonelCounter);
 
 			if (SHparameciaCounter >= 4)
 				bonus += 0.48;
 			else if (SHparameciaCounter >= 2)
 				bonus += 0.24;
-
+			//System.out.println("SHparamecia " + SHparameciaCounter);
+			
 			if (skypieaCounter >= 1)
 				bonus += 0.18;
-
+			//System.out.println("skypiea " + skypieaCounter);
+			
 			if (captainCounter >= 1)
 				bonus += 0.18;
+			//System.out.println("captain " + captainCounter);
 
 			if (shichibukaiVinsmokeCounter >= 6)
 				bonus += 0.72;
@@ -313,9 +335,11 @@ public class TeamPower {
 				bonus += 0.48;
 			else if (shichibukaiVinsmokeCounter >= 2)
 				bonus += 0.24;
+			//System.out.println("shichibukaiVinsmoke " + shichibukaiVinsmokeCounter);
 
 			if (piratesRevolutionariesCounter >= 2)
 				bonus += 0.24;
+			//System.out.println("piratesRevolutionaries " + piratesRevolutionariesCounter);
 
 			if (ShSupernovaCounter >= 6)
 				bonus += 0.54;
@@ -323,17 +347,21 @@ public class TeamPower {
 				bonus += 0.36;
 			else if (ShSupernovaCounter >= 2)
 				bonus += 0.18;
-
+			//System.out.println("ShSupernova " + ShSupernovaCounter);
+			
 			if (breakthroughCounter >= 4)
 				bonus += 0.48;
 			else if (breakthroughCounter >= 2)
 				bonus += 0.24;
-
+			//System.out.println("breakthrough " + breakthroughCounter);
+			
 			if (yonkoCounter >= 2)
 				bonus += 0.36;
+			//System.out.println("yonko " + yonkoCounter);
 			
 			if (cyborgCounter >= 2)
 				bonus += 0.24;
+			//System.out.println("cyborg " + cyborgCounter);
 
 			teamPowerPlusBonus = teamPower * bonus;
 

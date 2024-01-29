@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -16,6 +18,10 @@ import javafx.stage.Stage;
 public class CharSelection implements Serializable {
 
 	private static final long serialVersionUID = 7504656738084623494L;
+	
+    private static final String LAST_LOADED_FILE_KEY = "lastLoadedFile";
+    private static final String LAST_LOADED_FILE_LOCATION_KEY = "lastLoadedFileLocation";
+    
 	
 	String name;
 	ArrayList<String> charsSelected;
@@ -41,7 +47,7 @@ public class CharSelection implements Serializable {
 
 		// Show the save dialog
 		Stage stage = new Stage();
-		java.io.File selectedFile = fileChooser.showSaveDialog(stage);
+		File selectedFile = fileChooser.showSaveDialog(stage);
 
 		if (selectedFile != null) {
 			// Create the file output stream using the selected file
@@ -67,26 +73,72 @@ public class CharSelection implements Serializable {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new ExtensionFilter("Serialized Files", "*.ser"));
 
-		// Show the open dialog
-		Stage stage = new Stage();
-		java.io.File selectedFile = fileChooser.showOpenDialog(stage);
+	    // Retrieve the last location and last file from preferences
+	    Preferences prefs = Preferences.userNodeForPackage(CharSelection.class);
+	  
+	    String lastFile = prefs.get(LAST_LOADED_FILE_KEY, null);
+	    String lastLocation = prefs.get(LAST_LOADED_FILE_LOCATION_KEY, null);
+	    
+	    // Load last file loaded previously
+	    if (Controller.loadLastFile) {
+	    	if (lastFile != null) {
+								
+				// Create the file input stream using the selected file
+				try (FileInputStream fileIn = new FileInputStream(lastFile);
+						ObjectInputStream in = new ObjectInputStream(fileIn)) {
 
-		if (selectedFile != null) {
-			// Create the file input stream using the selected file
-			try (FileInputStream fileIn = new FileInputStream(selectedFile);
-					ObjectInputStream in = new ObjectInputStream(fileIn)) {
+					// Read the object from the input stream
+					CharSelection selection = (CharSelection) in.readObject();
 
-				// Read the object from the input stream
-				CharSelection selection = (CharSelection) in.readObject();
-
-				// Assign the loaded values to the current instance
-				this.charsSelected = selection.charsSelected;
-				this.savedInput = selection.savedInput;
-				this.dPowerSaved = selection.dPowerSaved;
-				this.levelSaved = selection.levelSaved;
+					// Assign the loaded values to the current instance
+					this.charsSelected = selection.charsSelected;
+					this.savedInput = selection.savedInput;
+					this.dPowerSaved = selection.dPowerSaved;
+					this.levelSaved = selection.levelSaved;
+				}
+			} 
+	    	else {
+				cancelled = true;
 			}
-		} else {
-			cancelled = true;
-		}
+	    }
+	    else {
+	    	// Setting the directory of the last loaded file as the default one
+		    if (lastLocation != null) {
+		    	fileChooser.setInitialDirectory(new File(lastLocation));
+		    }
+		    
+		    // Show the open dialog
+			Stage stage = new Stage();
+			File selectedFile = fileChooser.showOpenDialog(stage);
+			
+			if (selectedFile != null) {	
+				// Save path of file and its directory
+				saveLastFileLocation(selectedFile.getAbsolutePath(), selectedFile.getParent());
+				
+				// Create the file input stream using the selected file
+				try (FileInputStream fileIn = new FileInputStream(selectedFile);
+						ObjectInputStream in = new ObjectInputStream(fileIn)) {
+
+					// Read the object from the input stream
+					CharSelection selection = (CharSelection) in.readObject();
+
+					// Assign the loaded values to the current instance
+					this.charsSelected = selection.charsSelected;
+					this.savedInput = selection.savedInput;
+					this.dPowerSaved = selection.dPowerSaved;
+					this.levelSaved = selection.levelSaved;
+				}
+			} else {
+				cancelled = true;
+			}
+	    }		
 	}
+	
+    // Method to save the last loaded file and its location 
+    public static void saveLastFileLocation(String lastFile, String lastLocation) {
+        Preferences prefs = Preferences.userNodeForPackage(CharSelection.class);
+        prefs.put(LAST_LOADED_FILE_KEY, lastFile);
+        prefs.put(LAST_LOADED_FILE_LOCATION_KEY, lastLocation);
+        
+    }
 }

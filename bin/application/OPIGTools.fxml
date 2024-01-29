@@ -173,7 +173,7 @@
 			            <FlowPane fx:id="changeDPowerPane" alignment="CENTER" columnHalignment="CENTER" prefWrapLength="850.0" />
 			        </content>
 		    	</ScrollPane>
-            <Button fx:id="loadCharsButton" alignment="CENTER" layoutX="680.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="85.0" text="Load Selection" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="loadLastFileButton" alignment="CENTER" layoutX="668.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadLastFile" prefHeight="50.0" prefWidth="85.0" text="Last File Loaded" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font></Button>
@@ -220,7 +220,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <Button fx:id="saveCharsButton" alignment="CENTER" layoutX="768.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#saveChars" prefHeight="50.0" prefWidth="85.0" text="Save Selection" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="saveCharsButton" alignment="CENTER" layoutX="772.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#saveChars" prefHeight="50.0" prefWidth="85.0" text="Save Selection" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -255,6 +255,11 @@
             <Button fx:id="changeAlldPowersButton" layoutX="122.0" layoutY="57.0" mnemonicParsing="false" onAction="#changeAlldPowers" prefHeight="30.0" prefWidth="74.0" text="dPower" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="13.0" />
+               </font>
+            </Button>
+            <Button fx:id="loadFileChooserButton" alignment="CENTER" layoutX="746.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="21.0" text="▼" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="8.0" />
                </font>
             </Button>
        	  </children>

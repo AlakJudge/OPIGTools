@@ -100,6 +100,7 @@ public class Controller implements Initializable {
 	boolean savedLevelChanged = false;
 	boolean savedDPowerChanged = false;
 	boolean converted = false;
+	static boolean loadLastFile = false;
 	
 	TextField[] powerTextField;
 	Character character[];
@@ -328,8 +329,8 @@ public class Controller implements Initializable {
 		unit[54] = new Character("Sanji Germa", "SSS", 157, "breakthrough", 2390912, 127959, 11712, 409, 1);
 		unit[55] = new Character("Enma Zoro", "SSS", 157, "breakthrough", 1359739, 180936, 11712, 418, 1);
 		unit[56] = new Character("Carrot", "SSS", 157, "cyborg", 2425897, 98896, 13385, 417, 1);
-		unit[57] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", "captain", 1359739, 180936, 11712, 418, 1);
-		unit[58] = new Character("Charlotte Linlin", "SSS", 157, "yonko", 2567159, 167898, 24983, 410, 1);
+		unit[57] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", 1359739, 180936, 11712, 418, 1);
+		unit[58] = new Character("Charlotte Linlin", "SSS", 157, "yonko", "captain", 2567159, 167898, 24983, 410, 1);
 		unit[59] = new Character("Mihawk (Summit War)", "SSS", 157, "shichibukai", 1922920, 127959, 11712, 412, 1);
 		unit[60] = new Character("Magellan", "SSS", 157, "paramecia", 2635841, 108082, 16313, 420, 1);
 		unit[61] = new Character("Prime Whitebeard", "SSS", 157, "paramecia", "captain", "yonko", 1901456, 158585, 12139, 415, 1);
@@ -1340,6 +1341,12 @@ public class Controller implements Initializable {
 		}
 	}
 
+	public void loadLastFile() {
+		 
+		loadLastFile = true;
+		loadChars(); 
+	}
+	
 	public void loadChars() { // loading chars and their dpower from SER file user may have saved.
 		
 		CharSelection selection = new CharSelection();
@@ -1386,7 +1393,7 @@ public class Controller implements Initializable {
 				else if (savedDPowerChanged) 
 					characterList.get(i).setdPower(selection.savedInput[i]);
 			}
-
+			loadLastFile = false;
 			loadSelectedChars();
 		}
 	}

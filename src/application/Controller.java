@@ -1,6 +1,7 @@
 package application;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.Instant;
@@ -10,6 +11,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -17,11 +19,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -56,10 +61,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 public class Controller implements Initializable {
 	@FXML
-	Pane ruinsPane, bestTeamAnchorPane, paypalButton;
+	Pane ruinsPane, bestTeamAnchorPane, paypalButton, currentPane;
 	@FXML
 	ChoiceBox<Integer> numMembersChoiceBox;
 	@FXML
@@ -70,17 +76,27 @@ public class Controller implements Initializable {
 	Label bestTeamPower, ruinsLabel, bonus;
 	@FXML
 	Button changeLevelButton, backToSelectionButton, submitCharsButton, changeDPowerButton, allSSSButton, allSSButton, allSButton, sButton,	
-			ssButton, sssButton, exitButton, findNextBestTeam, changeAllLevelsButton, changeAlldPowersButton;
+	ssButton, sssButton, exitButton, findNextBestTeam, changeAllLevelsButton, changeAlldPowersButton, loadFileChooserButton, 
+	backToSubmissionButton, previousBestTeamButton, nextBestTeamButton;
 	@FXML
 	ToggleButton orderAZButton;
 	@FXML
 	ProgressBar progressBar = new ProgressBar();
 	@FXML
 	TextField missionPowerTextField, changeAllTextField;
-		
-	ArrayList<CheckBoxImage> originalOrderSSS;
-	ArrayList<CheckBoxImage> originalOrderSS;
-	ArrayList<CheckBoxImage> originalOrderS;
+	TextField[] powerTextField;
+
+	ArrayList<CheckBoxImage> originalOrderSSS, originalOrderSS, originalOrderS;
+
+	Character character[];
+
+	ArrayList<Character> characterList = new ArrayList<>();
+	ArrayList<Character> unitList = new ArrayList<>();
+	ArrayList<String> charsSelected = new ArrayList<>();
+	ArrayList<String> loadedCharsSelected = new ArrayList<>();
+	ArrayList<String> charNames = new ArrayList<>();
+	static Character[] unit;
+
 	boolean sssToggled = false;
 	boolean ssToggled = false;
 	boolean sToggled = false;
@@ -89,39 +105,31 @@ public class Controller implements Initializable {
 	static Thread calculationThread;
 	static Thread updateUIThread;
 
-	ArrayList<Character> characterList = new ArrayList<>();
-	ArrayList<String> charsSelected = new ArrayList<>();
-	ArrayList<String> loadedCharsSelected = new ArrayList<>();
-	ArrayList<Character> unitList = new ArrayList<>();
-	ArrayList<String> charNames = new ArrayList<>();
-	Character[] unit;
-	Pane currentPane;
 	boolean ruinsToggle = false;
 	boolean savedLevelChanged = false;
 	boolean savedDPowerChanged = false;
 	boolean converted = false;
 	static boolean loadLastFile = false;
-	
-	TextField[] powerTextField;
-	Character character[];
+
 	static int missionPower = 0;
 	static boolean changeLevel = false;
 	static boolean changeDPower = false;
 	static double totalBonus;
 	static String[] charLevel;
-	
+
 	int lastNumMembers;
+	int bestTeamPageCounter;
 
 	final int MAX_WIDTH = 120;
 	final int MAX_HEIGHT = 150;
 
 	// SSS CHACACTER ICONS
-	String[] sssImageTooltips = { "Eustass Kid (New World)", "Chopper (Christmas)", "Zoro Asura", "General Franky", "Shirahoshi", "Prime Whitebeard", "Zephyr", "Robin - Christmas", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
+	String[] sssImageTooltips = { "Hancock (Devotion)", "Eustass Kid (New World)", "Chopper (Christmas)", "Zoro Asura", "General Franky", "Shirahoshi", "Prime Whitebeard", "Zephyr", "Robin - Christmas", "Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
 			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
 			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
 			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
 
-	String[] sssSelectedImagePaths = { "resources/Eustass Kid (New World)BW.png", "resources/Chopper (Christmas)BW.png", "resources/Zoro AsuraBW.png", "resources/General FrankyBW.png", "resources/ShirahoshiBW.png", "resources/Prime WhitebeardBW.png", "resources/ZephyrBW.png", "resources/Robin - ChristmasBW.png", "resources/YamatoBW.png",
+	String[] sssSelectedImagePaths = { "resources/Hancock (Devotion)BW.png", "resources/Eustass Kid (New World)BW.png", "resources/Chopper (Christmas)BW.png", "resources/Zoro AsuraBW.png", "resources/General FrankyBW.png", "resources/ShirahoshiBW.png", "resources/Prime WhitebeardBW.png", "resources/ZephyrBW.png", "resources/Robin - ChristmasBW.png", "resources/YamatoBW.png",
 			"resources/Mihawk (Summit War)BW.png", "resources/God UsoppBW.png", "resources/Sanji GermaBW.png",
 			"resources/Enma ZoroBW.png", "resources/OdenBW.png", "resources/Nami (Valentine's Day)BW.png",
 			"resources/CarrotBW.png", "resources/KaidoBW.png", "resources/MagellanBW.png",
@@ -130,9 +138,9 @@ public class Controller implements Initializable {
 			"resources/FujitoraBW.png", "resources/ShanksBW.png", "resources/RayleighBW.png",
 			"resources/Charlotte LinlinBW.png", "resources/KizaruBW.png", "resources/AokijiBW.png",
 			"resources/SengokuBW.png", "resources/WhitebeardBW.png", "resources/AkainuBW.png", "resources/GarpBW.png",
-			"resources/MihawkBW.png"};
+	"resources/MihawkBW.png"};
 
-	String[] sssImagePaths = { "resources/Eustass Kid (New World).png", "resources/Chopper (Christmas).png", "resources/Zoro Asura.png", "resources/General Franky.png", "resources/Shirahoshi.png", "resources/Prime Whitebeard.png", "resources/Zephyr.png", "resources/Robin - Christmas.png", "resources/Yamato.png",
+	String[] sssImagePaths = { "resources/Hancock (Devotion).png", "resources/Eustass Kid (New World).png", "resources/Chopper (Christmas).png", "resources/Zoro Asura.png", "resources/General Franky.png", "resources/Shirahoshi.png", "resources/Prime Whitebeard.png", "resources/Zephyr.png", "resources/Robin - Christmas.png", "resources/Yamato.png",
 			"resources/Mihawk (Summit War).png", "resources/God Usopp.png", "resources/Sanji Germa.png",
 			"resources/Enma Zoro.png", "resources/Oden.png", "resources/Nami (Valentine's Day).png",
 			"resources/Carrot.png", "resources/Kaido.png", "resources/Magellan.png",
@@ -145,13 +153,13 @@ public class Controller implements Initializable {
 	// SS CHACACTER ICONS
 	String[] ssImageTooltips = { "Law (Supernova)", "Katakuri", "Vinsmoke Ichiji", "Zoro (Supernova)", "Ace",
 			"Doflamingo", "Sabo", "Enel", "Sanji (Supernova)", "Kuma", "Marco", "Boa Hancock", "Law",
-			"Nightmare Luffy" };
+	"Nightmare Luffy" };
 
 	String[] ssImagePaths = { "resources/Law (Supernova).png", "resources/Katakuri.png",
 			"resources/Vinsmoke Ichiji.png", "resources/Zoro (Supernova).png", "resources/Ace.png",
 			"resources/Doflamingo.png", "resources/Sabo.png", "resources/Enel.png", "resources/Sanji (Supernova).png",
 			"resources/Kuma.png", "resources/Marco.png", "resources/Boa Hancock.png", "resources/Law.png",
-			"resources/Nightmare Luffy.png" };
+	"resources/Nightmare Luffy.png" };
 
 	String[] ssSelectedImagePaths = { "resources/Law (Supernova)BW.png", "resources/KatakuriBW.png",
 			"resources/Vinsmoke IchijiBW.png", "resources/Zoro (Supernova)BW.png", "resources/AceBW.png",
@@ -170,7 +178,7 @@ public class Controller implements Initializable {
 			"resources/Bartolomeo.png", "resources/Robin (Supernova).png", "resources/Cavendish.png",
 			"resources/Ivankov.png", "resources/Nami (Supernova).png", "resources/Lucci.png", "resources/Crocodile.png",
 			"resources/Franky (Supernova).png", "resources/Vista.png", "resources/Jimbei.png",
-			"resources/Vinsmoke Reiju.png" };
+	"resources/Vinsmoke Reiju.png" };
 
 	String[] sSelectedImagePaths = { "resources/Luffy (Supernova)BW.png", "resources/Usopp (Supernova)BW.png",
 			"resources/MoriaBW.png", "resources/HawkinsBW.png", "resources/KidBW.png", "resources/BuggyBW.png",
@@ -180,7 +188,7 @@ public class Controller implements Initializable {
 			"resources/CrocodileBW.png", "resources/Franky (Supernova)BW.png", "resources/VistaBW.png",
 			"resources/JimbeiBW.png", "resources/Vinsmoke ReijuBW.png" };
 
-	
+
 	boolean allSelectedSSS = false;
 	boolean allSelectedSS = false;
 	boolean allSelectedS = false;
@@ -191,28 +199,44 @@ public class Controller implements Initializable {
 	Tooltip tooltipSS[] = new Tooltip[ssImageTooltips.length];
 	Tooltip tooltipS[] = new Tooltip[sImageTooltips.length];
 	Integer[] numMembersNumbers = { 2, 3, 4, 5, 6, 7, 8 };
-	Integer[] threePacksBought = { 0, 1, 2, 3};
-	Integer[] fivePacksBought = { 0, 1, 2, 3, 4, 5};
-	Integer[] sixPacksBought = { 0, 1, 2, 3, 4, 5, 6};
-	Integer[] tenPacksBought = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	
+	Integer[] threePacksBought = { 0, 1, 2, 3 };
+	Integer[] fivePacksBought = { 0, 1, 2, 3, 4, 5 };
+	Integer[] sixPacksBought = { 0, 1, 2, 3, 4, 5, 6 };
+	Integer[] tenPacksBought = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	Integer[] marketPurchase = { 0, 10, 15, 20, 25, 30, 40 };
+	Integer[] skypieaChallenge = { 0, 3, 6, 9, 12, 15 };
+	Integer[] rankingLike = { 0, 10, 20, 30, 40, 50 };
+	Integer[] bountyQuest = { 0, 10, 15, 20, 25, 30 };
+	Integer[] valuePack100 = { 0, 1, 2, 3, 4 };
+	String[] prioritytList = { "Map", "Telescope", "Rum" }; 
+	Integer[] topupDays = { 0, 1, 2, 3, 4, 5 };
+
 	private static final String TOOLTIP = "tooltip";
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-		prefs = Preferences.userRoot().node(getClass().getName());
-		loadState();
-		if (secs > 0 || mins > 0 || hrs > 0) {			
-			if (!timerStopped) {		
-				startTimer();			
+		bPrefs = Preferences.userRoot().node(getClass().getName());
+		ssPrefs = Preferences.userRoot().node(getClass().getName());
+		loadBrooksState();
+		loadSetSailState();
+		if (bSecs > 0 || bMins > 0 || bHrs > 0) {			
+			if (!bTimerStopped) {		
+				startBrooksTimer();			
 			}
 		}
-        // Register a shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            saveState();
-        }));
-		
+		if (ssSecs > 0 || ssMins > 0 || ssHrs > 0) {			
+			if (!ssTimerStopped) {		
+				startSetSailTimer();			
+			}
+		}
+
+		// Register a shutdown hook
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			saveBrooksState();
+			saveSetSailState();
+		}));
+
 		changeAllTextField.setVisible(false);
 		changeAllLevelsButton.setVisible(false);
 		changeAlldPowersButton.setVisible(false);
@@ -220,7 +244,7 @@ public class Controller implements Initializable {
 		numMembersChoiceBox.getItems().addAll(numMembersNumbers);
 		numMembersChoiceBox.setOnAction(this::setNumMembers);
 		numMembersChoiceBox.setValue(7);
-		
+
 		// setting up brooks calculator values
 		oneThousandGemsPack.getItems().addAll(sixPacksBought);
 		oneThousandGemsPack.setValue(0);
@@ -240,22 +264,42 @@ public class Controller implements Initializable {
 		money2999pack.setValue(0);
 		money999pack.setValue(0);
 		money9999pack.setValue(0);
-		
+		// setting up set sail calculator values
+		marketPurchaseBox.getItems().addAll(marketPurchase);
+		marketPurchaseBox.setValue(marketPurchase[marketPurchase.length-1]);
+		skypieaChallengeBox.getItems().addAll(skypieaChallenge);
+		skypieaChallengeBox.setValue(skypieaChallenge[skypieaChallenge.length-1]);
+		rankingLikeBox.getItems().addAll(rankingLike);
+		rankingLikeBox.setValue(rankingLike[rankingLike.length-1]);
+		bountyQuestBox.getItems().addAll(bountyQuest);
+		bountyQuestBox.setValue(bountyQuest[bountyQuest.length-1]);
+		valuePack100Box.getItems().addAll(valuePack100);
+		valuePack100Box.setValue(0);
+		priority1box.getItems().addAll(prioritytList); 
+		priority2box.getItems().addAll(prioritytList); 
+		priority3box.getItems().addAll(prioritytList); 
+		priority1box.setValue("Rum");
+		priority2box.setValue("Telescope");
+		priority3box.setValue("Map");
+		topupDaysBox.getItems().addAll(topupDays);
+		topupDaysBox.setValue(0);
+
 		changeDPowerScrollPane.setVisible(false);
 		bestTeamAnchorPane.setVisible(false);
 		backToSelectionButton.setVisible(false);
 		orderAZButton.setVisible(false);
 		comparisonPane.setVisible(false);
-		calculatorPane.setVisible(false);
+		brooksCalcPane.setVisible(false);
+		setSailCalcPane.setVisible(false);
 		splitPane.setDividerPosition(0, 0.5);
 		SplitPane.setResizableWithParent(splitPane.getItems().get(0), false);
-		
-		unit = new Character[68];
+
+		unit = new Character[69];
 
 		// S chars
 		unit[0] = new Character("Cavendish", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 404, 1);
 		unit[1] = new Character("Vista", "S", 63, "swordsmaster", "colonel", 540452, 52669, 11659, 401, 1);
-		unit[2] = new Character("Buggy", "S", 63, "SHparamecia", "will", "thrillerBark", "paramecia", "captain", 469621, 33950,
+		unit[2] = new Character("Buggy", "S", 63, "SHparamecia", "will", "thrillerBark", "paramecia", 469621, 33950,
 				16239, 370, 1);
 		unit[3] = new Character("Jozu", "S", 63, "will", "paramecia", "thrillerBark", "SHparamecia", 540452, 52669,
 				11659, 390, 1);
@@ -269,7 +313,7 @@ public class Controller implements Initializable {
 		unit[8] = new Character("Vinsmoke Reiju", "S", 63, "will", "piratesPursuit", "vinsmoke", 540452, 52669, 11659,
 				405, 1);
 		unit[9] = new Character("Jimbei", "S", 63, "piratesPursuit", "SHsupernova", 540452, 52669, 11659, 380, 1);
-		unit[10] = new Character("Moria", "S", 63, "paramecia", "thrillerBark", "captain", 540846, 33586, 35532, 382, 1);
+		unit[10] = new Character("Moria", "S", 63, "paramecia", "thrillerBark", 540846, 33586, 35532, 382, 1);
 		unit[11] = new Character("Hawkins", "S", 63, "paramecia", "thrillerBark", 540452, 52669, 11659, 408, 1);
 		unit[12] = new Character("Kid", "S", 63, "paramecia", "thrillerBark", "breakthrough", 540452, 52669, 11659,
 				408, 1);
@@ -277,14 +321,14 @@ public class Controller implements Initializable {
 		unit[14] = new Character("Ivankov", "S", 63, "piratesRevolutionaries", 707375, 46247, 24983, 380, 1);
 		unit[15] = new Character("Chopper (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 380, 1);
 		unit[16] = new Character("Robin (Supernova)", "S", 63, "SHsupernova", 707375, 46247, 24983, 406, 1);
-		unit[17] = new Character("Luffy (Supernova)", "S", 63, "swordsmaster", "SHsupernova", "captain", 757904, 36500, 13324,
+		unit[17] = new Character("Luffy (Supernova)", "S", 63, "swordsmaster", "SHsupernova", 757904, 36500, 13324,
 				400, 1);
 		unit[18] = new Character("Usopp (Supernova)", "S", 63, "swordsmaster", 540452, 52669, 11659, 398, 1);	
 		unit[19] = new Character("Bartolomeo", "S", 63, "swordsmaster", "piratesSH", 707375, 46247, 24983, 406, 1);
-		
+
 		// SS chars
 		unit[20] = new Character("Ace", "SS", 105, "swordsmaster", 1091668, 112980, 11659, 407, 1);
-		unit[21] = new Character("Doflamingo", "SS", 105, "swordsmaster", "will", "shichibukaiVinsmoke", "captain", 1091668,
+		unit[21] = new Character("Doflamingo", "SS", 105, "swordsmaster", "will", "shichibukaiVinsmoke", 1091668,
 				112980, 11659, 415, 1);
 		unit[22] = new Character("Sabo", "SS", 105, "swordsmaster", "piratesSH", 1091668, 112980, 11659, 417, 1);
 		unit[23] = new Character("Enel", "SS", 105, "swordsmaster", "skypiea", 1617146, 105743, 24983, 425, 1);
@@ -292,18 +336,18 @@ public class Controller implements Initializable {
 		unit[25] = new Character("Kuma", "SS", 105, "will", "marineShichibukai", 1413372, 70888, 12491, 419, 1);
 		unit[26] = new Character("Marco", "SS", 105, "will", "paramecia", "thrillerBark", "colonel", 1491760, 70888,
 				17322, 410, 1);
-		unit[27] = new Character("Boa Hancock", "SS", 105, "will", "shichibukaiVinsmoke", "shichibukai", "captain", 1130454, 68517,
+		unit[27] = new Character("Boa Hancock", "SS", 105, "will", "shichibukaiVinsmoke", "shichibukai", 1130454, 68517,
 				31090, 397, 1);
-		unit[28] = new Character("Nightmare Luffy", "SS", 105, "will", "captain", 1617146, 105743, 24983, 366, 1);
+		unit[28] = new Character("Nightmare Luffy", "SS", 105, "will", 1617146, 105743, 24983, 366, 1);
 		unit[29] = new Character("Law (Supernova)", "SS", 105, "captain", 1617216, 105715, 25097, 400, 1);
 		unit[30] = new Character("Vinsmoke Ichiji", "SS", 105, "will", "vinsmoke", "shichibukaiVinsmoke", 862119,
 				112957, 11712, 415, 1);
-		unit[31] = new Character("Law", "SS", 105, "marines", "shichibukai", "captain", 1617146, 105743, 24983, 400, 1);
+		unit[31] = new Character("Law", "SS", 105, "marines", "shichibukai", 1617146, 105743, 24983, 400, 1);
 		unit[32] = new Character("Sanji (Supernova)", "SS", 105, "marines", "swordsmaster", "piratesSH", 1617146,
 				105743, 24983, 441, 1);
 		unit[33] = new Character("Zoro (Supernova)", "SS", 105, "swordsmaster", "SHsupernova", 1091668, 112980, 11659,
 				415, 1);
-		
+
 		// SSS chars
 		unit[34] = new Character("Aokiji", "SSS", 157, "marines", "swordsmaster", "piratesSH", 2567159, 167898, 24983,
 				445, 1);
@@ -311,18 +355,18 @@ public class Controller implements Initializable {
 		unit[36] = new Character("Golden Lion", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 410, 1);
 		unit[37] = new Character("Fujitora", "SSS", 157, "wayOfFreedom", 1724108, 180902, 11712, 425, 1);
 		unit[38] = new Character("Kizaru", "SSS", 157, "wayOfFreedom", 1159997, 146539, 10553, 425, 1);
-		unit[39] = new Character("Snakeman Luffy", "SSS", 157, "swordsmaster", "colonel", "captain", 2425897, 98896, 13385, 421, 1);
-		unit[40] = new Character("Shanks", "SSS", 157, "swordsmaster", "will", "captain", 1159997, 146539, 10553, 414, 1);
+		unit[39] = new Character("Snakeman Luffy", "SSS", 157, "swordsmaster", "colonel", 2425897, 98896, 13385, 421, 1);
+		unit[40] = new Character("Shanks", "SSS", 157, "swordsmaster", "will", 1159997, 146539, 10553, 414, 1);
 		unit[41] = new Character("Akainu", "SSS", 157, "swordsmaster", 2425907, 98913, 13324, 409, 1);
 		unit[42] = new Character("Sengoku", "SSS", 157, "will", "marineShichibukai", 2635858, 108099, 16239, 415, 1);
 		unit[43] = new Character("Garp", "SSS", 157, "will", "marineShichibukai", 2248187, 112009, 12491, 419, 1);
-		unit[44] = new Character("Whitebeard", "SSS", 157, "piratesPursuit", "captain", 1724031, 180936, 11659, 421, 1);
+		unit[44] = new Character("Whitebeard", "SSS", 157, "piratesPursuit", 1724031, 180936, 11659, 421, 1);
 		unit[45] = new Character("Rayleigh", "SSS", 157, "yonko", 1359739, 180902, 11712, 415, 1);
-		unit[46] = new Character("Kaido", "SSS", 157, "yonko", "captain", 2635841, 93116, 16313, 415, 1);
+		unit[46] = new Character("Kaido", "SSS", 157, "yonko", 2635841, 93116, 16313, 415, 1);
 		unit[47] = new Character("Oden", "SSS", 157, "breakthrough", 1724108, 180902, 11712, 419, 1);
 		unit[48] = new Character("Swimsuit - Hancock", "SSS", 157, "cyborg", 2567264, 167852, 25097, 416, 1);
 		unit[49] = new Character("Robin - Christmas", "SSS", 157, "SHparamecia", 3908232, 134164, 25097, 420, 1);
-		unit[50] = new Character("Blackbeard", "SSS", 157, "shichibukaiVinsmoke", "captain", 2567264, 167898, 25097, 425, 1);
+		unit[50] = new Character("Blackbeard", "SSS", 157, "shichibukaiVinsmoke", 2567264, 167898, 25097, 425, 1);
 		unit[51] = new Character("Nami (Valentine's Day)", "SSS", 157, "piratesSH", 2567264, 167852, 25097, 423, 1);
 		unit[52] = new Character("Yamato", "SSS", 157, "will", 1882743, 180936, 12548, 419, 1);
 		unit[53] = new Character("God Usopp", "SSS", 157, "breakthrough", 1563294, 103564, 25097, 408, 1);
@@ -330,7 +374,7 @@ public class Controller implements Initializable {
 		unit[55] = new Character("Enma Zoro", "SSS", 157, "breakthrough", 1359739, 180936, 11712, 418, 1);
 		unit[56] = new Character("Carrot", "SSS", 157, "cyborg", 2425897, 98896, 13385, 417, 1);
 		unit[57] = new Character("Charlotte Linlin - Lily", "SSS", 157, "marineShichibukai", 1359739, 180936, 11712, 418, 1);
-		unit[58] = new Character("Charlotte Linlin", "SSS", 157, "yonko", "captain", 2567159, 167898, 24983, 410, 1);
+		unit[58] = new Character("Charlotte Linlin", "SSS", 157, "yonko", 2567159, 167898, 24983, 410, 1);
 		unit[59] = new Character("Mihawk (Summit War)", "SSS", 157, "shichibukai", 1922920, 127959, 11712, 412, 1);
 		unit[60] = new Character("Magellan", "SSS", 157, "paramecia", 2635841, 108082, 16313, 420, 1);
 		unit[61] = new Character("Prime Whitebeard", "SSS", 157, "paramecia", "captain", "yonko", 1901456, 158585, 12139, 415, 1);
@@ -339,18 +383,22 @@ public class Controller implements Initializable {
 		unit[64] = new Character("General Franky", "SSS", 157, "will", "piratesSH", "cyborg", 3226319, 98408, 30064, 424, 1);
 		unit[65] = new Character("Zoro Asura", "SSS", 157, "swordsmaster", "breakthrough", 1131856, 123449, 25045, 415, 1);
 		unit[66] = new Character("Chopper (Christmas)", "SSS", 157, "piratesSH", "breakthrough", 2857454, 158808, 38822, 415, 1);
-		unit[67] = new Character("Eustass Kid (New World)", "SSS", 157, "paramecia", "breakthrough", 2669814, 143069, 33114, 415, 1);
-				
+		unit[67] = new Character("Eustass Kid (New World)", "SSS", 157, "paramecia", "breakthrough", "captain", 2669814, 143069, 33114, 415, 1);
+		unit[68] = new Character("Hancock (Devotion)", "SSS", 157, "paramecia", "shichibukai", "captain", 1902907, 121425, 30064, 415, 1);
+
 		// adding all characters to a list
 		for (Character character : unit) {
 			unitList.add(character);
 		}
-		
+
 		// adding all character names to a list of names
 		for (int i = 0; i < unit.length; i++) {
 			charNames.add(unit[i].getName());
 		}				
-		
+
+		// Method to check affinities changes after updates
+		//CheckAffinities.run();		
+
 		// setting up the initial setup of the program
 		powerTextField = new TextField[unitList.size()];
 		character = new Character[unitList.size()];
@@ -361,7 +409,7 @@ public class Controller implements Initializable {
 		sssCharSelectionPane.setVisible(false);
 		ssCharSelectionPane.setVisible(false);
 		sCharSelectionPane.setVisible(false);	
-		
+
 		// Setting up paypal button
 		Image paypal = new Image(getClass().getResourceAsStream("resources/paypaldonate.png"));
 		ImageView paypalView = new ImageView(paypal);
@@ -384,7 +432,8 @@ public class Controller implements Initializable {
 	public void ruinsVisible() { // methods button use to the the main ruins feature pane visible
 		ruinsPane.setVisible(true);
 		comparisonPane.setVisible(false);
-		calculatorPane.setVisible(false);
+		brooksCalcPane.setVisible(false);
+		setSailCalcPane.setVisible(false);
 	}
 
 	public void setNumMembers(ActionEvent e) { // get the vale from the choice box and make sure it's set to the correct variable when needed
@@ -622,7 +671,7 @@ public class Controller implements Initializable {
 		}
 
 		allSelectedS = false;
-		allSelectedSS = false;
+		allSelectedSS = false; 
 		allSelectedSSS = false;
 
 	}
@@ -677,14 +726,14 @@ public class Controller implements Initializable {
 	}
 
 	public void changeDPower() { // method to run after selecting the characters
-		
+
 		charsSelected.clear();
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
-		
+
 		changeDPower=true;
 		changeLevel=false;
-		
+
 		// adding all selected chars to the CharsSelected array
 		for (CheckBoxImage element : checkboxImageSSS) {
 			if (element.isSelected()) {
@@ -717,16 +766,16 @@ public class Controller implements Initializable {
 			missionPowerTextField.setVisible(true);
 		}
 	}
-	
+
 	public void changeLevel() { // method to run after selecting the characters and choosing to change the level
-		
+
 		charsSelected.clear();
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
-	
+
 		changeLevel=true;
 		changeDPower=false;
-		
+
 		// adding all selected chars to the CharsSelected array
 		for (CheckBoxImage element : checkboxImageSSS) {
 			if (element.isSelected()) {
@@ -744,7 +793,7 @@ public class Controller implements Initializable {
 				charsSelected.add(element.getTooltipText());
 			}
 		}
-		
+
 		// only load the selected chars if the number selected is higher than the min number of members a team must have
 		if (charsSelected.size() <= Main.numMembers) {
 			showErrorPopup("Error", "Not enough characters selected!");
@@ -781,7 +830,7 @@ public class Controller implements Initializable {
 		Image icon[] = new Image[numElements];
 		ImageView iconView[] = new ImageView[numElements];
 		VBox vbox[] = new VBox[numElements];
-			
+
 		// loop creating each imagecheckbox and the textfield under it with the power
 		for (int i = 0; i < numElements; i++) { 
 
@@ -793,7 +842,7 @@ public class Controller implements Initializable {
 			defaultPower[i] = Integer.toString(character[i].getDefaultPower()); // getting default power
 			currentLevel[i] = Integer.toString(character[i].getLevel()); // getting default level
 			currentPower[i] = Integer.toString(character[i].getdPower()); // getting default power
-			
+
 			// loops getting the char icons
 			for (CheckBoxImage element : checkboxImageSSS) {
 				if (name[i].equals(element.getTooltipText())) {
@@ -818,7 +867,7 @@ public class Controller implements Initializable {
 			iconView[i].setPreserveRatio(true);
 			iconView[i].setFitWidth(MAX_WIDTH);
 			iconView[i].setFitHeight(MAX_HEIGHT);
-			
+
 			// Set default level if not loading levels from file
 			if (changeLevel) {
 				if (savedLevelChanged) {
@@ -828,7 +877,7 @@ public class Controller implements Initializable {
 					powerTextField[i].setText("1");
 				}
 			} 
-			
+
 			// Set default dpower if not loading dpower from file
 			else if (changeDPower) {
 				if (savedDPowerChanged) {
@@ -838,7 +887,7 @@ public class Controller implements Initializable {
 					powerTextField[i].setText(defaultPower[i]);
 				}
 			}
-			
+
 			powerTextField[i].setAlignment(Pos.CENTER);
 			vbox[i].getChildren().addAll(iconView[i], powerTextField[i]);
 			changeDPowerPane.getChildren().add(vbox[i]);
@@ -864,15 +913,15 @@ public class Controller implements Initializable {
 
 				// getting the name and power of the chars in the best team
 				if (changeLevel || (savedLevelChanged && !changeDPower)) {
-					finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[0][i].getLevel());
-					
+					finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[TeamCalculator.bestTeamCounter-1][i].getLevel());
+
 				}
 				else {
-					finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[0][i].dPower);
+					finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[TeamCalculator.bestTeamCounter-1][i].dPower);
 				}		
-				
-				name[i] = TeamCalculator.bestTeam[0][i].name;
-				
+
+				name[i] = TeamCalculator.bestTeam[TeamCalculator.bestTeamCounter-1][i].name;
+
 				// loops getting the char icons
 				for (CheckBoxImage element : checkboxImageSSS) {
 					if (name[i].equals(element.getTooltipText())) {
@@ -911,10 +960,10 @@ public class Controller implements Initializable {
 				vbox[i].getChildren().addAll(iconView[i], powerLabel[i]);
 				bestTeamPane.getChildren().add(vbox[i]);
 			}
-			String highestPower = Integer.toString(TeamCalculator.highestPower);
-			bestTeamPower.setText(highestPower);
-			
-			if (missionPower != 0 && TeamCalculator.highestPower < missionPower) {
+			String BestTeamPower = Integer.toString(TeamCalculator.BestTeamPower[TeamCalculator.bestTeamCounter-1]);
+			bestTeamPower.setText(BestTeamPower);
+
+			if (missionPower != 0 && TeamCalculator.BestTeamPower[TeamCalculator.bestTeamCounter-1] < missionPower) {
 				showWarningPopup("Warning", "Your best team does not have enough power for this mission :(");
 			}
 		});
@@ -969,7 +1018,7 @@ public class Controller implements Initializable {
 	}
 
 	public void reset() { // reset the whole program and allow a new team to be created without any side effects
-		TeamCalculator.resetBest();
+		TeamCalculator.resetAllBest();
 		for (Character character : unitList) {
 			character.setdPower(character.defaultPower);
 		}
@@ -994,6 +1043,9 @@ public class Controller implements Initializable {
 		powerTextField = new TextField[unitList.size()];
 		character = new Character[unitList.size()];
 		missionPowerTextField.clear();
+		bestTeamPageCounter = 0;
+		previousBestTeamButton.setVisible(false);
+		nextBestTeamButton.setVisible(false);
 		deselectAllCheckboxes();
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
@@ -1011,7 +1063,7 @@ public class Controller implements Initializable {
 		changeAllLevelsButton.setVisible(false);
 		changeAlldPowersButton.setVisible(false);
 		toggleRuinsPane("on");
-		
+
 		// making sure to go back to the last selected pane
 		if (currentPane != null) {		
 			if (currentPane == sssCharSelectionPane) {
@@ -1024,8 +1076,8 @@ public class Controller implements Initializable {
 		// unless you loaded the chars from a file and there was no last pane, then load the SSS one
 		else 
 			sssPaneVisible();
-		
-				
+
+
 		for (CheckBoxImage checkBox : checkboxImageSSS) {
 			String charName = checkBox.getTooltipText();
 			if (charsSelected.contains(charName)) {
@@ -1044,6 +1096,29 @@ public class Controller implements Initializable {
 				checkBox.setSelected(true);
 			}
 		}
+	}
+
+	public void backToSubmission() {
+
+		backToSubmissionButton.setVisible(false);
+		bestTeamAnchorPane.setVisible(false);
+		changeDPowerScrollPane.setVisible(true);
+
+		characterList.clear();
+		convertCharsSelected(charsSelected);
+		removeAllChildren(changeDPowerPane);
+		removeAllChildren(bestTeamPane);
+		loadSelectedChars(); 
+
+		changeAllTextField.clear();
+		changeAllTextField.setVisible(true);
+		changeAllLevelsButton.setVisible(true);
+		changeAlldPowersButton.setVisible(false);
+		missionPowerTextField.setVisible(true);
+		removeAllChildren(bestTeamPane);
+		TeamCalculator.resetAllBest();
+		nextBestTeamButton.setVisible(false);
+		previousBestTeamButton.setVisible(false);
 	}
 
 	public void paypalButton() { // linking to the paypal donation page
@@ -1110,7 +1185,7 @@ public class Controller implements Initializable {
 				ObservableList<Node> checkBoxes = currentPane.getChildren();
 				ArrayList<CheckBoxImage> checkboxList = new ArrayList<>();
 				originalOrderSS = new ArrayList<>();
-				
+
 				// Getting a list of the checkboxes in the pane
 				for (Node checkbox : checkBoxes) {
 					if (checkbox instanceof CheckBoxImage) {
@@ -1228,20 +1303,20 @@ public class Controller implements Initializable {
 	}
 
 	public void progressBar() { // progress bar being loaded and best team calculations being executed at the same time
-		
+
 		lastNumMembers = Main.numMembers;
 		charLevel = new String[charsSelected.size()];
-		
+
 		if (!missionPowerTextField.getText().isEmpty()) {
 			try {
-			    missionPower = Integer.parseInt(missionPowerTextField.getText());
+				missionPower = Integer.parseInt(missionPowerTextField.getText());
 			} catch (NumberFormatException e) {
 				showErrorPopup("Error", "Minimum Mission DPower can only contain numbers!");
 			}
 		}
-			
+
 		CountDownLatch latch = new CountDownLatch(1);
-		
+
 		calculationThread = new Thread(new CalculationRunnable(latch)); // calculations for the best team running on a new thread
 
 		Task<Void> task = new Task<Void>() {
@@ -1267,12 +1342,12 @@ public class Controller implements Initializable {
 			bestTeamPower.setVisible(false);
 			progressBar.setVisible(true);
 			bestTeamAnchorPane.setVisible(true);
+			backToSubmissionButton.setVisible(true);
 
 			taskThread.start();
 		}
 	}
 
-	
 	private class CalculationRunnable implements Runnable {
 		private CountDownLatch latch;
 
@@ -1285,22 +1360,23 @@ public class Controller implements Initializable {
 		public void run() {
 			// replacing the default power with whatever the user enters in the textfield
 			for (int i = 0; i < charsSelected.size(); i++) {
-				
+
+				// Convert level to dPower
 				if (changeLevel || (savedLevelChanged && !changeDPower)) {
-					
+
 					float tempPower =  Float.parseFloat(powerTextField[i].getText());
 					charLevel[i] = powerTextField[i].getText();
 					character[i].setLevel(Integer.parseInt(charLevel[i])); // set character levels
-					
+
 					if (tempPower == 1) {
 						character[i].setdPower(character[i].getDefaultPower());		
 					}
 					else {
 						if (character[i].getType().equals("SSS")) {
-							
+
 							tempPower = (float) Math.ceil((tempPower * 7.5 - 7.5) + 157);
 							character[i].setdPower((int)tempPower);
-							 
+
 						}
 						else if (character[i].getType().equals("SS")) {
 							character[i].setdPower(((int)tempPower * 5 - 5) + 105);
@@ -1318,46 +1394,214 @@ public class Controller implements Initializable {
 			latch.countDown(); 
 		}		
 	}
-	
+
 	public void findNextBestTeam() {
 		List<Character> charsToRemove = new ArrayList<>();
-		
-		//Main.numMembers = numMembersChoiceBox.getValue();
+
 		for (int i = 0; i < characterList.size(); i++) {
 			for (int j = 0; j < lastNumMembers; j++) {		
-				if (characterList.get(i).getName().equals(TeamCalculator.bestTeam[0][j].getName())) {
+				if (characterList.get(i).getName().equals(TeamCalculator.bestTeam[TeamCalculator.bestTeamCounter-1][j].getName())) {
 					charsToRemove.add(characterList.get(i));
 				}
 			}	
 		}	
 		characterList.removeAll(charsToRemove);
+
 		if (characterList.size() > Main.numMembers) {
+
 			TeamCalculator.resetBest();
 			removeAllChildren(bestTeamPane);
 			progressBar();
+			previousBestTeamButton.setVisible(true);
+			bestTeamPageCounter = TeamCalculator.bestTeamCounter;
 		} 
 		else {
+			characterList.addAll(charsToRemove);
 			showErrorPopup("Error", "Not enough characters to compare!");
 		}
 	}
 
+	public void findAlternativeTeam() {
+		TeamCalculator.resetBest();
+		removeAllChildren(bestTeamPane);
+		progressBar();		
+		previousBestTeamButton.setVisible(true);
+		bestTeamPageCounter = TeamCalculator.bestTeamCounter;
+	}
+
+	public void showPreviousBestTeam() {
+
+		bestTeamPageCounter--;
+
+		removeAllChildren(bestTeamPane);
+
+		int numMembers = Main.numMembers;
+		String name[] = new String[numMembers];
+		String finalCharPower[] = new String[numMembers];
+		Image icon[] = new Image[numMembers];
+		ImageView iconView[] = new ImageView[numMembers];
+		Label powerLabel[] = new Label[numMembers];
+		VBox vbox[] = new VBox[numMembers];
+
+		for (int i = 0; i < numMembers; i++) {
+
+			// getting the name and power of the chars in the best team
+			if (changeLevel || (savedLevelChanged && !changeDPower)) {
+				finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[bestTeamPageCounter][i].getLevel());
+
+			}
+			else {
+				finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[bestTeamPageCounter][i].dPower);
+			}		
+
+			name[i] = TeamCalculator.bestTeam[bestTeamPageCounter][i].name;
+
+			// loops getting the char icons
+			for (CheckBoxImage element : checkboxImageSSS) {
+				if (name[i].equals(element.getTooltipText())) {
+					icon[i] = element.getImage();
+					break;
+				}
+			}
+
+			for (CheckBoxImage element : checkboxImageSS) {
+				if (name[i].equals(element.getTooltipText())) {
+					icon[i] = element.getImage();
+					break;
+				}
+			}
+
+			for (CheckBoxImage element : checkboxImageS) {
+				if (name[i].equals(element.getTooltipText())) {
+					icon[i] = element.getImage();
+					break;
+				}
+			}
+
+			iconView[i] = new ImageView(icon[i]);
+			powerLabel[i] = new Label();
+			vbox[i] = new VBox();
+			iconView[i].setPreserveRatio(true);
+			iconView[i].setFitWidth(MAX_WIDTH);
+			iconView[i].setFitHeight(MAX_HEIGHT);
+			powerLabel[i].setText(finalCharPower[i]);
+			powerLabel[i].setPrefSize(MAX_WIDTH, 10);
+			powerLabel[i].setFont(Font.font("Palatino", 18));
+			powerLabel[i].setStyle("-fx-font-weight: bold;");
+			powerLabel[i].setTextFill(Color.WHITE);
+			powerLabel[i].setAlignment(Pos.CENTER);
+			powerLabel[i].getStyleClass().add("text-outline");
+			vbox[i].getChildren().addAll(iconView[i], powerLabel[i]);
+			bestTeamPane.getChildren().add(vbox[i]);
+		}
+		String BestTeamPower = Integer.toString(TeamCalculator.BestTeamPower[bestTeamPageCounter]);
+		bestTeamPower.setText(BestTeamPower);
+
+		if (missionPower != 0 && TeamCalculator.BestTeamPower[bestTeamPageCounter] < missionPower) {
+			showWarningPopup("Warning", "Your best team does not have enough power for this mission :(");
+		}			
+
+		if (bestTeamPageCounter == 0)
+			previousBestTeamButton.setVisible(false);
+
+		nextBestTeamButton.setVisible(true);
+	}
+
+	public void showNextBestTeam() {
+
+		bestTeamPageCounter++;
+
+		removeAllChildren(bestTeamPane);
+
+		int numMembers = Main.numMembers;
+		String name[] = new String[numMembers];
+		String finalCharPower[] = new String[numMembers];
+		Image icon[] = new Image[numMembers];
+		ImageView iconView[] = new ImageView[numMembers];
+		Label powerLabel[] = new Label[numMembers];
+		VBox vbox[] = new VBox[numMembers];
+
+		for (int i = 0; i < numMembers; i++) {
+
+			// getting the name and power of the chars in the best team
+			if (changeLevel || (savedLevelChanged && !changeDPower)) {
+				finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[bestTeamPageCounter][i].getLevel());
+
+			}
+			else {
+				finalCharPower[i] = Integer.toString(TeamCalculator.bestTeam[bestTeamPageCounter][i].dPower);
+			}		
+
+			name[i] = TeamCalculator.bestTeam[bestTeamPageCounter][i].name;
+
+			// loops getting the char icons
+			for (CheckBoxImage element : checkboxImageSSS) {
+				if (name[i].equals(element.getTooltipText())) {
+					icon[i] = element.getImage();
+					break;
+				}
+			}
+
+			for (CheckBoxImage element : checkboxImageSS) {
+				if (name[i].equals(element.getTooltipText())) {
+					icon[i] = element.getImage();
+					break;
+				}
+			}
+
+			for (CheckBoxImage element : checkboxImageS) {
+				if (name[i].equals(element.getTooltipText())) {
+					icon[i] = element.getImage();
+					break;
+				}
+			}
+
+			iconView[i] = new ImageView(icon[i]);
+			powerLabel[i] = new Label();
+			vbox[i] = new VBox();
+			iconView[i].setPreserveRatio(true);
+			iconView[i].setFitWidth(MAX_WIDTH);
+			iconView[i].setFitHeight(MAX_HEIGHT);
+			powerLabel[i].setText(finalCharPower[i]);
+			powerLabel[i].setPrefSize(MAX_WIDTH, 10);
+			powerLabel[i].setFont(Font.font("Palatino", 18));
+			powerLabel[i].setStyle("-fx-font-weight: bold;");
+			powerLabel[i].setTextFill(Color.WHITE);
+			powerLabel[i].setAlignment(Pos.CENTER);
+			powerLabel[i].getStyleClass().add("text-outline");
+			vbox[i].getChildren().addAll(iconView[i], powerLabel[i]);
+			bestTeamPane.getChildren().add(vbox[i]);
+		}
+		String BestTeamPower = Integer.toString(TeamCalculator.BestTeamPower[bestTeamPageCounter]);
+		bestTeamPower.setText(BestTeamPower);
+
+		if (missionPower != 0 && TeamCalculator.BestTeamPower[bestTeamPageCounter] < missionPower) {
+			showWarningPopup("Warning", "Your best team does not have enough power for this mission :(");
+		}
+
+		if (bestTeamPageCounter == TeamCalculator.bestTeamCounter-1)
+			nextBestTeamButton.setVisible(false);
+
+		previousBestTeamButton.setVisible(true);
+	}
+
 	public void loadLastFile() {
-		 
+
 		loadLastFile = true;
 		loadChars(); 
 	}
-	
+
 	public void loadChars() { // loading chars and their dpower from SER file user may have saved.
-		
+
 		CharSelection selection = new CharSelection();
 		try {
 			selection.loadSelection();
 		} catch (ClassNotFoundException | IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		if (!CharSelection.cancelled) {
-			
+
 			// If the char levels were saved, toggle that, or toggle the dpower instead
 			// Also toggle the changelevel or dpower buttons if each perspective one was saved
 			if (selection.levelSaved == 1) {
@@ -1382,11 +1626,11 @@ public class Controller implements Initializable {
 			for (Character character : unitList) {
 				character.setdPower(character.defaultPower);
 			}
-			
+
 			charsSelected.addAll(selection.charsSelected);			
 			convertCharsSelected(charsSelected);
 			converted = true;
-									
+
 			for (int i = 0; i < charsSelected.size(); i++) {
 				if (savedLevelChanged) 
 					characterList.get(i).setLevel(selection.savedInput[i]);
@@ -1399,25 +1643,25 @@ public class Controller implements Initializable {
 	}
 
 	public void saveChars() { // saving chars and their dpower to SER file
-		
+
 		int levelSaved;
 		int powerSaved;
 		if (changeLevel)
 			levelSaved = 1;
 		else
 			levelSaved = 0;
-		
+
 		if (changeDPower)
 			powerSaved = 1;
 		else
 			powerSaved = 0;
-		
+
 		CharSelection selection = new CharSelection();
 		int[] savedInput = new int[charsSelected.size()];
 
 		if (!charsSelected.isEmpty()) {
 			for (int i = 0; i < charsSelected.size(); i++) {
-					savedInput[i] = Integer.parseInt(powerTextField[i].getText());
+				savedInput[i] = Integer.parseInt(powerTextField[i].getText());
 			}
 
 			try {
@@ -1429,27 +1673,27 @@ public class Controller implements Initializable {
 	}
 
 	public void changeAllLevels() {
-		
+
 		String changeAllTarget = changeAllTextField.getText();
-		
+
 		for (int i = 0; i < charsSelected.size(); i++) {
 			powerTextField[i].setText(changeAllTarget);
 		}
 	}
-	
+
 	public void changeAlldPowers() {
-		
+
 		String changeAllTarget = changeAllTextField.getText();
-		
+
 		for (int i = 0; i < charsSelected.size(); i++) {
 			powerTextField[i].setText(changeAllTarget);
 		}
 	}
-	
+
 	public void exit() {
 		System.exit(0);
 	}
-	
+
 	//Char comparison feature stars here
 	@FXML
 	AnchorPane comparisonPane, splitPaneA, splitPaneB;
@@ -1477,30 +1721,30 @@ public class Controller implements Initializable {
 	GridPane skillsGridPaneA, skillsGridPaneB;
 	@FXML
 	StackPane differenceStackPane;
-	
+
 	String choiceA, choiceB, charAName, charBName, searchInput;
 	Character charChoiceA;
 	Character charChoiceB;
-	
+
 	BorderStroke borderStroke = new BorderStroke(
-		    Color.SIENNA,                       
-		    BorderStrokeStyle.SOLID,           	
-		    null,                               
-		    new BorderWidths(3)                 
-		);
+			Color.SIENNA,                       
+			BorderStrokeStyle.SOLID,           	
+			null,                               
+			new BorderWidths(3)                 
+			);
 	Border border = new Border(borderStroke);
-	
+
 	final int SKILL_MAX_HEIGHT = 110;
 	final int SKILL_MAX_WIDTH= 130;
-	
-	
+
+
 	String[] sssSkillIcons = { "Prime Whitebeard skill 1", "Prime Whitebeard skill 2", "Prime Whitebeard skill 3", "Prime Whitebeard skill 4", "Zephyr skill 1", "Zephyr skill 2",
 			"Zephyr skill 3", "Zephyr skill 4", "Robin - Christmas skill 1", "Robin - Christmas skill 2", "Robin - Christmas skill 3", "Robin - Christmas skill 4", 
 			"Yamato", "Mihawk (Summit War)", "God Usopp", "Sanji Germa",
 			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
 			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
 			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
-	
+
 	String[] sssSkillIconsPaths = { "resources/skills/Prime Whitebeard skill 1.png", "resources/skills/Prime Whitebeard skill 2", "resources/skills/Prime Whitebeard skill 3", 
 			"resources/skills/Prime Whitebeard skill 4", "resources/skills/Zephyr skill 1", "resources/skills/Zephyr skill 2", "resources/skills/Zephyr skill 3", 
 			"resources/skills/Zephyr skill 4", "resources/skills/Robin - Christmas skill 1", "resources/skills/Robin - Christmas skill 2", "resources/skills/Robin - Christmas skill 3", 
@@ -1508,7 +1752,7 @@ public class Controller implements Initializable {
 			"Enma Zoro", "Oden", "Nami (Valentine's Day)", "Carrot", "Kaido", "Magellan", "Charlotte Linlin - Lily",
 			"Swimsuit - Hancock", "Blackbeard", "Snakeman Luffy", "Golden Lion", "Fujitora", "Shanks", "Rayleigh",
 			"Charlotte Linlin", "Kizaru", "Aokiji", "Sengoku", "Whitebeard", "Akainu", "Garp", "Mihawk"};
-	
+
 	public void setCharSkills() {
 		// Prime Whitebeard
 		Skills murakumogiri = new Skills();
@@ -1523,13 +1767,13 @@ public class Controller implements Initializable {
 		earthManipulation.setDmgToTarget(50);
 		Skills vibrationWave = new Skills();
 		vibrationWave.setHealProhibit(true);	
-		
+
 		for (int i=0; i<unit.length;i++) {
 			if (unit[i].getName().equals("Prime Whitebeard")) {
 				unit[i].setSkill1("Total of " + NumberFormat.getNumberInstance().format(Math.abs(unit[i].getAtk()*(murakumogiri.getAtk()/100))) + " single target damage\n" + murakumogiri.getMiscEffect1());
 				unit[i].setSkill2("+" + theStrongestMan.getBreakRate() + "% Break Rate\n" + theStrongestMan.getMiscEffect1());
 				unit[i].setSkill3("+" + earthManipulation.getCritRate() + "% Crit Rate\n" + earthManipulation.getSpd() + "Speed\n" + "+" + earthManipulation.getDmgToTarget()
-				 + "% Damage to the target");
+				+ "% Damage to the target");
 				unit[i].setSkill4("Applies Heal Prohibit");
 			}
 			if (unit[i].getName().equals("Zephyr")) {
@@ -1546,28 +1790,29 @@ public class Controller implements Initializable {
 			}
 		}
 	}
-	
+
 	public void charComparisonVisible() {
 		comparisonPane.setVisible(true);
 		ruinsPane.setVisible(false);
-		calculatorPane.setVisible(false);
+		brooksCalcPane.setVisible(false);
+		setSailCalcPane.setVisible(false);
 		charAVBox.setBorder(border);
 		charBVBox.setBorder(border);	
 		resultVBox.setBorder(border);
 	}
-	
+
 	public void getCharInfo() {
-		
+
 		differenceStackPane.setVisible(true);
 		charAVBox.setVisible(true);
 		charBVBox.setVisible(true);
 		skillsGridPaneA.setVisible(false);
 		skillsGridPaneB.setVisible(false);
-		
+
 		charAName = charATextField.getText().toLowerCase();
 		charBName = charBTextField.getText().toLowerCase();
 
-			
+
 		for (int i = 0; i < charNames.size(); i++) {
 			if (charAName.equals(charNames.get(i).toLowerCase()))
 				choiceA = charNames.get(i);
@@ -1576,40 +1821,40 @@ public class Controller implements Initializable {
 			if (charBName.equals(charNames.get(i).toLowerCase()))
 				choiceB = charNames.get(i);
 		}
-		
+
 		String imagePathA = "resources/" + choiceA + ".png";
 		Image imageA = new Image(getClass().getResourceAsStream(imagePathA));
 		charAIcon.setImage(imageA);
-		
+
 		String imagePathB = "resources/" + choiceB + ".png";
 		Image imageB = new Image(getClass().getResourceAsStream(imagePathB));
 		charBIcon.setImage(imageB);
-		
+
 		charChoiceA = findUnit(choiceA, unitList);
 		charChoiceB = findUnit(choiceB, unitList);
-		
+
 		// char A stats
 		charALabelHPnumber.setText(""+ NumberFormat.getInstance().format(charChoiceA.getHp()));
 		charALabelATKnumber.setText(""+ NumberFormat.getInstance().format(charChoiceA.getAtk()));
 		charALabelDEFnumber.setText(""+ NumberFormat.getInstance().format(charChoiceA.getDef()));
 		charALabelSPDnumber.setText(""+ NumberFormat.getInstance().format(charChoiceA.getSpeed()));
-		
+
 		// char B stats
 		charBLabelHPnumber.setText(""+ NumberFormat.getInstance().format(charChoiceB.getHp()));
 		charBLabelATKnumber.setText(""+ NumberFormat.getInstance().format(charChoiceB.getAtk()));
 		charBLabelDEFnumber.setText(""+ NumberFormat.getInstance().format(charChoiceB.getDef()));
 		charBLabelSPDnumber.setText(""+ NumberFormat.getInstance().format(charChoiceB.getSpeed()));
-		
+
 		compareStats();
 	}
-	
+
 	public void compareStats() {
-		
+
 		String differenceHP = NumberFormat.getNumberInstance().format(Math.abs(charChoiceA.getHp() - charChoiceB.getHp()));
 		String differenceATK = NumberFormat.getNumberInstance().format(Math.abs(charChoiceA.getAtk() - charChoiceB.getAtk()));
 		String differenceDEF = NumberFormat.getNumberInstance().format(Math.abs(charChoiceA.getDef() - charChoiceB.getDef()));
 		String differenceSPD = NumberFormat.getNumberInstance().format(Math.abs(charChoiceA.getSpeed() - charChoiceB.getSpeed()));
-		
+
 		// HP comparison
 		if (charChoiceA.getHp() > charChoiceB.getHp()) {
 			charALabelHPnumber.getStyleClass().clear();
@@ -1629,7 +1874,7 @@ public class Controller implements Initializable {
 			charALabelHPnumber.getStyleClass().add("white-background");
 			charBLabelHPnumber.getStyleClass().add("white-background");
 		}
-		
+
 		// ATK comparison
 		if (charChoiceA.getAtk() > charChoiceB.getAtk()) {
 			charALabelATKnumber.getStyleClass().clear();
@@ -1649,7 +1894,7 @@ public class Controller implements Initializable {
 			charALabelATKnumber.getStyleClass().add("white-background");
 			charBLabelATKnumber.getStyleClass().add("white-background");
 		}
-		
+
 		// DEF comparison
 		if (charChoiceA.getDef() > charChoiceB.getDef()) {
 			charALabelDEFnumber.getStyleClass().clear();
@@ -1669,7 +1914,7 @@ public class Controller implements Initializable {
 			charALabelDEFnumber.getStyleClass().add("white-background");
 			charBLabelDEFnumber.getStyleClass().add("white-background");
 		}
-		
+
 		// SPEED comparison
 		if (charChoiceA.getSpeed() > charChoiceB.getSpeed()) {
 			charALabelSPDnumber.getStyleClass().clear();
@@ -1689,112 +1934,112 @@ public class Controller implements Initializable {
 			charALabelSPDnumber.getStyleClass().add("white-background");
 			charBLabelSPDnumber.getStyleClass().add("white-background");
 		}
-		
+
 		differenceLabelHPnumber.getStyleClass().add("yellow-background");
 		differenceLabelATKnumber.getStyleClass().add("yellow-background");
 		differenceLabelDEFnumber.getStyleClass().add("yellow-background");
 		differenceLabelSPDnumber.getStyleClass().add("yellow-background");
-		
+
 		differenceLabelHPnumber.setText(differenceHP);
 		differenceLabelATKnumber.setText(differenceATK);
 		differenceLabelDEFnumber.setText(differenceDEF);
 		differenceLabelSPDnumber.setText(differenceSPD);
-		
+
 	}
-	
+
 	public void charATextFieldAction () {
-		
+
 		searchInput = charATextField.getText();
 		ObservableList<String> suggestionsList = FXCollections.observableArrayList();			
-				
+
 		for (String charName : charNames) {
 			if (charName.toLowerCase().startsWith(searchInput)) {
 				suggestionsList.add(charName);	
 			}
 		}		
 		autocompleteBoxA.setItems(suggestionsList);
-		
+
 		// autocomplete box height
 		autocompleteBoxA.setPrefHeight(25 * suggestionsList.size());
-		
+
 		charATextField.setOnKeyPressed(event -> {
-		    if (event.getCode() == KeyCode.DOWN) {
-		        autocompleteBoxA.requestFocus();
-		        autocompleteBoxA.getSelectionModel().select(0);
-		    }
+			if (event.getCode() == KeyCode.DOWN) {
+				autocompleteBoxA.requestFocus();
+				autocompleteBoxA.getSelectionModel().select(0);
+			}
 		});
-		
+
 		autocompleteBoxA.setOnKeyPressed(event -> {
-		    if (event.getCode() == KeyCode.ENTER) {
-		        charATextField.setText(autocompleteBoxA.getSelectionModel().getSelectedItem());
-		        autocompleteBoxA.setVisible(false);
-		        charATextField.requestFocus();
-		        charATextField.positionCaret(charATextField.getText().length());
-		    }
+			if (event.getCode() == KeyCode.ENTER) {
+				charATextField.setText(autocompleteBoxA.getSelectionModel().getSelectedItem());
+				autocompleteBoxA.setVisible(false);
+				charATextField.requestFocus();
+				charATextField.positionCaret(charATextField.getText().length());
+			}
 		});
 		autocompleteBoxA.setOnMousePressed(event -> {			
-		        charATextField.setText(autocompleteBoxA.getSelectionModel().getSelectedItem());
-		        autocompleteBoxA.setVisible(false);
-		        charATextField.requestFocus();
-		        charATextField.positionCaret(charATextField.getText().length());		    
+			charATextField.setText(autocompleteBoxA.getSelectionModel().getSelectedItem());
+			autocompleteBoxA.setVisible(false);
+			charATextField.requestFocus();
+			charATextField.positionCaret(charATextField.getText().length());		    
 		});
-		
+
 		if (suggestionsList.isEmpty()) {
-	    	autocompleteBoxA.setVisible(false);
-	    } else {
-	    	autocompleteBoxA.setVisible(true);
-	    	autocompleteBoxA.toFront();
-	    }
+			autocompleteBoxA.setVisible(false);
+		} else {
+			autocompleteBoxA.setVisible(true);
+			autocompleteBoxA.toFront();
+		}
 	}
-	
+
 	public void charBTextFieldAction () {
-		
+
 		searchInput = charBTextField.getText();
 		ObservableList<String> suggestionsList = FXCollections.observableArrayList();			
-				
+
 		for (String charName : charNames) {
 			if (charName.toLowerCase().startsWith(searchInput)) {
 				suggestionsList.add(charName);	
 			}
 		}		
 		autocompleteBoxB.setItems(suggestionsList);
-		
+
 		// autocomplete box height
 		autocompleteBoxB.setPrefHeight(25 * suggestionsList.size()); 
-		
+
 		autocompleteBoxB.setOnMousePressed(event -> {			
 			charBTextField.setText(autocompleteBoxB.getSelectionModel().getSelectedItem());
-	        autocompleteBoxB.setVisible(false);
-	        charBTextField.requestFocus();
-	        charBTextField.positionCaret(charBTextField.getText().length());		    
+			autocompleteBoxB.setVisible(false);
+			charBTextField.requestFocus();
+			charBTextField.positionCaret(charBTextField.getText().length());		    
 		});
-		
+
 		charBTextField.setOnKeyPressed(event -> {
-		    if (event.getCode() == KeyCode.DOWN) {
-		        autocompleteBoxB.requestFocus();
-		        autocompleteBoxB.getSelectionModel().select(0);
-		    }
+			if (event.getCode() == KeyCode.DOWN) {
+				autocompleteBoxB.requestFocus();
+				autocompleteBoxB.getSelectionModel().select(0);
+			}
 		});
-		
+
 		autocompleteBoxB.setOnKeyPressed(event -> {
-		    if (event.getCode() == KeyCode.ENTER) {
-		        charBTextField.setText(autocompleteBoxB.getSelectionModel().getSelectedItem());
-		        autocompleteBoxB.setVisible(false);
-		        charBTextField.requestFocus();
-		        charBTextField.positionCaret(charBTextField.getText().length());
-		    }
+			if (event.getCode() == KeyCode.ENTER) {
+				charBTextField.setText(autocompleteBoxB.getSelectionModel().getSelectedItem());
+				autocompleteBoxB.setVisible(false);
+				charBTextField.requestFocus();
+				charBTextField.positionCaret(charBTextField.getText().length());
+			}
 		});
 
 		if (suggestionsList.isEmpty()) {
-	    	autocompleteBoxB.setVisible(false);
-	    } else {
-	    	autocompleteBoxB.setVisible(true);
-	    	autocompleteBoxB.toFront();
-	    }
+			autocompleteBoxB.setVisible(false);
+		} else {
+			autocompleteBoxB.setVisible(true);
+			autocompleteBoxB.toFront();
+		}
 	}		
 
 	public void getSkilsInfo () {
-		
+
 		differenceStackPane.setVisible(false);
 		charAVBox.setVisible(false);
 		charBVBox.setVisible(false);
@@ -1802,11 +2047,11 @@ public class Controller implements Initializable {
 		skillsGridPaneB.setVisible(true);
 
 		setCharSkills();
-		
+
 		charAName = charATextField.getText().toLowerCase();
 		charBName = charBTextField.getText().toLowerCase();
 
-			
+
 		for (int i = 0; i < charNames.size(); i++) {
 			if (charAName.equals(charNames.get(i).toLowerCase()))
 				choiceA = charNames.get(i);
@@ -1815,44 +2060,44 @@ public class Controller implements Initializable {
 			if (charBName.equals(charNames.get(i).toLowerCase()))
 				choiceB = charNames.get(i);
 		}
-		
+
 		charChoiceA = findUnit(choiceA, unitList);
 		charChoiceB = findUnit(choiceB, unitList);
-		
+
 		String imagePathA = "resources/" + choiceA + ".png";
 		Image imageA = new Image(getClass().getResourceAsStream(imagePathA));
 		charAIcon.setImage(imageA);
-		
+
 		String imagePathB = "resources/" + choiceB + ".png";
 		Image imageB = new Image(getClass().getResourceAsStream(imagePathB));
 		charBIcon.setImage(imageB);
-		
+
 		Image[] skillA = new Image[4];
 		ImageView[] skillIconA = new ImageView[4];
 		Image[] skillB = new Image[4];
 		ImageView[] skillIconB = new ImageView[4];
-		
+
 		for (int i = 0; i < 4; i++) {
 			final int index = i;
-			
+
 			skillA[i] = new Image(getClass().getResourceAsStream("resources/skills/" + choiceA + " skill " + (i + 1) + ".png"));
 			skillIconA[i] = new ImageView(skillA[i]);
 			skillIconA[i].setFitHeight(SKILL_MAX_HEIGHT);
 			skillIconA[i].setFitWidth(SKILL_MAX_WIDTH);
-			
+
 			skillB[i] = new Image(getClass().getResourceAsStream("resources/skills/" + choiceB + " skill " + (i + 1) + ".png"));
 			skillIconB[i] = new ImageView(skillB[i]);
 			skillIconB[i].setFitHeight(SKILL_MAX_HEIGHT);
 			skillIconB[i].setFitWidth(SKILL_MAX_WIDTH);			
-			
+
 			skillsGridPaneA.add(skillIconA[i], 2, i);			
 			skillsGridPaneB.add(skillIconB[i], 0, i);
-			
+
 			zoomSkillBoxes(skillIconA[index], skillIconA[index], skillIconB[index], index);
 			zoomSkillBoxes(skillIconB[index], skillIconA[index], skillIconB[index], index);
-			
+
 		}
-		
+
 		// 2nd column. Skill numbers
 		Label skill1TextA = new Label(charChoiceA.getSkill1()); 
 		Label skill2TextA = new Label(charChoiceA.getSkill2()); 
@@ -1862,7 +2107,7 @@ public class Controller implements Initializable {
 		skillsGridPaneA.add(skill2TextA, 1, 1);
 		skillsGridPaneA.add(skill3TextA, 1, 2);
 		skillsGridPaneA.add(skill4TextA, 1, 3);
-		
+
 		Label skill1TextB = new Label(charChoiceB.getSkill1()); 
 		Label skill2TextB = new Label(charChoiceB.getSkill2()); 
 		Label skill3TextB = new Label(charChoiceB.getSkill3()); 
@@ -1871,7 +2116,7 @@ public class Controller implements Initializable {
 		skillsGridPaneB.add(skill2TextB, 1, 1);
 		skillsGridPaneB.add(skill3TextB, 1, 2);
 		skillsGridPaneB.add(skill4TextB, 1, 3);
-				
+
 	}
 	public void zoomSkillBoxes(Node hovered, Node boxA, Node boxB, int index) {
 		hovered.setOnMouseEntered(event -> {
@@ -1895,7 +2140,7 @@ public class Controller implements Initializable {
 			}
 			else
 				boxA.setTranslateX(-60);
-				boxB.setTranslateX(50);
+			boxB.setTranslateX(50);
 		});			
 		hovered.setOnMouseExited(event -> {
 			boxA.setScaleX(1.0);   
@@ -1911,22 +2156,35 @@ public class Controller implements Initializable {
 
 	// Event Calculators starts here
 	@FXML 
-	AnchorPane calculatorPane;
+	AnchorPane brooksCalcPane, setSailCalcPane;
 	@FXML
 	Button eventCalcButton, brooksCalcButton, setSailCalcButton, resetBrooksButton, calculateBrooksButton, startTimer, stopTimer;
 	@FXML
-	DatePicker brooksEndDate;
+	DatePicker brooksEndDate, setSailEndDate;
 	@FXML
-	CheckBox dailiesDoneCheckbox;
+	CheckBox dailiesDoneCheckbox, dailyBenefitsDoneCheckbox, dailyRewardClaimedCheckbox, 
+	valuePack5Box, valuePack10Box, valuePack15Box, valuePack30Box, valuePack50Box, breakPacksBox, valuesPrioBox;
 	@FXML
 	TextField currentGemsTextfield, currentWinesTextfield, extraInstancesTextfield, wineGoalTextfield,
-	textfield1k, textfield5k, textfield299, textfield999, textfield2999, textfield9999;
+	textfield1k, textfield5k, textfield299, textfield999, textfield2999, textfield9999, 
+	currentMapTextfield, currentTelescopeTextfield, currentRumTextfield, mapGoalTextfield, telescopeGoalTextfield, rumGoalTextfield,
+	breakPack15Label, breakPack30Label, breakPack50Label, breakPack100Label,
+	valuePack5Label, valuePack10Label, valuePack15Label, valuePack30Label, valuePack50Label, valuePack100Label;
 	@FXML
-	ChoiceBox<Integer> oneThousandGemsPack, fiveThousandGemsPack, money299pack, money2999pack, money999pack, money9999pack;
+	ChoiceBox<Integer> oneThousandGemsPack, fiveThousandGemsPack, money299pack, money2999pack, money999pack, money9999pack,
+	marketPurchaseBox, skypieaChallengeBox, rankingLikeBox, bountyQuestBox, valuePack100Box, topupDaysBox;
 	@FXML
-	Label idlingWinesLabel, dailiesWinesLabel, totalWinesLabel, timerDisplay, remainingTimerDisplay, availableWines;
-	
-	int totalWines, totalIdlingWines, totalDailiesWines, totalGemsWines, totalPacksWines, currentWines, currentGems, wineGoal;
+	ChoiceBox<String> priority1box, priority2box, priority3box;
+	@FXML
+	Label idlingWinesLabel, dailiesWinesLabel, totalWineLabel, bTimerDisplay, bRemainingTimerDisplay, availableWines, 
+	availableMaps, ssTimerDisplay, ssRemainingTimerDisplay, totalMapLabel, totalTelescopeLabel, totalRumLabel, totalCostLabel;
+	@FXML
+	GridPane resultGridPane;
+	Boolean bTimerStopped = true;
+	Boolean ssTimerStopped = true;
+
+	// brooks variables
+	int totalWine, totalIdlingWines, totalDailiesWines, totalGemsWines, totalPacksWines, currentWines, currentGems, wineGoal;
 	int extraInstanceChances = 0;
 	int sssCost = 10000;
 	int pack1k = 300;
@@ -1935,80 +2193,105 @@ public class Controller implements Initializable {
 	int pack999 = 360;
 	int pack2999 = 1080;
 	int pack9999 = 4000;
-	
-	Boolean timerStopped = true;
-	
-	public void eventCalculatorsVisible() {
-		calculatorPane.setVisible(true);
+
+	// set sail variable
+	int totalIdlingMaps, currentMap, currentTelescope, currentRum, mapGoal, telescopeGoal, rumGoal, totalMap, totalTelescope, totalRum,
+	valuePack5, valuePack10, valuePack15, valuePack30, valuePack50, totalTelescopePurchased, totalRumPurchased;	
+	int dailyBenefitMaps = 200;
+	int infiniteGoal = 99999;
+	int[] priorityGoal = new int[3];
+	int[] totals = new int[3];
+	boolean[] priorityGoalReached = new boolean [3];
+	String[] priorityNames = new String[4];
+	boolean allPacksBought;
+	boolean allValuePacksBought;
+	int pack5added;
+	int pack10added;
+	int pack15added;
+	int pack30added;
+	int pack50added;
+	int pack100added;
+	int breakPack15;
+	int breakPack30;
+	int breakPack50;
+	int breakPack100;
+	int finalCost;
+
+	public void brooksCalculatorsVisible() {
+		brooksCalcPane.setVisible(true);
+		setSailCalcPane.setVisible(false);
 		comparisonPane.setVisible(false);
 		ruinsPane.setVisible(false);
 	}
-	
+	public void setSailCalculatorsVisible() {
+		brooksCalcPane.setVisible(false);
+		setSailCalcPane.setVisible(true);
+		comparisonPane.setVisible(false);
+		ruinsPane.setVisible(false);
+	}
+
 	public void calculateBrooks() {
-		
+
 		int instanceChances = 12;
 		int winesPerInstance = 3;
-		
+
 		LocalDate today = LocalDate.now();
 		LocalDateTime endOfDay = LocalDateTime.of(today, LocalTime.MAX);
 		LocalDateTime timeNow = LocalDateTime.now();
-		
-		// Specify the timezone ID for China
-        String chinaTimeZoneId = "Asia/Bangkok";
-        // Get the current time in the specified timezone
-        LocalDateTime chinaTime = LocalDateTime.now(ZoneId.of(chinaTimeZoneId));
-		// Going to add the minutes of timezone difference into the calculation. To get Server time.
-        long timeZoneMinutesDifference = ChronoUnit.MINUTES.between(timeNow, chinaTime);
 
-        // Calculate the difference in days
-        long daysUntilTarget = ChronoUnit.DAYS.between(today, brooksEndDate.getValue());
-        // Calculate the minutes until the end of today
-        long minutesUntilMidnight = (ChronoUnit.SECONDS.between(LocalDateTime.now(), endOfDay)) / 60;       
-        // calcaulate minutes left until the end of Brooks
-        int minutesOfBrooksLeft = (int) (daysUntilTarget * 24 * 60) + (int) minutesUntilMidnight + (int) timeZoneMinutesDifference;        
-        // total of wines possible to get until the end of the event + 10% adjustment as some may be missed
-        totalIdlingWines = (int) ((minutesOfBrooksLeft / 6) * 0.9);
-        
-        // calculating the the total of wines you can get from daily instances
-        
-        if (dailiesDoneCheckbox.isSelected()) {
-        	extraInstanceChances = Integer.parseInt(extraInstancesTextfield.getText());
-        	// instance chances, plus any extra, times the winer per instance. Then times that by the numbers of day left for the event
-        	totalDailiesWines = ((instanceChances + extraInstanceChances) * winesPerInstance) * ((int) daysUntilTarget);
-        }
-        else {
-        	extraInstanceChances = Integer.parseInt(extraInstancesTextfield.getText());
-        	totalDailiesWines = ((instanceChances + extraInstanceChances) * winesPerInstance) * ((int) daysUntilTarget + 1);;
-        }        	
-        
-        // Get the current gems and wines 
-        currentWines = Integer.parseInt(currentWinesTextfield.getText());
-        currentGems = Integer.parseInt(currentGemsTextfield.getText());
-        
-        // Get the total amount of wines you get per gem and $$ pack you bought
-        totalGemsWines = (oneThousandGemsPack.getValue() * pack1k) + (fiveThousandGemsPack.getValue() * pack5k);
-        totalPacksWines = 
-        		(money299pack.getValue() * pack299) + 
-        		(money999pack.getValue() * pack999) +
-        		(money2999pack.getValue() * pack2999) +
-        		(money9999pack.getValue() * pack9999);
-        
-        
-        totalWines = currentWines + totalIdlingWines + totalDailiesWines;
-        calculateBrooksPurchases();
-        
+		// Specify the timezone ID for China
+		String chinaTimeZoneId = "Asia/Bangkok";
+		// Get the current time in the specified timezone
+		LocalDateTime chinaTime = LocalDateTime.now(ZoneId.of(chinaTimeZoneId));
+		// Going to add the minutes of timezone difference into the calculation. To get Server time.
+		long timeZoneMinutesDifference = ChronoUnit.MINUTES.between(timeNow, chinaTime);
+
+		// Calculate the difference in days
+		long daysUntilTarget = ChronoUnit.DAYS.between(today, brooksEndDate.getValue());
+		// Calculate the minutes until the end of today
+		long minutesUntilMidnight = (ChronoUnit.SECONDS.between(LocalDateTime.now(), endOfDay)) / 60;       
+		// calcaulate minutes left until the end of Brooks
+		int minutesOfBrooksLeft = (int) (daysUntilTarget * 24 * 60) + (int) minutesUntilMidnight + (int) timeZoneMinutesDifference;        
+		// total of wines possible to get until the end of the event + 10% adjustment as some may be missed
+		totalIdlingWines = (int) ((minutesOfBrooksLeft / 6) * 0.9);
+
+		// calculating the the total of wines you can get from daily instances
+
+		if (dailiesDoneCheckbox.isSelected()) {
+			extraInstanceChances = Integer.parseInt(extraInstancesTextfield.getText());
+			// instance chances, plus any extra, times the winer per instance. Then times that by the numbers of day left for the event
+			totalDailiesWines = ((instanceChances + extraInstanceChances) * winesPerInstance) * ((int) daysUntilTarget);
+		}
+		else {
+			extraInstanceChances = Integer.parseInt(extraInstancesTextfield.getText());
+			totalDailiesWines = ((instanceChances + extraInstanceChances) * winesPerInstance) * ((int) daysUntilTarget + 1);;
+		}        	
+
+		// Get the current gems and wines 
+		currentWines = Integer.parseInt(currentWinesTextfield.getText());
+		currentGems = Integer.parseInt(currentGemsTextfield.getText());
+
+		// Get the total amount of wines you get per gem and $$ pack you bought
+		totalGemsWines = (oneThousandGemsPack.getValue() * pack1k) + (fiveThousandGemsPack.getValue() * pack5k);
+		totalPacksWines = 
+				(money299pack.getValue() * pack299) + 
+				(money999pack.getValue() * pack999) +
+				(money2999pack.getValue() * pack2999) +
+				(money9999pack.getValue() * pack9999);
+
+		totalWine = currentWines + totalIdlingWines + totalDailiesWines;
+		calculateBrooksPurchases();       
 	}
-	
 	public void calculateBrooksPurchases() {
-		
+
 		int packsNeeded1k = 0;
 		int packsNeeded5k = 0;
 		int packsNeeded299 = 0;
 		int packsNeeded999 = 0;
 		int packsNeeded2999 = 0;
 		int packsNeeded9999 = 0;	
-		
-		int winesNeeded = sssCost - totalWines;	
+
+		int winesNeeded = sssCost - totalWine;	
 		int packsAvailable1k = 6 - oneThousandGemsPack.getValue();
 		int packsAvailable5k = 5 - fiveThousandGemsPack.getValue();
 		int packsAvailable299 = 3 - money299pack.getValue();
@@ -2016,61 +2299,61 @@ public class Controller implements Initializable {
 		int packsAvailable2999 = 5 - money2999pack.getValue();
 		int packsAvailable9999 = 10 - money9999pack.getValue();
 
-		
+
 		// If player wants to set their own goal, it's set here. Otherwise it will be 10k for an SSS
 		wineGoal = Integer.parseInt(wineGoalTextfield.getText());
 		if(wineGoal > 0) {
-			winesNeeded = wineGoal - totalWines;
+			winesNeeded = wineGoal - totalWine;
 		}
 		else
-			winesNeeded = sssCost - totalWines;
-		
+			winesNeeded = sssCost - totalWine;
+
 		// Calculation
 		while (winesNeeded >= 0 && currentGems >= 1000 && packsAvailable1k > 0) {						
 			winesNeeded -= pack1k;	
-			totalWines += pack1k;
+			totalWine += pack1k;
 			currentGems -= 1000;
 			packsAvailable1k--;
 			packsNeeded1k++;
-			
+
 		}
 		while (winesNeeded >= 0 && currentGems >= 5000 && packsAvailable5k > 0) {						
 			winesNeeded -= pack5k;	
-			totalWines += pack5k;
+			totalWine += pack5k;
 			currentGems -= 5000;
 			packsAvailable5k--;
 			packsNeeded5k++;
 		}
-		
+
 		while (winesNeeded > 0 && packsAvailable299 > 0) {						
 			winesNeeded -= pack299;	
-			totalWines += pack299;
+			totalWine += pack299;
 			packsAvailable299--;
 			packsNeeded299++;
 		}
-		
+
 		while (winesNeeded > 0 && packsAvailable999 > 0) {						
 			winesNeeded -= pack999;	
-			totalWines += pack999;
+			totalWine += pack999;
 			packsAvailable999--;
 			packsNeeded999++;
 		}
-		
+
 		while (winesNeeded > 0 && packsAvailable2999 > 0) {						
 			winesNeeded -= pack2999;
-			totalWines += pack2999;
+			totalWine += pack2999;
 			packsAvailable2999--;
 			packsNeeded2999++;
 		}
-		
+
 		while (winesNeeded > 0 && packsAvailable9999 > 0) {			
 			winesNeeded -= pack9999;
-			totalWines += pack9999;
+			totalWine += pack9999;
 			packsAvailable9999--;
 			packsNeeded9999++;
 		}
-		
-		
+
+
 		textfield1k.setText(packsNeeded1k + "");
 		textfield5k.setText(packsNeeded5k + "");
 		textfield299.setText(packsNeeded299 + "");
@@ -2078,12 +2361,11 @@ public class Controller implements Initializable {
 		textfield2999.setText(packsNeeded2999 + "");
 		textfield9999.setText(packsNeeded9999 + "");
 		idlingWinesLabel.setText(""+totalIdlingWines);
-        dailiesWinesLabel.setText(""+totalDailiesWines);
-		totalWinesLabel.setText("" + NumberFormat.getNumberInstance().format(Math.abs(totalWines)));	
+		dailiesWinesLabel.setText(""+totalDailiesWines);
+		totalWineLabel.setText("" + NumberFormat.getNumberInstance().format(Math.abs(totalWine)));	
 	}
-	
 	public void resetBrooks() {
-		totalWines = 0;
+		totalWine = 0;
 		wineGoal = 0;
 		totalIdlingWines = 0;
 		totalDailiesWines = 0;
@@ -2110,189 +2392,1246 @@ public class Controller implements Initializable {
 		textfield2999.setText("0");
 		textfield9999.setText("0");
 	}
+	
+	//main set sail methods
+	// Set sail calculator methods
+	public void calculateSetSail() throws Exception {
 
-		long timestamp;
-	    long secs = 0;
-	    long hrs = 0;
-	    long mins = 0;
-	    long remainingSecs = 3;
-	    long remainingMins = 0;
-	    String seconds = "00";
-	    String minutes = "00";
-	    String hours = "00";
-	    String remainingSeconds = "00";
-	    String remainingMinutes = "00";
-	    long fraction = 0;	     
-	    Preferences prefs;	    
-	    LocalDateTime savedTime;
-	    long savedMillis;
-	    long loadedTime;
-	    int availableWinesToCollect = 0;
+		totalTelescopePurchased = 0;
+		totalRumPurchased = 0;
+		totalMap = 0;
+		totalTelescope = 0; 
+		totalRum = 0;
 
+		priorityGoalReached[0] = false;
+		priorityGoalReached[1] = false;		
+		priorityGoalReached[2] = false;
+		priorityNames[0] = priority1box.getValue();
+		priorityNames[1] = priority2box.getValue();
+		priorityNames[2] = priority3box.getValue();	
+		priorityNames[3] = "infiniteGoal";
 
-	    AnimationTimer timer = new AnimationTimer() {
+		LocalDate today = LocalDate.now();
+		LocalDateTime endOfDay = LocalDateTime.of(today, LocalTime.MAX);
+		LocalDateTime timeNow = LocalDateTime.now();
 
-		    @Override
-		    public void start() {
-		        // current time adjusted by remaining time from last run
-		        timestamp = System.currentTimeMillis() - fraction;
-		        super.start();
-		    }
+		// Specify the timezone ID for China
+		String chinaTimeZoneId = "Asia/Bangkok";
+		// Get the current time in the specified timezone
+		LocalDateTime chinaTime = LocalDateTime.now(ZoneId.of(chinaTimeZoneId));
+		// Going to add the minutes of timezone difference into the calculation. To get Server time.
+		long timeZoneMinutesDifference = ChronoUnit.MINUTES.between(timeNow, chinaTime);
 
-		    @Override
-		    public void stop() {
-		        super.stop();
-		        // save leftover time not handled with the last update
-		        fraction = System.currentTimeMillis() - timestamp;
-		    }
+		// Calculate the difference in days
+		long daysUntilTarget = ChronoUnit.DAYS.between(today, setSailEndDate.getValue());
+		// Calculate the minutes until the end of today
+		long minutesUntilMidnight = (ChronoUnit.SECONDS.between(LocalDateTime.now(), endOfDay)) / 60;       
+		// calcaulate minutes left until the end of Brooks
+		int minutesOfSetSailLeft = (int) (daysUntilTarget * 24 * 60) + (int) minutesUntilMidnight + (int) timeZoneMinutesDifference;        
+		// total of wines possible to get until the end of the event
+		totalIdlingMaps = (int) ((minutesOfSetSailLeft / 33));
 
-		    @Override
-		    public void handle(long now) {
-		        long newTime = System.currentTimeMillis();
-		        if (timestamp + 1000 <= newTime) {
-		        	long deltaT = (newTime - timestamp) / 1000;
-		            secs += deltaT;
-		            remainingSecs -= deltaT;
-		            timestamp += 1000 * deltaT;
-		            Platform.runLater(() -> {
-		                displayTimer();
-		                displayNextWineTimer();
-		            });
+		// Get the current amount of event currency the player has
+		currentMap =  Integer.parseInt(currentMapTextfield.getText());
+		currentTelescope = Integer.parseInt(currentTelescopeTextfield.getText());
+		currentRum = Integer.parseInt(currentRumTextfield.getText());
+
+		// Maps from daily benefit drops
+		if (dailyBenefitsDoneCheckbox.isSelected()) {
+			totalMap = dailyBenefitMaps * (int) daysUntilTarget;
+		}
+		else {
+			totalMap = dailyBenefitMaps * ((int) daysUntilTarget + 1);
+		}
+
+		// Telescopes from daily reward
+		if (dailyRewardClaimedCheckbox.isSelected()) {
+			totalTelescope = 15 * (int) daysUntilTarget;
+
+		}
+		else {
+			totalTelescope = 15 * ((int) daysUntilTarget + 1);
+		}
+
+		// Adding the rewards for the market bounty quests
+		int marketPurchaseDone = marketPurchaseBox.getSelectionModel().getSelectedIndex();
+		switch (marketPurchaseDone) {
+		case 0:
+			break;
+		case 1:
+			totalMap += 3;
+			totalTelescope += 3;
+			break;
+		case 2:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 3:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 4:
+			totalMap += 16;
+			totalTelescope += 16;
+			break;
+		case 5:
+			totalMap += 24;
+			totalTelescope += 24;
+			break;
+		case 6:
+			totalMap += 32;
+			totalTelescope += 32;
+			break;
+		}
+
+		// Adding the rewards for the skypiea bounty quests
+		int skypieaChallengeDone = skypieaChallengeBox.getSelectionModel().getSelectedIndex();
+		switch (skypieaChallengeDone) {
+		case 0:
+			break;
+		case 1:
+			totalMap += 3;
+			totalTelescope += 3;
+			break;
+		case 2:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 3:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 4:
+			totalMap += 16;
+			totalTelescope += 16;
+			break;
+		case 5:
+			totalMap += 24;
+			totalTelescope += 24;
+			break;
+		}
+
+		// Adding the rewards for the ranking bounty quests
+		int rankingLikeDone = rankingLikeBox.getSelectionModel().getSelectedIndex();
+		switch (rankingLikeDone) {
+		case 0:
+			break;
+		case 1:
+			totalMap += 3;
+			totalTelescope += 3;
+			break;
+		case 2:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 3:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 4:
+			totalMap += 16;
+			totalTelescope += 16;
+			break;
+		case 5:
+			totalMap += 24;
+			totalTelescope += 24;
+			break;
+		}
+
+		// Adding the rewards for the bounty bounty quests
+		int bountyQuestDone = bountyQuestBox.getSelectionModel().getSelectedIndex();
+		switch (bountyQuestDone) {
+		case 0:
+			break;
+		case 1:
+			totalMap += 3;
+			totalTelescope += 3;
+			break;
+		case 2:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 3:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 4:
+			totalMap += 16;
+			totalTelescope += 16;
+			break;
+		case 5:
+			totalMap += 24;
+			totalTelescope += 24;
+			break;
+		} 
+
+		int topupDaysNumber = topupDaysBox.getValue();
+		if (topupDaysNumber > 0) {
+			totalRum += 10 * topupDaysNumber;
+			totalTelescope += 10 * topupDaysNumber;
+		}
+		
+		totalRum += currentRum;
+		totalTelescope += currentTelescope;
+		totalMap += currentMap;
+		setSailResultCalculation();
+	}
+	public void setSailResultCalculation () throws Exception {
+		finalCost = 0;
+		breakPack15 = 0;
+		breakPack30 = 0;
+		breakPack50 = 0;
+		breakPack100 = 0;
+		pack100added = 0;
+		pack5added = 0;
+		pack10added = 0;
+		pack15added = 0;
+		pack30added = 0;
+		pack50added = 0;
+		allPacksBought = false;
+		mapGoal = Integer.parseInt(mapGoalTextfield.getText());
+		telescopeGoal = Integer.parseInt(telescopeGoalTextfield.getText());		
+		rumGoal = Integer.parseInt(rumGoalTextfield.getText());
+		int bestPack;		
+		int bought100packs = valuePack100Box.getValue();
+		priorityConverting();			
+		
+		for (int i = 0; i < totals.length; i++) {
+
+			checkGoal(i);
+			System.out.println(totals[0]);
+			System.out.println(totals[1]);
+			System.out.println(totals[2]);
+			while (!priorityGoalReached[i]) {
+				System.out.println(totals[0]);
+				System.out.println(totals[1]);
+				System.out.println(totals[2]);
+				// Add Value Pack 5 logic
+				if(!priorityGoalReached[i] && pack5added < 1 && !valuePack5Box.isSelected()) {							
+					addValuePack(5);
+					pack5added++;
+					finalCost += 5;
+					priorityConverting();				
+				}
+				System.out.println(totals[0]);
+				System.out.println(totals[1]);
+				System.out.println(totals[2]);
+				// Add Value Pack 10 logic
+				checkGoal(i);	
+				if (!priorityGoalReached[i] && pack10added < 1 && !valuePack10Box.isSelected() && (pack5added == 1 || valuePack5Box.isSelected())) {
+					addValuePack(10);
+					pack10added++;
+					finalCost += 10;
+					priorityConverting();
+				}
+				System.out.println(totals[0]);
+				System.out.println(totals[1]);
+				System.out.println(totals[2]);
+				// Add Value Pack 15 logic
+				checkGoal(i);	
+				if (!priorityGoalReached[i] && pack15added < 1 && !valuePack15Box.isSelected() && (pack10added == 1 || valuePack10Box.isSelected())) {
+					addValuePack(15);
+					pack15added++;
+					finalCost += 15;
+					priorityConverting();
+				}
+				System.out.println(totals[0]);
+				System.out.println(totals[1]);
+				System.out.println(totals[2]);
+				// Add Value Pack 30 or Break Pack 15 logic
+				checkGoal(i);	
+				if (!priorityGoalReached[i]) {
+
+					if (breakPack15 < 2 && breakPacksBox.isSelected()) {		
+						bestPack = checkBestPack(30, 915);
+						if (bestPack == 30 && pack30added < 1 && !valuePack30Box.isSelected() && (pack15added == 1 || valuePack15Box.isSelected())) {
+							pack30added++;
+							addValuePack(30);	
+							finalCost += 30;
+						}
+						else if (valuesPrioBox.isSelected() && pack30added < 1 && !valuePack30Box.isSelected() && pack15added == 1) {
+							pack30added++;
+							addValuePack(30);	
+							finalCost += 30;
+						}
+						else {
+							breakPack15++;
+							addBreakPack(915);
+							finalCost += 15;
+						}
+					}
+					else if (breakPack15 == 2 && pack30added < 1 && !valuePack30Box.isSelected() && (pack15added == 1 || valuePack15Box.isSelected())) {
+						pack30added++;
+						addValuePack(30);
+						finalCost += 30;
+					}
+					else if (pack30added < 1 && !valuePack30Box.isSelected() && (pack15added == 1 || valuePack15Box.isSelected())){
+						pack30added++;
+						addValuePack(30);
+						finalCost += 30;
+					}
+					priorityConverting();
+				}
+				// Add Value Pack 50 or Break Pack 30 logic
+				checkGoal(i);	
+				if (!priorityGoalReached[i]) {
+
+					if (breakPack30 < 6 && breakPacksBox.isSelected()) {				
+						bestPack = checkBestPack(50, 930);
+						if (bestPack == 50 && pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
+							pack50added++;
+							addValuePack(50);	
+							finalCost += 50;
+						}
+						else if (valuesPrioBox.isSelected() && pack50added < 1 && !valuePack50Box.isSelected() && pack30added == 1) {
+							pack50added++;
+							addValuePack(50);	
+							finalCost += 50;
+						}
+						else {
+							breakPack30++;
+							addBreakPack(930);
+							finalCost += 30;
+						}
+					}
+					else if (breakPack30 == 6 && pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
+						pack50added++;
+						addValuePack(50);
+						finalCost += 50;
+					}
+					else if (pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
+						pack50added++;
+						addValuePack(50);
+						finalCost += 50;
+					}
+					priorityConverting();
+				}
+				// Add Value Pack 100 or Break Pack 50 logic
+				checkGoal(i);	
+				if (!priorityGoalReached[i]) {
+
+					if (breakPack50 < 12 && breakPacksBox.isSelected()) {				
+						bestPack = checkBestPack(100, 950);
+						if (bestPack == 100 && pack100added < 4 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
+							pack100added++;
+							addValuePack(100);	
+							finalCost += 100;
+						}
+						else if (valuesPrioBox.isSelected() && pack100added < 4 - bought100packs && pack50added == 1) {
+							pack100added++;
+							addValuePack(100);	
+							finalCost += 100;
+						}
+						else {
+							breakPack50++;
+							addBreakPack(950);
+							finalCost += 50;
+						}
+					}
+					else if (breakPack50 == 12 && pack100added < 4 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
+						pack100added++;
+						addValuePack(100);
+						finalCost += 100;
+					}
+
+					else if (breakPack50 == 12 && pack100added == 4 && breakPack100 < 99 && breakPacksBox.isSelected()) {
+						breakPack100++;
+						addBreakPack(9100);
+						finalCost += 100;
+					}
+					else if (pack100added < 4 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
+						pack100added++;
+						addValuePack(100);
+						finalCost += 100;
+					}
+					else if (!breakPacksBox.isSelected() && (pack100added == 4 || valuePack100Box.getValue() == 4)) {
+						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
+						break;
+					}
+					priorityConverting();
+				}
+
+				if (pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
+						pack50added  == 1 && pack100added == 4 && 
+						breakPack15 == 2 && breakPack30 == 6 && breakPack50 == 12 && breakPack100 == 99) {
+					allPacksBought = true;
+					break;
+				}
+				checkGoal(i);
+				if (pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
+						pack50added  == 1 && pack100added == 4 && (!priorityGoalReached[0] || !priorityGoalReached[1] || !priorityGoalReached[2])) {
+					allValuePacksBought = true;
+					showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
+					break;
+				}
+			}
+		}
+		
+		// flash the result pane
+		resultGridPane.setVisible(false);
+		Timeline timeline = new Timeline(
+		    new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
+		        @Override
+		        public void handle(ActionEvent event) {
+		            // After 1 second, make the GridPane visible again
+		            resultGridPane.setVisible(true);
 		        }
-		    }
-		};	
-		
-		public void startTimer() {
-			timer.start();	
-			timerStopped = false;
-		}
-		
-		public void stopTimer() {
-			timer.stop();	
-			timerStopped = true;
-		}
-		
-		public void resetTimer() {
-			secs = 0;
-			mins = 0;
-			hrs = 0;
-		    remainingSecs = 0;
-			remainingMins = 6;
-			fraction = 0;
-			savedMillis = 0;
-			availableWinesToCollect = 0;
-			availableWines.setText("0");
-	        displayTimer();
-	        displayNextWineTimer();
-		}
-		
-		private void loadState() {
-			timerStopped = prefs.getBoolean("timerStopped", timerStopped);
-			if (!timerStopped) {
-		        secs = prefs.getLong("secs", 0);
-		        mins = prefs.getLong("mins", 0);
-		        hrs = prefs.getLong("hrs", 0);
-		        remainingSecs = prefs.getLong("remainingSecs", 0);
-				remainingMins = prefs.getLong("remainingMins", 0);
-		        fraction = prefs.getLong("fraction", 0);	
-		        availableWinesToCollect = prefs.getInt("availableWinesToCollect", 0);
-		        
-		    	savedMillis  = prefs.getLong("savedMillis", 0);	        
-		    	Instant instant = Instant.ofEpochMilli(savedMillis);
-		        savedTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());	    	
-		    	long secondsEllapsed = (ChronoUnit.SECONDS.between(savedTime, LocalDateTime.now()));
-		    	 
-		    	hrs += secondsEllapsed / 3600;
-		    	long savedRemainingSeconds = secondsEllapsed % 3600;
-		    	mins += savedRemainingSeconds / 60;
-		    	secs += savedRemainingSeconds % 60;
-		    		        	    	
-		    	long savedRemainingMinutes = secondsEllapsed / 60;
-		    	availableWinesToCollect += savedRemainingMinutes / 6;
-		    	remainingMins -= savedRemainingMinutes % 6;
-		    	if (remainingMins < 0) {
-		    		availableWinesToCollect++;
-		    		remainingMins += 6;
-		    	}
-		    	remainingSecs -= secondsEllapsed % 60;
-		    	if (remainingSecs < 0) {
-		    		if (remainingMins == 0) {
-			    		availableWinesToCollect++;
-		    		}
-		    		remainingMins += 6;
-		    	}
-		    	availableWines.setText("" + availableWinesToCollect);
-		        displayTimer();
-		        displayNextWineTimer();
-			}
-	    }
+		    })
+		);
 
-	   private void saveState() {
-	        prefs.putLong("secs", secs);
-	        prefs.putLong("mins", mins);
-	        prefs.putLong("hrs", hrs);
-	        prefs.putLong("remainingSecs", remainingSecs);
-			prefs.putLong("remainingMins", remainingMins);
-	        prefs.putLong("fraction", fraction);     
-	        
-	        savedMillis = System.currentTimeMillis();
-	        prefs.putLong("savedMillis", savedMillis);
+		// Play the timeline
+		timeline.play();
+		
+		totalRumLabel.setText(""+totalRum);
+		totalTelescopeLabel.setText(""+totalTelescope);
+		totalMapLabel.setText(""+totalMap);
+		
+		valuePack5Label.setText(""+pack5added);
+		valuePack10Label.setText(""+pack10added);
+		valuePack15Label.setText(""+pack15added);
+		valuePack30Label.setText(""+pack30added);
+		valuePack50Label.setText(""+pack50added);
+		valuePack100Label.setText(""+pack100added);
+		
+		breakPack15Label.setText(""+breakPack15);
+		breakPack30Label.setText(""+breakPack30);
+		breakPack50Label.setText(""+breakPack50);
+		breakPack100Label.setText(""+breakPack100);
+		
+		totalCostLabel.setText("$" + finalCost);
+	}
+	public void priorityConverting () throws Exception {
 
-	        prefs.putInt("availableWinesToCollect", availableWinesToCollect);
-	        prefs.putBoolean("timerStopped", timerStopped);
-	    }		
-	    
-	   public void displayTimer() {
-			 
-		   if (secs >= 60) {
-				mins++;
-				secs = 0;
-			}			
-			
-			if (mins >= 60) {
-				hrs ++;
-				mins = 0;
-			}
-			
-			if (secs < 10)
-				seconds = "0" + secs;
-			else 
-				seconds = "" + secs;
-			
-			if (mins < 10)
-				minutes = "0" + mins;
-			else 
-				minutes = "" + mins;
-			
-			if (hrs < 10)
-				hours = "0" + hrs;
-			else 
-				hours = "" + hrs;		
-			
-			timerDisplay.setText(hours + ":" + minutes + ":" + seconds); 
-			
-		}
-	   
-	   public void displayNextWineTimer() {
-		   
-			if (remainingSecs < 0) {
-				remainingMins--;
-				remainingSecs = 59;
+		Controller methodInvoker = this;		
+		String conv3to1 = "conv" + priorityNames[2] + "To" + priorityNames[0]; 
+		String conv2to1 = "conv" + priorityNames[1] + "To" + priorityNames[0];
+		String conv3to2 = "conv" + priorityNames[2] + "To" + priorityNames[1]; 
+		String convRem1to2 = "convRem" + priorityNames[0] + "To" + priorityNames[1]; 
+		String convRem1to3 = "convRem" + priorityNames[0] + "To" + priorityNames[2];
+		String convRem2to3 = "convRem" + priorityNames[1] + "To" + priorityNames[2];
+		Method mConv3to1 = methodInvoker.getClass().getMethod(conv3to1, int.class);	
+		Method mConv2to1 = methodInvoker.getClass().getMethod(conv2to1, int.class);
+		Method mConv3to2 = methodInvoker.getClass().getMethod(conv3to2, int.class);
+		Method mConvRem1to2 = methodInvoker.getClass().getMethod(convRem1to2);
+		Method mConvRem1to3 = methodInvoker.getClass().getMethod(convRem1to3);
+		Method mConvRem2to3 = methodInvoker.getClass().getMethod(convRem2to3);
+		totals = getTotals(priorityNames);
+		priorityGoal = getPriorityGoals(priorityNames);		
+
+		if (totals[0] >= priorityGoal[0]) 
+			priorityGoalReached[0] = true;
+		else {
+			// convert priority 3 to priority 1
+			mConv3to1.invoke(methodInvoker, priorityGoal[0]);
+			totals = getTotals(priorityNames);
+			checkGoal(0);
+
+			if (!priorityGoalReached[0]) {
+				// convert priority 2 to priority 1
+				mConv2to1.invoke(methodInvoker, priorityGoal[0]);								
+				totals = getTotals(priorityNames);
+
+				checkGoal(0);	
 			}	
-			
-			if (remainingSecs < 10)
-				remainingSeconds = "0" + remainingSecs;
-			else 
-				remainingSeconds = "" + remainingSecs;
-			
-			remainingMinutes = "0" + remainingMins;
-		
-			if (remainingMins == 0 && remainingSecs == 0) {
-				availableWinesToCollect++;
-				remainingMins = 6;			
-				availableWines.setText("" + availableWinesToCollect);
+		}
+		// Focus on priority 2 if priority 1 goal is reached
+		if (priorityGoalReached[0]) {
+
+			checkGoal(1);
+
+			if (!priorityGoalReached[1]) {
+				// convert priority 3 to priority 2
+				mConv3to2.invoke(methodInvoker, priorityGoal[1]);
+				totals = getTotals(priorityNames);
+
+				checkGoal(1);
+
+				if (!priorityGoalReached[1]) {
+					mConvRem1to2.invoke(methodInvoker);
+					totals = getTotals(priorityNames);
+
+					checkGoal(1);		
+				}
 			}
-		   
-		   remainingTimerDisplay.setText(remainingMinutes + ":" + remainingSeconds);
-	   }
+		}
+		// Focus on priority 3 if priority 2 goal is reached
+		if (priorityGoalReached[1]) {
+
+			checkGoal(2);
+
+			if (!priorityGoalReached[2]) {
+				mConvRem2to3.invoke(methodInvoker);
+				totals = getTotals(priorityNames);
+
+				checkGoal(2);
+			}
+			if (!priorityGoalReached[2]) {			
+				mConvRem1to3.invoke(methodInvoker);
+				totals = getTotals(priorityNames);
+
+				checkGoal(2);	
+			}
+		}			
+		// If priority 3 goal is reached, add rest to priority 1
+		if (priorityGoalReached[2]) {
+			mConv3to1.invoke(methodInvoker, infiniteGoal);
+			mConv2to1.invoke(methodInvoker, infiniteGoal);
+		}	
+		totals = getTotals(priorityNames);
+	}
+	// additional calculation methods
+	// additional methods for calculation
+	public int goalTotalDifference(int amount, int goal) {
+		int difference;
+
+		difference = amount - goal;
+
+		return difference;
+	}
+	public void checkGoal(int i) {
+
+		if (totals[i] >= priorityGoal[i] || priorityGoal[i] == 0 ) {
+			priorityGoalReached[i] = true;
+		}
+	}
+	public void addValuePack(int packPrice) {
+
+		if (packPrice == 5) {
+			totalTelescope += 10;
+			totalRum += 16;
+		}
+		if (packPrice == 10) {
+			totalTelescope += 20;
+			totalRum += 30;
+		} 
+		if (packPrice == 15) {
+			totalTelescope += 30;
+			totalRum += 40;
+		} 
+		if (packPrice == 30) {
+			totalTelescope += 40;
+			totalRum += 80;
+		} 
+		if (packPrice == 50) {
+			totalTelescope += 60;
+			totalRum += 120;
+		}    
+		if (packPrice == 100) {
+			totalTelescope += 120;
+			totalRum += 240;
+		}    
+	}
+	public void addBreakPack(int packPrice) {
+
+		if (packPrice == 915) {
+			totalTelescope += 5;
+			totalRum += 30;
+		} 
+		if (packPrice == 930) {
+			totalTelescope += 10;
+			totalRum += 60;
+		} 
+		if (packPrice == 950) {
+			totalTelescope += 15;
+			totalRum += 90;
+		}    
+		if (packPrice == 9100) {
+			totalTelescope += 30;
+			totalRum += 160;
+		}    
+	}
+	public int checkBestPack(int pack1, int pack2) throws Exception {
+
+		// Save all originals before simulating packs for comparing
+		int[] ogTotals;
+		int ogTotalRum;
+		int ogTotalTelescope;
+		int ogTotalMap;
+		boolean[] ogPriorityGoalReached;
+
+		ogTotals = Arrays.copyOf(totals, totals.length);
+		ogTotalRum = totalRum;
+		ogTotalTelescope = totalTelescope;
+		ogTotalMap = totalMap;
+		ogPriorityGoalReached = Arrays.copyOf(priorityGoalReached, priorityGoalReached.length);
+
+		int goalChecker1;
+		int goalChecker2;
+		int[] difference1;
+		int[] difference2;
+		int differencesWon1;
+		int differencesWon2;	
+		int chosenPack;
+
+		goalChecker1 = 0;
+		goalChecker2 = 0;
+		difference1 = new int[totals.length];
+		difference2 = new int[totals.length];
+		differencesWon1 = 0;
+		differencesWon2 = 0;	
+		chosenPack = 0;
+
+		// Add pack1 and save how many goals it reaches and the differences to the goals
+		addValuePack(pack1);			
+		priorityConverting();	
+		for (int i = 0; i < totals.length; i++) {		
+			difference1[i] = goalTotalDifference(totals[i], priorityGoal[i]);
+			checkGoal(i);
+			if (priorityGoalReached[i])
+				goalChecker1++;
+		}	
+		// reset everything back to the originals
+		totals = Arrays.copyOf(ogTotals, ogTotals.length);;
+		totalRum = ogTotalRum;
+		totalTelescope = ogTotalTelescope;
+		totalMap = ogTotalMap;
+		priorityGoalReached = Arrays.copyOf(ogPriorityGoalReached, ogPriorityGoalReached.length);
+
+		// Add pack2 and save how many goals it reaches and the differences to the goals
+		addBreakPack(pack2);			
+		priorityConverting();		
+		for (int i = 0; i < totals.length; i++) {		
+			difference2[i] = goalTotalDifference(totals[i], priorityGoal[i]);
+			checkGoal(i);
+			if (priorityGoalReached[i])
+				goalChecker2++;
+		}
+
+		// Choose pack based on the number of goals reached first
+		// If equals, check the differences
+		// The closest to the goal, or with the least resources wasted, wins
+		if (goalChecker1 > goalChecker2) {
+			chosenPack = pack1;
+		}		
+		else if (goalChecker1 < goalChecker2)
+			chosenPack = pack2;
+		else {
+			for (int i = 0; i < totals.length; i++) {			
+				if (difference1[i] < difference2[i]) {					
+					if (priorityGoalReached[i])
+						differencesWon1++;
+					else 
+						differencesWon2++;
+				}
+				else {
+					if (priorityGoalReached[i])
+						differencesWon2++;
+					else 
+						differencesWon1++;
+				}										
+			}
+			if (differencesWon1 > differencesWon2)
+				chosenPack = pack1;
+			else
+				chosenPack = pack2;
+		}
+		// reset everything back to the originals
+		totals = Arrays.copyOf(ogTotals, ogTotals.length);;
+		totalRum = ogTotalRum;
+		totalTelescope = ogTotalTelescope;
+		totalMap = ogTotalMap;
+		priorityGoalReached = Arrays.copyOf(ogPriorityGoalReached, ogPriorityGoalReached.length);
+
+		return chosenPack;
+	}
+	public int[] getPriorityGoals(String[] priorityNames) {
+		int[] priority = new int[4];
+
+		for (int i = 0; i < priority.length; i++ ) {
+			if (priorityNames[i].equals("Rum")) 		
+				priority[i] = rumGoal;			
+			else if (priorityNames[i].equals("Telescope"))		
+				priority[i] = telescopeGoal;
+			else if (priorityNames[i].equals("Map"))			
+				priority[i] = mapGoal;
+			else
+				priority[i] = infiniteGoal;
+		}		
+
+		return priority;
+	}
+	public int[] getTotals(String[] priorityNames) {
+		int[] totals = new int[3];
+
+		for (int i = 0; i < totals.length; i++ ) {
+			if (priorityNames[i].equals("Rum")) 		
+				totals[i] = totalRum;			
+			else if (priorityNames[i].equals("Telescope"))		
+				totals[i] = totalTelescope;
+			else if (priorityNames[i].equals("Map"))			
+				totals[i] = totalMap;
+		}			
+		return totals;
+	}
+	// set sail calc conversion methods
+	public void convMapToRum (int rumGoal) {		
+
+		if (rumGoal == infiniteGoal) {
+			while (totalMap >= mapGoal + 50) {
+				totalMap -= 50;
+				totalRum += 5;				
+			}	
+			return;
+		}		
+		while (totalRum < rumGoal && totalMap >= 50) {
+			totalMap -= 50;
+			totalRum += 5;
+		}		
+	}
+	public void convTelescopeToRum (int rumGoal) {	
+		if (rumGoal == infiniteGoal) {
+			while (totalTelescope >= telescopeGoal + 10) {
+				totalTelescope -= 10;
+				totalRum += 5;
+			}
+			return;
+		}
+		while (totalRum < rumGoal && totalTelescope >= 10) {
+			totalTelescope -= 10;
+			totalRum += 5;
+		}
+	}
+	public void convMapToTelescope (int telescopeGoal) {			
+		if (telescopeGoal == infiniteGoal) {
+			while (totalMap >= mapGoal + 50) {
+				totalMap -= 50;
+				totalTelescope += 10;
+			}
+			return;
+		}
+		while (totalTelescope < telescopeGoal && totalMap >= 50) {
+			totalMap -= 50;
+			totalTelescope += 10;
+		}
+	}
+	public void convRumToTelescope (int telescopeGoal) {	
+		if (telescopeGoal == infiniteGoal) {
+			while (totalRum >= rumGoal + 5) {
+				totalRum -= 5;
+				totalTelescope += 10;
+			}
+			return;
+		}
+		while (totalTelescope < telescopeGoal && totalRum >= 5) {
+			totalRum -= 5;
+			totalTelescope += 10;
+		}
+	}
+	public void convTelescopeToMap (int mapGoal) {
+		if (mapGoal == infiniteGoal) {
+			while (totalTelescope >= telescopeGoal + 4) {
+				totalTelescope -= 4;
+				totalMap += 20;
+			}
+			return;
+		}
+		while (totalMap < mapGoal && totalTelescope >= 4) {
+			totalTelescope -= 4;
+			totalMap += 20;
+		}
+	}
+	public void convRumToMap (int mapGoal) {
+		if (mapGoal == infiniteGoal) {
+			while (totalRum >= rumGoal + 2) {
+				totalRum -= 2;
+				totalMap += 20;
+			}
+			return;
+		}
+		while (totalMap < mapGoal && totalRum >= 2) {
+			totalRum -= 2;
+			totalMap += 20;
+		}
+	}
+	//Convert remaining items methods
+	public void convRemRumToTelescope () {
+		if (totalRum > rumGoal) {
+			while (totalTelescope < telescopeGoal && totalRum >= rumGoal + 5) {
+				totalRum -= 5;
+				totalTelescope += 10;
+			}				
+		}	
+	}	
+	public void convRemRumToMap () {
+		if (totalRum > rumGoal) {
+			while (totalMap < mapGoal && totalRum >= rumGoal + 2) {
+				totalRum -= 2;
+				totalMap += 20;
+			}				
+		}	
+	}
+	public void convRemTelescopeToRum () {
+		if (totalTelescope > telescopeGoal) {
+			while (totalRum < rumGoal && totalTelescope >= telescopeGoal + 10) {
+				totalTelescope -= 10;
+				totalRum += 5;
+			}
+		}
+	}
+	public void convRemTelescopeToMap () {
+		if (totalTelescope > telescopeGoal) {
+			while (totalMap < mapGoal && totalTelescope >= telescopeGoal + 4) {
+				totalTelescope -= 4;
+				totalMap += 20;
+			}				
+		}	
+	}	
+	public void convRemMapToRum() {
+		if (totalMap > mapGoal) {
+			while (totalRum < rumGoal && totalMap >= mapGoal + 50) {
+				totalMap -= 50;
+				totalRum += 5;
+			}
+		}
+	}
+	public void convRemMapToTelescope() {
+		if (totalMap > mapGoal) {
+			while (totalTelescope < telescopeGoal && totalMap >= mapGoal + 50) {
+				totalMap -= 50;
+				totalTelescope += 10;
+			}
+		}
+	}
+
+	public void resetSetSail() {
+		resultGridPane.setVisible(false);
+		Timeline timeline = new Timeline(
+		    new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
+		        @Override
+		        public void handle(ActionEvent event) {
+		            // After 1 second, make the GridPane visible again
+		            resultGridPane.setVisible(true);
+		        }
+		    })
+		);
+		timeline.play();
+		
+		finalCost = 0;
+		breakPack15 = 0;
+		breakPack30 = 0;
+		breakPack50 = 0;
+		breakPack100 = 0;
+		pack100added = 0;
+		pack5added = 0;
+		pack10added = 0;
+		pack15added = 0;
+		pack30added = 0;
+		pack50added = 0;
+		allPacksBought = false;
+		totalTelescopePurchased = 0;
+		totalRumPurchased = 0;
+		totalMap = 0;
+		totalTelescope = 0; 
+		totalRum = 0;		
+		finalCost = 0;
+		currentMapTextfield.setText("0");
+		currentTelescopeTextfield.setText("0");
+		currentRumTextfield.setText("0");		
+		dailyBenefitsDoneCheckbox.setSelected(false);
+		dailyRewardClaimedCheckbox.setSelected(false);
+		marketPurchaseBox.setValue(marketPurchase[marketPurchase.length-1]);
+		skypieaChallengeBox.setValue(skypieaChallenge[skypieaChallenge.length-1]);
+		rankingLikeBox.setValue(rankingLike[rankingLike.length-1]);
+		bountyQuestBox.setValue(bountyQuest[bountyQuest.length-1]);
+		valuePack5Box.setSelected(false);
+		valuePack10Box.setSelected(false);
+		valuePack15Box.setSelected(false);
+		valuePack30Box.setSelected(false);
+		valuePack50Box.setSelected(false);
+		valuePack100Box.setValue(0);
+		topupDaysBox.setValue(0);
+		mapGoalTextfield.setText("0");
+		telescopeGoalTextfield.setText("0");
+		rumGoalTextfield.setText("0");	
+		priority1box.setValue("Rum");
+		priority2box.setValue("Telescope");
+		priority3box.setValue("Map");
+		valuesPrioBox.setSelected(true);
+		breakPacksBox.setSelected(true);
+		
+		totalRumLabel.setText("");
+		totalTelescopeLabel.setText("");
+		totalMapLabel.setText("");
+		valuePack5Label.setText("0");
+		valuePack10Label.setText("0");
+		valuePack15Label.setText("0");
+		valuePack30Label.setText("0");
+		valuePack50Label.setText("0");
+		valuePack100Label.setText("0");	
+		breakPack15Label.setText("0");
+		breakPack30Label.setText("0");
+		breakPack50Label.setText("0");
+		breakPack100Label.setText("0");
+		totalCostLabel.setText("");
+	}
+
+	// BROOKS TIMER
+	long bTimeStamp;
+	long bSecs = 0;
+	long bHrs = 0;
+	long bMins = 0;
+	long bRemainingSecs = 3;
+	long bRemainingMins = 0;
+	String bSeconds = "00";
+	String bMinutes = "00";
+	String bHours = "00";
+	String bRemainingSeconds = "00";
+	String bRemainingMinutes = "00";
+	long bFraction = 0;	     
+	Preferences bPrefs;	    
+	LocalDateTime bSavedTime;
+	long bSavedMillis;
+	int availableWinesToCollect = 0;
+
+	AnimationTimer brooksTimer = new AnimationTimer() {
+
+		@Override
+		public void start() {
+			// current time adjusted by remaining time from last run
+			bTimeStamp = System.currentTimeMillis() - bFraction;
+			super.start();
+		}
+
+		@Override
+		public void stop() {
+			super.stop();
+			// save leftover time not handled with the last update
+			bFraction = System.currentTimeMillis() - bTimeStamp;
+		}
+
+		@Override
+		public void handle(long now) {
+			long newTime = System.currentTimeMillis();
+			if (bTimeStamp + 1000 <= newTime) {
+				long deltaT = (newTime - bTimeStamp) / 1000;
+				bSecs += deltaT;
+				bRemainingSecs -= deltaT;
+				bTimeStamp += 1000 * deltaT;
+				Platform.runLater(() -> {
+					displayBrooksTimer();
+					displayNextWineTimer();
+				});
+			}
+		}
+	};	
+
+
+	public void startBrooksTimer() {
+		brooksTimer.start();	
+		bTimerStopped = false;
+	}
+
+	public void stopBrooksTimer() {
+		brooksTimer.stop();	
+		bTimerStopped = true;
+	}
+
+	public void resetBrooksTimer() {
+		bSecs = 0;
+		bMins = 0;
+		bHrs = 0;
+		bRemainingSecs = 0;
+		bRemainingMins = 6;
+		bFraction = 0;
+		bSavedMillis = 0;
+		availableWinesToCollect = 0;
+		availableWines.setText("0");
+		displayBrooksTimer();
+		displayNextWineTimer();
+	}
+
+	private void loadBrooksState() {
+		bTimerStopped = bPrefs.getBoolean("bTimerStopped", bTimerStopped);
+		if (!bTimerStopped) {
+			bSecs = bPrefs.getLong("bSecs", 0);
+			bMins = bPrefs.getLong("bMins", 0);
+			bHrs = bPrefs.getLong("bHrs", 0);
+			bRemainingSecs = bPrefs.getLong("bRemainingSecs", 0);
+			bRemainingMins = bPrefs.getLong("bRemainingMins", 0);
+			bFraction = bPrefs.getLong("bFraction", 0);	
+			availableWinesToCollect = bPrefs.getInt("availableWinesToCollect", 0);
+
+			bSavedMillis  = bPrefs.getLong("bSavedMillis", 0);	        
+			Instant instant = Instant.ofEpochMilli(bSavedMillis);
+			bSavedTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());	    	
+			long secondsEllapsed = (ChronoUnit.SECONDS.between(bSavedTime, LocalDateTime.now()));
+
+			bHrs += secondsEllapsed / 3600;
+			long savedbRemainingSeconds = secondsEllapsed % 3600;
+			bMins += savedbRemainingSeconds / 60;
+			bSecs += savedbRemainingSeconds % 60;
+
+			long savedbRemainingMinutes = secondsEllapsed / 60;
+			availableWinesToCollect += savedbRemainingMinutes / 6;
+			bRemainingMins -= savedbRemainingMinutes % 6;
+			if (bRemainingMins < 0) {
+				availableWinesToCollect++;
+				bRemainingMins += 6;
+			}
+			bRemainingSecs -= secondsEllapsed % 60;
+			if (bRemainingSecs < 0) {
+				if (bRemainingMins == 0) {
+					availableWinesToCollect++;
+				}
+				bRemainingMins += 6;
+			}
+			availableWines.setText("" + availableWinesToCollect);
+			displayBrooksTimer();
+			displayNextWineTimer();
+		}
+	}
+
+	private void saveBrooksState() {
+		bPrefs.putLong("bSecs", bSecs);
+		bPrefs.putLong("bMins", bMins);
+		bPrefs.putLong("bHrs", bHrs);
+		bPrefs.putLong("bRemainingSecs", bRemainingSecs);
+		bPrefs.putLong("bRemainingMins", bRemainingMins);
+		bPrefs.putLong("bFraction", bFraction);     
+
+		bSavedMillis = System.currentTimeMillis();
+		bPrefs.putLong("bSavedMillis", bSavedMillis);
+
+		bPrefs.putInt("availableWinesToCollect", availableWinesToCollect);
+		bPrefs.putBoolean("bTimerStopped", bTimerStopped);
+	}		
+
+	public void displayBrooksTimer() {
+
+		if (bSecs >= 60) {
+			bMins++;
+			bSecs = 0;
+		}			
+
+		if (bMins >= 60) {
+			bHrs ++;
+			bMins = 0;
+		}
+
+		if (bSecs < 10)
+			bSeconds = "0" + bSecs;
+		else 
+			bSeconds = "" + bSecs;
+
+		if (bMins < 10)
+			bMinutes = "0" + bMins;
+		else 
+			bMinutes = "" + bMins;
+
+		if (bHrs < 10)
+			bHours = "0" + bHrs;
+		else 
+			bHours = "" + bHrs;		
+
+		bTimerDisplay.setText(bHours + ":" + bMinutes + ":" + bSeconds); 
+
+	}
+
+	public void displayNextWineTimer() {
+
+		if (bRemainingSecs < 0) {
+			bRemainingMins--;
+			bRemainingSecs = 59;
+		}	
+
+		if (bRemainingSecs < 10)
+			bRemainingSeconds = "0" + bRemainingSecs;
+		else 
+			bRemainingSeconds = "" + bRemainingSecs;
+
+		bRemainingMinutes = "0" + bRemainingMins;
+
+		if (bRemainingMins == 0 && bRemainingSecs == 0) {
+			availableWinesToCollect++;
+			bRemainingMins = 6;			
+			availableWines.setText("" + availableWinesToCollect);
+		}
+
+		bRemainingTimerDisplay.setText(bRemainingMinutes + ":" + bRemainingSeconds);
+	}
+
+	// SET SAIL TIMER
+	long ssTimeStamp;
+	long ssSecs = 0;
+	long ssHrs = 0;
+	long ssMins = 0;
+	long ssRemainingSecs = 00;
+	long ssRemainingMins = 33;
+	String ssSeconds = "00";
+	String ssMinutes = "00";
+	String ssHours = "00";
+	String ssRemainingSeconds = "00";
+	String ssRemainingMinutes = "00";
+	long ssFraction = 0;	     
+	Preferences ssPrefs;	    
+	LocalDateTime ssSavedTime;
+	long ssSavedMillis;
+	int availableMapsToCollect = 0;
+
+	AnimationTimer setSailTimer = new AnimationTimer() {
+
+		@Override
+		public void start() {
+			// current time adjusted by remaining time from last run
+			ssTimeStamp = System.currentTimeMillis() - ssFraction;
+			super.start();
+		}
+
+		@Override
+		public void stop() {
+			super.stop();
+			// save leftover time not handled with the last update
+			ssFraction = System.currentTimeMillis() - ssTimeStamp;
+		}
+
+		@Override
+		public void handle(long now) {
+			long newTime = System.currentTimeMillis();
+			if (ssTimeStamp + 1000 <= newTime) {
+				long deltaT = (newTime - ssTimeStamp) / 1000;
+				ssSecs += deltaT;
+				ssRemainingSecs -= deltaT;
+				ssTimeStamp += 1000 * deltaT;
+				Platform.runLater(() -> {
+					displaySetSailTimer();
+					displayNextMapTimer();
+				});
+			}
+		}
+	};	
+
+	public void startSetSailTimer() {
+		setSailTimer.start();	
+		ssTimerStopped = false;
+	}
+
+	public void stopSetSailTimer() {
+		setSailTimer.stop();	
+		ssTimerStopped = true;
+	}
+
+	public void resetSetSailTimer() {
+		ssSecs = 0;
+		ssMins = 0;
+		ssHrs = 0;
+		ssRemainingSecs = 0;
+		ssRemainingMins = 33;
+		ssFraction = 0;
+		ssSavedMillis = 0;
+		availableMapsToCollect = 0;
+		availableMaps.setText("0");
+		displaySetSailTimer();
+		displayNextMapTimer();
+	}
+
+	private void loadSetSailState() {
+		ssTimerStopped = ssPrefs.getBoolean("ssTimerStopped", ssTimerStopped);
+		if (!ssTimerStopped) {
+			ssSecs = ssPrefs.getLong("ssSecs", 0);
+			ssMins = ssPrefs.getLong("ssMins", 0);
+			ssHrs = ssPrefs.getLong("ssHrs", 0);
+			ssRemainingSecs = ssPrefs.getLong("ssRemainingSecs", 0);
+			ssRemainingMins = ssPrefs.getLong("ssRemainingMins", 0);
+			ssFraction = ssPrefs.getLong("ssFraction", 0);	
+			availableMapsToCollect = ssPrefs.getInt("availableMapsToCollect", 0);
+
+			ssSavedMillis  = ssPrefs.getLong("ssSavedMillis", 0);	        
+			Instant instant = Instant.ofEpochMilli(ssSavedMillis);
+			ssSavedTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());	    	
+			long secondsEllapsed = (ChronoUnit.SECONDS.between(ssSavedTime, LocalDateTime.now()));
+
+			ssHrs += secondsEllapsed / 3600;
+			long savedbRemainingSeconds = secondsEllapsed % 3600;
+			ssMins += savedbRemainingSeconds / 60;
+			ssSecs += savedbRemainingSeconds % 60;
+
+			long savedbRemainingMinutes = secondsEllapsed / 60;
+			availableMapsToCollect += savedbRemainingMinutes / 33;
+			ssRemainingMins -= savedbRemainingMinutes % 33;
+			if (ssRemainingMins < 0) {
+				availableMapsToCollect++;
+				ssRemainingMins += 33;
+			}
+			ssRemainingSecs -= secondsEllapsed % 60;
+			if (ssRemainingSecs < 0) {
+				if (ssRemainingMins == 0) {
+					availableMapsToCollect++;
+				}
+				ssRemainingMins += 33;
+			}
+			availableMaps.setText("" + availableMapsToCollect);
+			displaySetSailTimer();
+			displayNextMapTimer();
+		}
+	}
+
+	private void saveSetSailState() {
+
+		ssPrefs.putLong("ssSecs", ssSecs);
+		ssPrefs.putLong("ssMins", ssMins);
+		ssPrefs.putLong("ssHrs", ssHrs);
+		ssPrefs.putLong("ssRemainingSecs", ssRemainingSecs);
+		ssPrefs.putLong("ssRemainingMins", ssRemainingMins);
+		ssPrefs.putLong("ssFraction", ssFraction);     
+
+		ssSavedMillis = System.currentTimeMillis();
+		ssPrefs.putLong("ssSavedMillis", ssSavedMillis);
+
+		ssPrefs.putInt("availableMapsToCollect", availableMapsToCollect);
+		ssPrefs.putBoolean("ssTimerStopped", ssTimerStopped);
+	}		
+
+	public void displaySetSailTimer() {
+
+		if (ssSecs >= 60) {
+			ssMins++;
+			ssSecs = 0;
+		}			
+
+		if (ssMins >= 60) {
+			ssHrs ++;
+			ssMins = 0;
+		}
+
+		if (ssSecs < 10)
+			ssSeconds = "0" + ssSecs;
+		else 
+			ssSeconds = "" + ssSecs;
+
+		if (ssMins < 10)
+			ssMinutes = "0" + ssMins;
+		else 
+			ssMinutes = "" + ssMins;
+
+		if (ssHrs < 10)
+			ssHours = "0" + ssHrs;
+		else 
+			ssHours = "" + ssHrs;		
+
+		ssTimerDisplay.setText(ssHours + ":" + ssMinutes + ":" + ssSeconds); 			
+	}
+
+	public void displayNextMapTimer() {
+
+		if (ssRemainingSecs < 0) {
+			ssRemainingMins--;
+			ssRemainingSecs = 59;
+		}	
+
+		if (ssRemainingSecs < 10)
+			ssRemainingSeconds = "0" + ssRemainingSecs;
+		else 
+			ssRemainingSeconds = "" + ssRemainingSecs;
+
+		ssRemainingMinutes = "" + ssRemainingMins;
+
+		if (ssRemainingMins == 0 && ssRemainingSecs == 0) {
+			availableMapsToCollect++;
+			ssRemainingMins = 33;			
+			availableMaps.setText("" + availableMapsToCollect);
+		}
+
+		ssRemainingTimerDisplay.setText(ssRemainingMinutes + ":" + ssRemainingSeconds);
+	}
+
 }

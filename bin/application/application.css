@@ -10,6 +10,13 @@
     -fx-background-size: cover;
 }
 
+.AnchorPane3 {
+    -fx-background-image: url('setsailbg.jpg');
+    -fx-background-repeat: repeat;
+    -fx-background-size: cover;
+}
+
+
 .scroll-pane{
    -fx-background-color:transparent;
 }
@@ -66,4 +73,36 @@
 
 .default-toggle-button {
     -fx-text-fill: black;
+}
+
+.custom-button1 {
+	-fx-background-color: CHARTREUSE;
+}
+
+.custom-button1:hover {
+	-fx-background-color: forestgreen;
+}
+
+.custom-button2 {
+	-fx-background-color: MEDIUMTURQUOISE;
+}
+
+.custom-button2:hover {
+	-fx-background-color: CORNFLOWERBLUE;
+}
+
+.custom-button3 {
+	-fx-background-color: yellow;
+}
+
+.custom-button3:hover {
+	-fx-background-color: goldenrod;
+}
+
+.custom-button4 {
+	-fx-background-color: tomato;
+}
+
+.custom-button4:hover {
+	-fx-background-color: firebrick;
 }

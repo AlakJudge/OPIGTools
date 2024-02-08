@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-	private static Main instance;
+	static Main instance;
 	public static int numMembers = 7;
 	static Thread progressBarThread;
 

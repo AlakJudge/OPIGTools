@@ -37,8 +37,6 @@ public class TeamPower {
 			int yonkoCounter = 0;
 			int cyborgCounter = 0;
 			
-			
-
 			// add a counter for each affiliation each character of the team possesses
 			for (int i = 0; i < numMembers; i++) {
 

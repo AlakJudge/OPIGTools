@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -79,7 +80,7 @@
                <font>
                   <Font name="System Bold" size="16.0" />
                </font></Button>
-            <Button fx:id="eventCalcButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#eventCalculatorsVisible" prefHeight="65.0" prefWidth="200.0" text="Event Calculators" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
+            <Button fx:id="eventCalcButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#setSailCalculatorsVisible" prefHeight="65.0" prefWidth="200.0" text="Event Calculators" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font></Button>
@@ -109,7 +110,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="ruinsPane" layoutY="145.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="782.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css" AnchorPane.bottomAnchor="73.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="145.0">
+      <AnchorPane fx:id="ruinsPane" layoutY="145.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="782.0" prefWidth="870.0" styleClass="AnchorPane" stylesheets="@application.css" visible="false" AnchorPane.bottomAnchor="73.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="145.0">
          <children>
             <Button fx:id="sButton" layoutX="380.0" layoutY="46.0" mnemonicParsing="false" onAction="#sPaneVisible" text="S" textAlignment="CENTER">
                <font>
@@ -177,6 +178,11 @@
                <font>
                   <Font name="System Bold" size="14.0" />
                </font></Button>
+            <Button fx:id="loadFileChooserButton" alignment="CENTER" layoutX="746.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="21.0" text="▼" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="8.0" />
+               </font>
+            </Button>
             <Button fx:id="changeDPowerButton" layoutX="304.0" layoutY="732.0" mnemonicParsing="false" onAction="#changeDPower" prefHeight="50.0" prefWidth="76.0" text="Change DPower" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -186,14 +192,14 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
-            <AnchorPane fx:id="bestTeamAnchorPane" blendMode="SRC_ATOP" prefHeight="788.0" prefWidth="870.0" styleClass="AnchorPane" visible="false" AnchorPane.rightAnchor="-1.0">
+            <AnchorPane fx:id="bestTeamAnchorPane" blendMode="SRC_ATOP" prefHeight="788.0" prefWidth="870.0" styleClass="AnchorPane" AnchorPane.rightAnchor="-1.0">
                <children>
                   <FlowPane fx:id="bestTeamPane" alignment="CENTER" columnHalignment="CENTER" layoutX="195.0" layoutY="140.0" prefHeight="300.0" prefWidth="480.0" />
-                  <Button fx:id="newTeamButton" layoutX="457.0" layoutY="580.0" mnemonicParsing="false" onAction="#reset" prefHeight="50.0" prefWidth="120.0" text="New Team" AnchorPane.rightAnchor="293.0">
+                  <Button fx:id="newTeamButton" layoutX="230.0" layoutY="590.0" mnemonicParsing="false" onAction="#reset" prefHeight="65.0" prefWidth="120.0" styleClass="custom-button3" stylesheets="@application.css" text="New Selection" textAlignment="CENTER" wrapText="true" AnchorPane.rightAnchor="520.0">
                      <font>
                         <Font name="System Bold" size="17.0" />
                      </font></Button>
-                  <Button fx:id="exitButton" layoutX="308.0" layoutY="580.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="120.0" text="Exit" AnchorPane.rightAnchor="442.0">
+                  <Button fx:id="exitButton" layoutX="365.0" layoutY="695.0" mnemonicParsing="false" onAction="#exit" prefHeight="50.0" prefWidth="140.0" styleClass="custom-button4" stylesheets="@application.css" text="Exit" AnchorPane.rightAnchor="365.0">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font></Button>
@@ -208,7 +214,7 @@
                      </font>
                   </Label>
                   <ProgressBar fx:id="progressBar" cache="true" focusTraversable="false" layoutX="310.0" layoutY="313.0" mouseTransparent="true" prefHeight="61.0" prefWidth="250.0" />
-                  <Button fx:id="findNextBestTeam" layoutX="367.0" layoutY="646.0" mnemonicParsing="false" onAction="#findNextBestTeam" prefHeight="80.0" prefWidth="149.0" text="Find your Next Best Team" textAlignment="CENTER" wrapText="true">
+                  <Button fx:id="findNextBestTeam" layoutX="520.0" layoutY="590.0" mnemonicParsing="false" onAction="#findNextBestTeam" prefHeight="65.0" prefWidth="120.0" styleClass="custom-button1" stylesheets="@application.css" text="   Next    Best Team" textAlignment="CENTER" wrapText="true">
                      <font>
                         <Font name="System Bold" size="17.0" />
                      </font>
@@ -218,6 +224,26 @@
                         <Font name="System Bold" size="38.0" />
                      </font>
                   </Label>
+                  <Button fx:id="alternativeTeam" alignment="CENTER" layoutX="375.0" layoutY="590.0" mnemonicParsing="false" onAction="#findAlternativeTeam" prefHeight="65.0" prefWidth="120.0" styleClass="custom-button2" stylesheets="@application.css" text="Alternative Team" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="backToSubmissionButton" layoutX="53.0" layoutY="104.0" mnemonicParsing="false" onAction="#backToSubmission" prefHeight="55.0" prefWidth="88.0" text="Back" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="previousBestTeamButton" layoutX="105.0" layoutY="310.0" mnemonicParsing="false" onAction="#showPreviousBestTeam" prefHeight="0.0" prefWidth="0.0" rotate="90.0" text="▼" visible="false" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="25.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="nextBestTeamButton" layoutX="700.0" layoutY="310.0" mnemonicParsing="false" onAction="#showNextBestTeam" prefHeight="0.0" prefWidth="0.0" rotate="270.0" text="▼" visible="false" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
             <Button fx:id="saveCharsButton" alignment="CENTER" layoutX="772.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#saveChars" prefHeight="50.0" prefWidth="85.0" text="Save Selection" textAlignment="CENTER" wrapText="true">
@@ -255,11 +281,6 @@
             <Button fx:id="changeAlldPowersButton" layoutX="122.0" layoutY="57.0" mnemonicParsing="false" onAction="#changeAlldPowers" prefHeight="30.0" prefWidth="74.0" text="dPower" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="13.0" />
-               </font>
-            </Button>
-            <Button fx:id="loadFileChooserButton" alignment="CENTER" layoutX="746.0" layoutY="732.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#loadChars" prefHeight="50.0" prefWidth="21.0" text="▼" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="8.0" />
                </font>
             </Button>
        	  </children>
@@ -458,14 +479,14 @@
             </Button>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="calculatorPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
+      <AnchorPane fx:id="brooksCalcPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
          <children>
-            <Button fx:id="brooksCalcButton" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="brooksCalcButton" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#brooksCalculatorsVisible" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font>
             </Button>
-            <Button fx:id="setSailCalcButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="533.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Setting Sail Calculator" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="setSailCalcButton" alignment="CENTER" contentDisplay="CENTER" layoutX="533.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#setSailCalculatorsVisible" prefHeight="75.0" prefWidth="140.0" text="Setting Sail Calculator" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font>
@@ -850,14 +871,14 @@
             </GridPane>
             <AnchorPane layoutX="58.0" layoutY="16.0">
                <children>
-                  <Label fx:id="timerDisplay" alignment="CENTER" layoutX="3.0" layoutY="32.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="00:00:00" textFill="WHITE">
+                  <Label fx:id="bTimerDisplay" alignment="CENTER" layoutX="3.0" layoutY="32.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="00:00:00" textFill="WHITE">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Button fx:id="startTimer" layoutX="55.0" layoutY="68.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="20.0" prefWidth="45.0" styleClass="green-background" text="Start" />
-                  <Button fx:id="resetTimer" layoutX="110.0" layoutY="68.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: khaki;" text="Reset" />
-                  <Button fx:id="stopTimer" layoutY="68.0" mnemonicParsing="false" onAction="#stopTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: indianred;" text="Stop" />
+                  <Button fx:id="startTimer" layoutX="55.0" layoutY="68.0" mnemonicParsing="false" onAction="#startBrooksTimer" prefHeight="20.0" prefWidth="45.0" styleClass="green-background" text="Start" />
+                  <Button fx:id="resetTimer" layoutX="110.0" layoutY="68.0" mnemonicParsing="false" onAction="#resetBrooksTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: khaki;" text="Reset" />
+                  <Button fx:id="stopTimer" layoutY="68.0" mnemonicParsing="false" onAction="#stopBrooksTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: indianred;" text="Stop" />
                   <Label alignment="CENTER" layoutX="4.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="Idling Timer" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="26.0" />
@@ -882,7 +903,7 @@
                         <Font name="System Bold" size="20.0" />
                      </font>
                   </Label>
-                  <Label fx:id="remainingTimerDisplay" alignment="CENTER" layoutX="-32.0" layoutY="61.0" prefHeight="30.0" prefWidth="74.0" styleClass="text-outline" text="00:00" textFill="WHITE">
+                  <Label fx:id="bRemainingTimerDisplay" alignment="CENTER" layoutX="-32.0" layoutY="61.0" prefHeight="30.0" prefWidth="74.0" styleClass="text-outline" text="00:00" textFill="WHITE">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -895,29 +916,45 @@
                </children>
             </AnchorPane>
          </children></AnchorPane>
-      <AnchorPane fx:id="calculatorPane1" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane2" visible="false">
+      <AnchorPane fx:id="setSailCalcPane" layoutY="145.0" prefHeight="770.0" prefWidth="870.0" styleClass="AnchorPane3">
          <children>
-            <Button fx:id="brooksCalcButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="brooksCalcButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="685.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#brooksCalculatorsVisible" prefHeight="75.0" prefWidth="140.0" text="Brook's Calculator" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font>
             </Button>
-            <Button fx:id="setSailCalcButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="533.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="140.0" text="Setting Sail Calculator" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="setSailCalcButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="533.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#setSailCalculatorsVisible" prefHeight="75.0" prefWidth="140.0" text="Setting Sail Calculator" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="System Bold" size="17.0" />
                </font>
             </Button>
-            <FlowPane alignment="CENTER" layoutX="43.0" layoutY="195.0">
+            <AnchorPane layoutY="183.0" prefWidth="870.0" style="-fx-border-color: white;">
                <children>
-                  <Label prefHeight="30.0" prefWidth="200.0" styleClass="text-outline" text="Date the event ends:" textFill="WHITE">
+                  <CheckBox fx:id="dailyBenefitsDoneCheckbox" layoutX="747.0" layoutY="6.0" mnemonicParsing="false" textAlignment="CENTER" />
+                  <Label alignment="CENTER" layoutX="429.0" prefHeight="30.0" prefWidth="309.0" styleClass="text-outline" text="Today's daily Benefit Drops done?" textFill="WHITE">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <DatePicker fx:id="brooksEndDate1" prefHeight="32.0" prefWidth="151.0" />
+                  <CheckBox fx:id="dailyRewardClaimedCheckbox" layoutX="747.0" layoutY="37.0" mnemonicParsing="false" textAlignment="CENTER" />
+                  <Label alignment="CENTER" layoutX="429.0" layoutY="31.0" prefHeight="30.0" prefWidth="309.0" styleClass="text-outline" text="Today's Daily reward claimed?" textFill="WHITE">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <FlowPane alignment="CENTER" layoutY="14.0">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="200.0" styleClass="text-outline" text="Date the event ends:" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <DatePicker fx:id="setSailEndDate" prefHeight="32.0" prefWidth="151.0" />
+                     </children>
+                  </FlowPane>
                </children>
-            </FlowPane>
-            <GridPane alignment="CENTER" layoutX="21.0" layoutY="552.0" prefHeight="210.0" prefWidth="800.0" style="-fx-border-color: white;">
+            </AnchorPane>
+            <GridPane fx:id="resultGridPane" alignment="CENTER" layoutX="35.0" layoutY="552.0" prefHeight="210.0" prefWidth="800.0" style="-fx-border-color: white;">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -928,21 +965,18 @@
                <children>
                   <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE;">
                      <children>
-                        <Label alignment="CENTER" prefHeight="51.0" text="Items earned until end of event" textAlignment="CENTER" textFill="WHITE">
+                        <Label alignment="CENTER" text="Items earned until end of event" textAlignment="CENTER" textFill="#8cff9a">
                            <font>
                               <Font name="System Bold" size="25.0" />
                            </font>
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
-                           <padding>
-                              <Insets top="-23.0" />
-                           </padding>
                         </Label>
                         <GridPane alignment="CENTER" prefHeight="160.0" prefWidth="394.0">
                            <columnConstraints>
-                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
-                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="297.0" minWidth="10.0" prefWidth="252.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="154.0" minWidth="10.0" prefWidth="142.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints />
@@ -950,15 +984,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="2.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="45.0" styleClass="text-outline" text="Idling Wines:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="45.0" styleClass="text-outline" text="Total Rum" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
-                                    <Font size="30.0" />
+                                    <Font size="25.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="idlingWinesLabel1" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label fx:id="totalRumLabel" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="30.0" />
                                  </font>
@@ -966,15 +999,15 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Dailies Wines:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Total Telescopes" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
-                                    <Font size="30.0" />
+                                    <Font size="25.0" />
                                  </font>
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </Label>
-                              <Label fx:id="dailiesWinesLabel1" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <Label fx:id="totalTelescopeLabel" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font name="System Bold" size="30.0" />
                                  </font>
@@ -982,12 +1015,12 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Total Wines:" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Total Maps" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
-                                    <Font size="30.0" />
+                                    <Font size="25.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="totalWinesLabel1" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Label fx:id="totalMapLabel" alignment="CENTER" styleClass="text-outline" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font name="System Bold" size="30.0" />
                                  </font>
@@ -995,12 +1028,17 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="(with packs needed)" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label alignment="CENTER_RIGHT" prefHeight="45.0" styleClass="text-outline" text="Total Cost" textAlignment="CENTER" textFill="#ff76af" GridPane.rowIndex="4">
                                  <font>
-                                    <Font size="18.0" />
+                                    <Font size="25.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="totalCostLabel" alignment="CENTER" layoutX="272.0" layoutY="92.0" styleClass="text-outline" textFill="#ff76af" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
                                  </font>
                                  <GridPane.margin>
-                                    <Insets top="-10.0" />
+                                    <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
                            </children>
@@ -1012,17 +1050,22 @@
                   </FlowPane>
                   <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: WHITE;" GridPane.columnIndex="1">
                      <children>
-                        <Label alignment="CENTER" prefHeight="51.0" text="Packs needed to reach goal" textAlignment="CENTER" textFill="WHITE">
+                        <Label alignment="CENTER" text="Packs needed to reach goal" textAlignment="CENTER" textFill="#8cff9a">
                            <font>
-                              <Font name="System Bold" size="27.0" />
+                              <Font name="System Bold" size="25.0" />
                            </font>
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
+                           <FlowPane.margin>
+                              <Insets top="-10.0" />
+                           </FlowPane.margin>
                         </Label>
-                        <GridPane>
+                        <GridPane prefHeight="161.0" prefWidth="308.0">
                            <columnConstraints>
-                              <ColumnConstraints />
+                              <ColumnConstraints maxWidth="30.0" prefWidth="30.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" prefWidth="134.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="10.0" prefWidth="30.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                            </columnConstraints>
                            <rowConstraints>
@@ -1034,71 +1077,140 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - 1k Gems" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="1">
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $5 Value" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - 5k Gems" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $15 Value" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $2.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $30 Value" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $9.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $50 Value" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $29.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $100 Value" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" - $99.99" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <TextField fx:id="valuePack15Label" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="valuePack5Label" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="valuePack30Label" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="valuePack50Label" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="valuePack100Label" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="breakPack15Label" alignment="CENTER" editable="false" focusTraversable="false" layoutX="10.0" layoutY="14.0" prefHeight="25.0" prefWidth="40.0" text="0" GridPane.columnIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="breakPack30Label" alignment="CENTER" editable="false" focusTraversable="false" layoutX="169.0" layoutY="14.0" prefHeight="25.0" prefWidth="40.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="breakPack50Label" alignment="CENTER" editable="false" focusTraversable="false" layoutX="169.0" layoutY="45.0" prefHeight="25.0" prefWidth="40.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <TextField fx:id="breakPack100Label" alignment="CENTER" editable="false" focusTraversable="false" layoutX="169.0" layoutY="75.0" prefHeight="25.0" prefWidth="40.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </TextField>
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $15 Break" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="3">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="textfield5k1" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="1">
+                              <Label alignment="CENTER" contentDisplay="CENTER" styleClass="text-outline" text=" $30 Break" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="43.0" styleClass="text-outline" text=" $50 Break" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="73.0" styleClass="text-outline" text=" $100 Break" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="valuePack10Label" alignment="CENTER" editable="false" focusTraversable="false" layoutX="10.0" layoutY="62.0" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </TextField>
-                              <TextField fx:id="textfield1k1" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0">
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="40.0" layoutY="8.0" styleClass="text-outline" text=" $10 Value" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
-                                    <Font name="System Bold" size="12.0" />
+                                    <Font size="22.0" />
                                  </font>
-                              </TextField>
-                              <TextField fx:id="textfield2991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="2">
+                              </Label>
+                              <CheckBox fx:id="breakPacksBox" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" selected="true" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                 <padding>
+                                    <Insets bottom="10.0" left="7.0" />
+                                 </padding>
+                                 <rotationAxis>
+                                    <Point3D />
+                                 </rotationAxis>
+                              </CheckBox>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="88.0" styleClass="text-outline" text="Break Packs?" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="5">
                                  <font>
-                                    <Font name="System Bold" size="12.0" />
+                                    <Font size="17.0" />
                                  </font>
-                              </TextField>
-                              <TextField fx:id="textfield9991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="3">
+                                 <padding>
+                                    <Insets top="6.0" />
+                                 </padding>
+                              </Label>
+                              <CheckBox fx:id="valuesPrioBox" alignment="CENTER" contentDisplay="RIGHT" layoutX="174.0" layoutY="139.0" mnemonicParsing="false" selected="true" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                 <padding>
+                                    <Insets bottom="10.0" left="7.0" />
+                                 </padding>
+                              </CheckBox>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="204.0" layoutY="143.0" styleClass="text-outline" text="Values Priority?" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
                                  <font>
-                                    <Font name="System Bold" size="12.0" />
+                                    <Font size="17.0" />
                                  </font>
-                              </TextField>
-                              <TextField fx:id="textfield29991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </TextField>
-                              <TextField fx:id="textfield99991" alignment="CENTER" editable="false" focusTraversable="false" prefHeight="25.0" prefWidth="44.0" text="0" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                              </TextField>
+                                 <padding>
+                                    <Insets top="6.0" />
+                                 </padding>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>
                      <GridPane.margin>
-                        <Insets left="35.0" />
+                        <Insets />
                      </GridPane.margin>
                   </FlowPane>
                </children>
@@ -1107,14 +1219,14 @@
                <children>
                   <AnchorPane layoutX="10.0" layoutY="2.0">
                      <children>
-                        <Label fx:id="timerDisplay1" alignment="CENTER" layoutX="3.0" layoutY="32.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="00:00:00" textFill="WHITE">
+                        <Label fx:id="ssTimerDisplay" alignment="CENTER" layoutX="3.0" layoutY="32.0" prefHeight="30.0" prefWidth="149.0" styleClass="text-outline" text="00:00:00" textFill="WHITE">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="startTimer1" layoutX="55.0" layoutY="68.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="20.0" prefWidth="45.0" styleClass="green-background" text="Start" />
-                        <Button fx:id="resetTimer1" layoutX="110.0" layoutY="68.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: khaki;" text="Reset" />
-                        <Button fx:id="stopTimer1" layoutY="68.0" mnemonicParsing="false" onAction="#stopTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: indianred;" text="Stop" />
+                        <Button fx:id="startTimer1" layoutX="55.0" layoutY="68.0" mnemonicParsing="false" onAction="#startSetSailTimer" prefHeight="20.0" prefWidth="45.0" styleClass="green-background" text="Start" />
+                        <Button fx:id="resetTimer1" layoutX="110.0" layoutY="68.0" mnemonicParsing="false" onAction="#resetSetSailTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: khaki;" text="Reset" />
+                        <Button fx:id="stopTimer1" layoutY="68.0" mnemonicParsing="false" onAction="#stopSetSailTimer" prefHeight="20.0" prefWidth="45.0" style="-fx-background-color: indianred;" text="Stop" />
                         <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="38.0" prefWidth="155.0" styleClass="text-outline" text="Idling Timer" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="26.0" />
@@ -1134,12 +1246,12 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <Label fx:id="availableWines1" alignment="CENTER" layoutX="47.0" layoutY="45.0" prefHeight="30.0" prefWidth="40.0" styleClass="text-outline" text="0" textFill="WHITE">
+                        <Label fx:id="availableMaps" alignment="CENTER" layoutX="47.0" layoutY="45.0" prefHeight="30.0" prefWidth="40.0" styleClass="text-outline" text="0" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label fx:id="remainingTimerDisplay1" alignment="CENTER" layoutX="-44.0" layoutY="62.0" prefHeight="30.0" prefWidth="74.0" styleClass="text-outline" text="00:00" textFill="WHITE">
+                        <Label fx:id="ssRemainingTimerDisplay" alignment="CENTER" layoutX="-44.0" layoutY="62.0" prefHeight="30.0" prefWidth="74.0" styleClass="text-outline" text="00:00" textFill="WHITE">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -1153,11 +1265,11 @@
                   </AnchorPane>
                </children>
             </AnchorPane>
-            <FlowPane alignment="CENTER" layoutY="130.0" prefHeight="51.0" prefWidth="870.0" style="-fx-border-color: White;">
+            <FlowPane alignment="CENTER" layoutY="130.0" prefHeight="55.0" prefWidth="870.0" style="-fx-border-color: White;">
                <children>
-                  <Label prefHeight="30.0" prefWidth="231.0" styleClass="text-outline" text="Current Quantity Owned:" textFill="WHITE">
+                  <Label prefHeight="50.0" prefWidth="273.0" styleClass="text-outline" text="Current Quantity Owned:" textFill="#ffe48b">
                      <font>
-                        <Font size="20.0" />
+                        <Font name="System Bold" size="22.0" />
                      </font>
                   </Label>
                   <ImageView fx:id="gemsImageView1" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
@@ -1168,7 +1280,7 @@
                         <Insets left="10.0" />
                      </FlowPane.margin>
                   </ImageView>
-                  <TextField fx:id="currentGemsTextfield1" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                  <TextField fx:id="currentMapTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="0" text="0">
                      <FlowPane.margin>
                         <Insets left="10.0" right="10.0" />
                      </FlowPane.margin>
@@ -1181,7 +1293,7 @@
                         <Insets left="20.0" />
                      </FlowPane.margin>
                   </ImageView>
-                  <TextField fx:id="currentGemsTextfield11" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                  <TextField fx:id="currentTelescopeTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="0" text="0">
                      <FlowPane.margin>
                         <Insets left="10.0" right="10.0" />
                      </FlowPane.margin>
@@ -1194,26 +1306,23 @@
                         <Insets left="20.0" />
                      </FlowPane.margin>
                   </ImageView>
-                  <TextField fx:id="currentGemsTextfield111" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                  <TextField fx:id="currentRumTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="0" text="0">
                      <FlowPane.margin>
                         <Insets left="10.0" right="10.0" />
                      </FlowPane.margin>
                   </TextField>
                </children>
             </FlowPane>
-            <AnchorPane layoutY="247.0" prefWidth="872.0" style="-fx-border-color: white;">
+            <AnchorPane layoutY="244.0" prefWidth="870.0" style="-fx-border-color: white;">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="360.0" prefHeight="31.0" prefWidth="171.0" styleClass="text-outline" text="Bounty Quests" textFill="WHITE">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="280.0" prefHeight="34.0" prefWidth="308.0" styleClass="text-outline" text="Bounty Quests Completed" textFill="#ffe48b">
                      <font>
-                        <Font name="System Bold" size="23.0" />
+                        <Font name="System Bold" size="22.0" />
                      </font>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
                   </Label>
-                  <FlowPane alignment="CENTER" layoutY="36.0" prefWidth="870.0">
+                  <FlowPane alignment="CENTER" layoutY="35.0" prefWidth="868.0">
                      <children>
-                        <Label styleClass="text-outline" text="Market Purchases" textFill="WHITE">
+                        <Label styleClass="text-outline" text="Market Purchase" textFill="WHITE">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -1221,7 +1330,7 @@
                               <Insets left="10.0" />
                            </FlowPane.margin>
                         </Label>
-                        <ChoiceBox fx:id="oneThousandGemsPack1" prefHeight="25.0" prefWidth="50.0">
+                        <ChoiceBox fx:id="marketPurchaseBox" prefHeight="25.0" prefWidth="50.0">
                            <FlowPane.margin>
                               <Insets left="5.0" />
                            </FlowPane.margin>
@@ -1234,7 +1343,7 @@
                               <Insets left="20.0" />
                            </FlowPane.margin>
                         </Label>
-                        <ChoiceBox fx:id="fiveThousandGemsPack1" prefHeight="25.0" prefWidth="50.0">
+                        <ChoiceBox fx:id="skypieaChallengeBox" prefHeight="25.0" prefWidth="50.0">
                            <FlowPane.margin>
                               <Insets left="5.0" />
                            </FlowPane.margin>
@@ -1247,12 +1356,12 @@
                               <Insets left="20.0" />
                            </FlowPane.margin>
                         </Label>
-                        <ChoiceBox fx:id="money999pack1" prefHeight="25.0" prefWidth="50.0">
+                        <ChoiceBox fx:id="rankingLikeBox" prefHeight="25.0" prefWidth="50.0">
                            <FlowPane.margin>
                               <Insets left="5.0" />
                            </FlowPane.margin>
                         </ChoiceBox>
-                        <Label styleClass="text-outline" text="Bountry Quest" textFill="WHITE">
+                        <Label styleClass="text-outline" text="Bounty Quest" textFill="WHITE">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -1260,24 +1369,128 @@
                               <Insets left="20.0" />
                            </FlowPane.margin>
                         </Label>
-                        <ChoiceBox fx:id="money299pack1" prefHeight="25.0" prefWidth="50.0">
+                        <ChoiceBox fx:id="bountyQuestBox" prefHeight="25.0" prefWidth="50.0">
                            <FlowPane.margin>
                               <Insets left="5.0" />
                            </FlowPane.margin>
                         </ChoiceBox>
                      </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
                   </FlowPane>
                </children>
                <padding>
                   <Insets bottom="10.0" />
                </padding>
             </AnchorPane>
-            <AnchorPane layoutY="335.0" style="-fx-border-color: white;">
+            <AnchorPane layoutY="319.0" prefWidth="500.0" style="-fx-border-color: white;">
                <children>
-                  <FlowPane alignment="CENTER" layoutY="32.0" prefHeight="47.0" prefWidth="870.0">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="132.5" styleClass="text-outline" text="Value Packs Already Purchased" textAlignment="CENTER" textFill="#ffe48b">
+                     <font>
+                        <Font name="System Bold" size="22.0" />
+                     </font>
+                  </Label>
+                  <FlowPane alignment="CENTER" layoutY="35.0" prefWidth="600.0">
+                     <children>
+                        <Label styleClass="text-outline" text="\$5" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets />
+                           </FlowPane.margin>
+                        </Label>
+                        <CheckBox fx:id="valuePack5Box" mnemonicParsing="false" textAlignment="CENTER">
+                           <FlowPane.margin>
+                              <Insets bottom="2.0" left="5.0" />
+                           </FlowPane.margin>
+                        </CheckBox>
+                        <Label layoutX="260.0" layoutY="20.0" styleClass="text-outline" text="\$10" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <CheckBox fx:id="valuePack10Box" layoutX="287.0" layoutY="27.0" mnemonicParsing="false" textAlignment="CENTER">
+                           <FlowPane.margin>
+                              <Insets bottom="2.0" left="5.0" />
+                           </FlowPane.margin>
+                        </CheckBox>
+                        <Label styleClass="text-outline" text="\$15" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <CheckBox fx:id="valuePack15Box" layoutX="258.0" layoutY="27.0" mnemonicParsing="false" textAlignment="CENTER">
+                           <FlowPane.margin>
+                              <Insets bottom="2.0" left="5.0" />
+                           </FlowPane.margin>
+                        </CheckBox>
+                        <Label styleClass="text-outline" text="\$30" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <CheckBox fx:id="valuePack30Box" layoutX="450.0" layoutY="27.0" mnemonicParsing="false" textAlignment="CENTER">
+                           <FlowPane.margin>
+                              <Insets bottom="2.0" left="5.0" />
+                           </FlowPane.margin>
+                        </CheckBox>
+                        <Label layoutX="521.0" layoutY="20.0" styleClass="text-outline" text="\$50" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <CheckBox fx:id="valuePack50Box" layoutX="638.0" layoutY="27.0" mnemonicParsing="false" textAlignment="CENTER">
+                           <FlowPane.margin>
+                              <Insets bottom="2.0" left="5.0" />
+                           </FlowPane.margin>
+                        </CheckBox>
+                        <Label styleClass="text-outline" text="\$100" textFill="WHITE">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="20.0" />
+                           </FlowPane.margin>
+                        </Label>
+                        <ChoiceBox fx:id="valuePack100Box" prefWidth="50.0">
+                           <FlowPane.margin>
+                              <Insets left="5.0" />
+                           </FlowPane.margin>
+                        </ChoiceBox>
+                     </children>
+                  </FlowPane>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </AnchorPane>
+            <AnchorPane layoutX="601.0" layoutY="319.0" prefHeight="75.0" prefWidth="269.0" style="-fx-border-color: white;">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="267.0" styleClass="text-outline" text="Top-up Days" textAlignment="CENTER" textFill="#ffe48b">
+                     <font>
+                        <Font name="System Bold" size="22.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox fx:id="topupDaysBox" layoutX="109.0" layoutY="38.0" prefHeight="25.0" prefWidth="50.0" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </AnchorPane>
+            <AnchorPane layoutY="394.0" prefWidth="870.0" style="-fx-border-color: white;">
+               <children>
+                  <FlowPane alignment="CENTER" layoutY="35.0" prefWidth="868.0">
                      <children>
                         <ImageView fx:id="gemsImageView11" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -1287,7 +1500,7 @@
                               <Insets left="10.0" />
                            </FlowPane.margin>
                         </ImageView>
-                        <TextField fx:id="currentGemsTextfield11" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                        <TextField fx:id="mapGoalTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="0" text="0">
                            <FlowPane.margin>
                               <Insets left="10.0" right="10.0" />
                            </FlowPane.margin>
@@ -1300,7 +1513,7 @@
                               <Insets left="20.0" />
                            </FlowPane.margin>
                         </ImageView>
-                        <TextField fx:id="currentGemsTextfield111" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                        <TextField fx:id="telescopeGoalTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="0" text="0">
                            <FlowPane.margin>
                               <Insets left="10.0" right="10.0" />
                            </FlowPane.margin>
@@ -1313,41 +1526,63 @@
                               <Insets left="20.0" />
                            </FlowPane.margin>
                         </ImageView>
-                        <TextField fx:id="currentGemsTextfield1111" alignment="CENTER" prefHeight="25.0" prefWidth="80.0" promptText="Current Gems" text="0">
+                        <TextField fx:id="rumGoalTextfield" alignment="CENTER" prefHeight="25.0" prefWidth="50.0" promptText="0" text="0">
                            <FlowPane.margin>
                               <Insets left="10.0" right="10.0" />
                            </FlowPane.margin>
                         </TextField>
                      </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
                   </FlowPane>
-                  <Label layoutX="385.0" layoutY="-3.0" prefHeight="36.0" prefWidth="130.0" styleClass="text-outline" text="Item Goals" textFill="WHITE">
+                  <Label alignment="CENTER" layoutX="369.0" prefWidth="130.0" styleClass="text-outline" text="Item Goals" textAlignment="CENTER" textFill="#ffe48b">
                      <font>
-                        <Font name="System Bold" size="23.0" />
+                        <Font name="System Bold" size="22.0" />
                      </font>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
                   </Label>
                </children>
                <padding>
                   <Insets bottom="10.0" />
                </padding>
             </AnchorPane>
-            <Button fx:id="calculateBrooksButton1" defaultButton="true" layoutX="443.0" layoutY="443.0" mnemonicParsing="false" onAction="#calculateBrooks" prefHeight="42.0" prefWidth="88.0" style="-fx-background-color: lawngreen;" text="Calculate">
+            <Button fx:id="calculateSetSailButton" defaultButton="true" layoutX="763.0" layoutY="495.0" mnemonicParsing="false" onAction="#calculateSetSail" prefHeight="42.0" prefWidth="88.0" style="-fx-background-color: lawngreen;" text="Calculate">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Button>
-            <Button fx:id="resetBrooksButton1" layoutX="357.0" layoutY="448.0" mnemonicParsing="false" onAction="#resetBrooks" prefHeight="32.0" prefWidth="76.0" text="Reset" />
-            <CheckBox fx:id="dailiesDoneCheckbox1" layoutX="790.0" layoutY="202.0" mnemonicParsing="false" textAlignment="CENTER" />
-            <Label alignment="CENTER" layoutX="472.0" layoutY="196.0" prefHeight="30.0" prefWidth="309.0" styleClass="text-outline" text="Today's daily Benefit Drops Done?" textFill="WHITE">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
+            <AnchorPane layoutX="22.0" layoutY="481.0" prefHeight="60.0" prefWidth="630.0" style="-fx-border-color: white;">
+               <children>
+                  <AnchorPane layoutX="10.0" layoutY="15.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="34.0" prefWidth="102.0" styleClass="text-outline" text="Priority 1" textAlignment="CENTER" textFill="#ffe48b">
+                           <font>
+                              <Font name="System Bold" size="23.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="priority1box" layoutX="109.0" layoutY="5.0" prefWidth="80.0" />
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane layoutX="220.0" layoutY="15.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="34.0" prefWidth="102.0" styleClass="text-outline" text="Priority 2" textAlignment="CENTER" textFill="#ffe48b">
+                           <font>
+                              <Font name="System Bold" size="23.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="priority2box" layoutX="109.0" layoutY="5.0" prefWidth="80.0" />
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane layoutX="430.0" layoutY="15.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="34.0" prefWidth="102.0" styleClass="text-outline" text="Priority 3" textAlignment="CENTER" textFill="#ffe48b">
+                           <font>
+                              <Font name="System Bold" size="23.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="priority3box" layoutX="109.0" layoutY="5.0" prefWidth="80.0" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+            <Button fx:id="resetSetSailButton" layoutX="674.0" layoutY="500.0" mnemonicParsing="false" onAction="#resetSetSail" prefHeight="32.0" prefWidth="76.0" text="Reset" />
          </children>
       </AnchorPane>
    </children>

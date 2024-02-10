@@ -207,7 +207,7 @@ public class Controller implements Initializable {
 	Integer[] skypieaChallenge = { 0, 3, 6, 9, 12, 15 };
 	Integer[] rankingLike = { 0, 10, 20, 30, 40, 50 };
 	Integer[] bountyQuest = { 0, 10, 15, 20, 25, 30 };
-	Integer[] valuePack100 = { 0, 1, 2, 3, 4 };
+	Integer[] valuePack100 = { 0, 1, 2, 3, 4, 5};
 	String[] prioritytList = { "Map", "Telescope", "Rum" }; 
 	Integer[] topupDays = { 0, 1, 2, 3, 4, 5 };
 
@@ -398,7 +398,21 @@ public class Controller implements Initializable {
 
 		// Method to check affinities changes after updates
 		//CheckAffinities.run();		
-
+		
+		// Initialize event packs
+		Pack[] packs = new Pack[100];
+		
+		packs[0] = new Pack("value5", "ssValue", 5, "Rum", 16, "Telescope", 10);
+		packs[1] = new Pack("value10", "ssValue", 10, "Rum", 30, "Telescope", 20);
+		packs[2] = new Pack("value15", "ssValue", 15, "Rum", 40, "Telescope", 30);
+		packs[3] = new Pack("value30", "ssValue", 30, "Rum", 80, "Telescope", 40);
+		packs[4] = new Pack("value50", "ssValue", 50, "Rum", 120, "Telescope", 60);
+		packs[5] = new Pack("value100", "ssValue", 100, "Rum", 240, "Telescope", 120);
+		packs[6] = new Pack("break15", "ssBreak", 15, "Rum", 30, "Telescope", 5);
+		packs[7] = new Pack("break30", "ssBreak", 30, "Rum", 60, "Telescope", 10);
+		packs[8] = new Pack("break50", "ssBreak", 50, "Rum", 90, "Telescope", 15);
+		packs[9] = new Pack("break100", "ssBreak", 100, "Rum", 160, "Telescope", 30);
+		
 		// setting up the initial setup of the program
 		powerTextField = new TextField[unitList.size()];
 		character = new Character[unitList.size()];
@@ -2176,7 +2190,7 @@ public class Controller implements Initializable {
 	@FXML
 	ChoiceBox<String> priority1box, priority2box, priority3box;
 	@FXML
-	Label idlingWinesLabel, dailiesWinesLabel, totalWineLabel, bTimerDisplay, bRemainingTimerDisplay, availableWines, 
+	Label idlingWinesLabel, dailiesWinesLabel, totalWinesLabel, bTimerDisplay, bRemainingTimerDisplay, availableWines, 
 	availableMaps, ssTimerDisplay, ssRemainingTimerDisplay, totalMapLabel, totalTelescopeLabel, totalRumLabel, totalCostLabel;
 	@FXML
 	GridPane resultGridPane;
@@ -2362,7 +2376,7 @@ public class Controller implements Initializable {
 		textfield9999.setText(packsNeeded9999 + "");
 		idlingWinesLabel.setText(""+totalIdlingWines);
 		dailiesWinesLabel.setText(""+totalDailiesWines);
-		totalWineLabel.setText("" + NumberFormat.getNumberInstance().format(Math.abs(totalWine)));	
+		totalWinesLabel.setText("" + NumberFormat.getNumberInstance().format(Math.abs(totalWine)));	
 	}
 	public void resetBrooks() {
 		totalWine = 0;
@@ -2595,17 +2609,12 @@ public class Controller implements Initializable {
 		int bestPack;		
 		int bought100packs = valuePack100Box.getValue();
 		priorityConverting();			
-		
+				
 		for (int i = 0; i < totals.length; i++) {
 
 			checkGoal(i);
-			System.out.println(totals[0]);
-			System.out.println(totals[1]);
-			System.out.println(totals[2]);
+
 			while (!priorityGoalReached[i]) {
-				System.out.println(totals[0]);
-				System.out.println(totals[1]);
-				System.out.println(totals[2]);
 				// Add Value Pack 5 logic
 				if(!priorityGoalReached[i] && pack5added < 1 && !valuePack5Box.isSelected()) {							
 					addValuePack(5);
@@ -2613,9 +2622,6 @@ public class Controller implements Initializable {
 					finalCost += 5;
 					priorityConverting();				
 				}
-				System.out.println(totals[0]);
-				System.out.println(totals[1]);
-				System.out.println(totals[2]);
 				// Add Value Pack 10 logic
 				checkGoal(i);	
 				if (!priorityGoalReached[i] && pack10added < 1 && !valuePack10Box.isSelected() && (pack5added == 1 || valuePack5Box.isSelected())) {
@@ -2624,9 +2630,6 @@ public class Controller implements Initializable {
 					finalCost += 10;
 					priorityConverting();
 				}
-				System.out.println(totals[0]);
-				System.out.println(totals[1]);
-				System.out.println(totals[2]);
 				// Add Value Pack 15 logic
 				checkGoal(i);	
 				if (!priorityGoalReached[i] && pack15added < 1 && !valuePack15Box.isSelected() && (pack10added == 1 || valuePack10Box.isSelected())) {
@@ -2635,9 +2638,6 @@ public class Controller implements Initializable {
 					finalCost += 15;
 					priorityConverting();
 				}
-				System.out.println(totals[0]);
-				System.out.println(totals[1]);
-				System.out.println(totals[2]);
 				// Add Value Pack 30 or Break Pack 15 logic
 				checkGoal(i);	
 				if (!priorityGoalReached[i]) {
@@ -2683,12 +2683,12 @@ public class Controller implements Initializable {
 							addValuePack(50);	
 							finalCost += 50;
 						}
-						else if (valuesPrioBox.isSelected() && pack50added < 1 && !valuePack50Box.isSelected() && pack30added == 1) {
+						else if (valuesPrioBox.isSelected() && pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
 							pack50added++;
 							addValuePack(50);	
 							finalCost += 50;
 						}
-						else {
+						else {							
 							breakPack30++;
 							addBreakPack(930);
 							finalCost += 30;
@@ -2712,12 +2712,12 @@ public class Controller implements Initializable {
 
 					if (breakPack50 < 12 && breakPacksBox.isSelected()) {				
 						bestPack = checkBestPack(100, 950);
-						if (bestPack == 100 && pack100added < 4 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
+						if (bestPack == 100 && pack100added < 5 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
 							pack100added++;
 							addValuePack(100);	
 							finalCost += 100;
 						}
-						else if (valuesPrioBox.isSelected() && pack100added < 4 - bought100packs && pack50added == 1) {
+						else if (valuesPrioBox.isSelected() && pack100added < 5 - bought100packs && pack50added == 1) {
 							pack100added++;
 							addValuePack(100);	
 							finalCost += 100;
@@ -2728,23 +2728,29 @@ public class Controller implements Initializable {
 							finalCost += 50;
 						}
 					}
-					else if (breakPack50 == 12 && pack100added < 4 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
+					else if (breakPack50 == 12 && pack100added < 5 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
 						pack100added++;
 						addValuePack(100);
 						finalCost += 100;
 					}
 
-					else if (breakPack50 == 12 && pack100added == 4 && breakPack100 < 99 && breakPacksBox.isSelected()) {
+					else if (breakPack50 < 12 && pack100added == 5 && breakPacksBox.isSelected()) {
+						breakPack50++;
+						addBreakPack(950);
+						finalCost += 50;
+					}
+					
+					else if (breakPack50 == 12 && pack100added == 5 && breakPack100 < 99 && breakPacksBox.isSelected()) {
 						breakPack100++;
 						addBreakPack(9100);
 						finalCost += 100;
 					}
-					else if (pack100added < 4 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
+					else if (pack100added < 5 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
 						pack100added++;
 						addValuePack(100);
 						finalCost += 100;
 					}
-					else if (!breakPacksBox.isSelected() && (pack100added == 4 || valuePack100Box.getValue() == 4)) {
+					else if (!breakPacksBox.isSelected() && (pack100added == 5 || valuePack100Box.getValue() == 5)) {
 						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
 						break;
 					}
@@ -2752,14 +2758,14 @@ public class Controller implements Initializable {
 				}
 
 				if (pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
-						pack50added  == 1 && pack100added == 4 && 
+						pack50added  == 1 && pack100added == 5 && 
 						breakPack15 == 2 && breakPack30 == 6 && breakPack50 == 12 && breakPack100 == 99) {
 					allPacksBought = true;
 					break;
 				}
 				checkGoal(i);
-				if (pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
-						pack50added  == 1 && pack100added == 4 && (!priorityGoalReached[0] || !priorityGoalReached[1] || !priorityGoalReached[2])) {
+				if (!breakPacksBox.isSelected() && pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
+						pack50added  == 1 && pack100added == 5 && (!priorityGoalReached[0] || !priorityGoalReached[1] || !priorityGoalReached[2])) {
 					allValuePacksBought = true;
 					showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
 					break;
@@ -2941,7 +2947,7 @@ public class Controller implements Initializable {
 		}    
 	}
 	public int checkBestPack(int pack1, int pack2) throws Exception {
-
+		
 		// Save all originals before simulating packs for comparing
 		int[] ogTotals;
 		int ogTotalRum;

@@ -10,6 +10,7 @@ public class Pack {
 	int rss1Amount;
 	int rss2Amount;
 	int rss3Amount;
+	int added = 0;
 	
 	public Pack(String name, String type, int price, String rss1, int rss1Amount, String rss2, int rss2Amount, String rss3, int rss3Amount) {
 		super();
@@ -17,8 +18,11 @@ public class Pack {
 		this.type = type;
 		this.price = price;
 		this.rss1 = rss1;
+		this.rss1Amount = rss1Amount;
 		this.rss2 = rss2;
+		this.rss2Amount = rss2Amount;
 		this.rss3 = rss3;
+		this.rss3Amount = rss3Amount;
 	}
 	
 	public Pack(String name, String type, int price, String rss1, int rss1Amount, String rss2, int rss2Amount) {
@@ -27,7 +31,9 @@ public class Pack {
 		this.type = type;
 		this.price = price;
 		this.rss1 = rss1;
+		this.rss1Amount = rss1Amount;
 		this.rss2 = rss2;
+		this.rss2Amount = rss2Amount;
 	}
 	
 	public Pack(String name, String type, int price, String rss1, int rss1Amount) {
@@ -36,6 +42,11 @@ public class Pack {
 		this.type = type;
 		this.price = price;
 		this.rss1 = rss1;
+		this.rss1Amount = rss1Amount;
+	}
+	
+	public Pack() {
+		super();
 	}
 
 	public String getName() {
@@ -110,13 +121,23 @@ public class Pack {
 		this.rss3Amount = rss3Amount;
 	}
 
+	public int getAdded() {
+		return added;
+	}
+
+	public void setAdded(int added) {
+		this.added = added;
+	}
+
 	@Override
 	public String toString() {
 		return  "Name: " + name + "\n" +
-				"Type: " + type+ "\n" +
+				"Type: " + type + "\n" +
 				"Price: " + price + "\n" +
-				"Resource 1: " + rss1 + "\n" +
-				"Resource 2: " + rss2 + "\n" +
-				"Resource 3: " + rss3 + "\n";
+				"Resource 1: " + rss1 + " - " + rss1Amount + "\n" +
+				"Resource 2: " + rss2 + " - " + rss2Amount + "\n" +
+				"Resource 3: " + rss3 + " - " + rss3Amount + "\n" +
+				"Packs added: " + added;
+				
 	}	
 }

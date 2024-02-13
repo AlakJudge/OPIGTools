@@ -96,6 +96,7 @@ public class Controller implements Initializable {
 	ArrayList<String> loadedCharsSelected = new ArrayList<>();
 	ArrayList<String> charNames = new ArrayList<>();
 	static Character[] unit;
+	Pack[] packs;
 
 	boolean sssToggled = false;
 	boolean ssToggled = false;
@@ -216,6 +217,7 @@ public class Controller implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
+		// load timers if they were running on exit
 		bPrefs = Preferences.userRoot().node(getClass().getName());
 		ssPrefs = Preferences.userRoot().node(getClass().getName());
 		loadBrooksState();
@@ -236,14 +238,6 @@ public class Controller implements Initializable {
 			saveBrooksState();
 			saveSetSailState();
 		}));
-
-		changeAllTextField.setVisible(false);
-		changeAllLevelsButton.setVisible(false);
-		changeAlldPowersButton.setVisible(false);
-		missionPowerTextField.setVisible(false);
-		numMembersChoiceBox.getItems().addAll(numMembersNumbers);
-		numMembersChoiceBox.setOnAction(this::setNumMembers);
-		numMembersChoiceBox.setValue(7);
 
 		// setting up brooks calculator values
 		oneThousandGemsPack.getItems().addAll(sixPacksBought);
@@ -266,13 +260,13 @@ public class Controller implements Initializable {
 		money9999pack.setValue(0);
 		// setting up set sail calculator values
 		marketPurchaseBox.getItems().addAll(marketPurchase);
-		marketPurchaseBox.setValue(marketPurchase[marketPurchase.length-1]);
+		marketPurchaseBox.setValue(marketPurchase[0]);
 		skypieaChallengeBox.getItems().addAll(skypieaChallenge);
-		skypieaChallengeBox.setValue(skypieaChallenge[skypieaChallenge.length-1]);
+		skypieaChallengeBox.setValue(skypieaChallenge[0]);
 		rankingLikeBox.getItems().addAll(rankingLike);
-		rankingLikeBox.setValue(rankingLike[rankingLike.length-1]);
+		rankingLikeBox.setValue(rankingLike[0]);
 		bountyQuestBox.getItems().addAll(bountyQuest);
-		bountyQuestBox.setValue(bountyQuest[bountyQuest.length-1]);
+		bountyQuestBox.setValue(bountyQuest[0]);
 		valuePack100Box.getItems().addAll(valuePack100);
 		valuePack100Box.setValue(0);
 		priority1box.getItems().addAll(prioritytList); 
@@ -284,6 +278,13 @@ public class Controller implements Initializable {
 		topupDaysBox.getItems().addAll(topupDays);
 		topupDaysBox.setValue(0);
 
+		changeAllTextField.setVisible(false);
+		changeAllLevelsButton.setVisible(false);
+		changeAlldPowersButton.setVisible(false);
+		missionPowerTextField.setVisible(false);
+		numMembersChoiceBox.getItems().addAll(numMembersNumbers);
+		numMembersChoiceBox.setOnAction(this::setNumMembers);
+		numMembersChoiceBox.setValue(7);
 		changeDPowerScrollPane.setVisible(false);
 		bestTeamAnchorPane.setVisible(false);
 		backToSelectionButton.setVisible(false);
@@ -398,21 +399,7 @@ public class Controller implements Initializable {
 
 		// Method to check affinities changes after updates
 		//CheckAffinities.run();		
-		
-		// Initialize event packs
-		Pack[] packs = new Pack[100];
-		
-		packs[0] = new Pack("value5", "ssValue", 5, "Rum", 16, "Telescope", 10);
-		packs[1] = new Pack("value10", "ssValue", 10, "Rum", 30, "Telescope", 20);
-		packs[2] = new Pack("value15", "ssValue", 15, "Rum", 40, "Telescope", 30);
-		packs[3] = new Pack("value30", "ssValue", 30, "Rum", 80, "Telescope", 40);
-		packs[4] = new Pack("value50", "ssValue", 50, "Rum", 120, "Telescope", 60);
-		packs[5] = new Pack("value100", "ssValue", 100, "Rum", 240, "Telescope", 120);
-		packs[6] = new Pack("break15", "ssBreak", 15, "Rum", 30, "Telescope", 5);
-		packs[7] = new Pack("break30", "ssBreak", 30, "Rum", 60, "Telescope", 10);
-		packs[8] = new Pack("break50", "ssBreak", 50, "Rum", 90, "Telescope", 15);
-		packs[9] = new Pack("break100", "ssBreak", 100, "Rum", 160, "Telescope", 30);
-		
+
 		// setting up the initial setup of the program
 		powerTextField = new TextField[unitList.size()];
 		character = new Character[unitList.size()];
@@ -442,14 +429,6 @@ public class Controller implements Initializable {
 		}
 		return null;
 	}
-
-	public void ruinsVisible() { // methods button use to the the main ruins feature pane visible
-		ruinsPane.setVisible(true);
-		comparisonPane.setVisible(false);
-		brooksCalcPane.setVisible(false);
-		setSailCalcPane.setVisible(false);
-	}
-
 	public void setNumMembers(ActionEvent e) { // get the vale from the choice box and make sure it's set to the correct variable when needed
 		Main.numMembers = numMembersChoiceBox.getValue();
 	}
@@ -531,7 +510,6 @@ public class Controller implements Initializable {
 			Tooltip.install(this, tooltip);
 		}
 	}
-
 	public void createSSSCheckboxes() { // loop creating the checkboxes with the SSS character's icons to select
 
 		for (int i = 0; i < checkboxImageSSS.length; i++) {
@@ -553,7 +531,6 @@ public class Controller implements Initializable {
 		sssCharSelectionPane.getChildren().add(allSSSButton);
 
 	}
-
 	public void createSSCheckboxes() { // loop creating the checkboxes with the SS character's icons to select
 		for (int i = 0; i < checkboxImageSS.length; i++) {
 			final int index = i;
@@ -573,7 +550,6 @@ public class Controller implements Initializable {
 		ssCharSelectionPane.getChildren().remove(allSSButton);
 		ssCharSelectionPane.getChildren().add(allSSButton);
 	}
-
 	public void createSCheckboxes() { // loop creating the checkboxes with the S character's icons to select
 		for (int i = 0; i < checkboxImageS.length; i++) {
 			final int index = i;
@@ -616,7 +592,6 @@ public class Controller implements Initializable {
 			allSelectedSSS = false;
 		}
 	}
-
 	public void selectAllSSCheckboxes() {
 
 		if (!allSelectedSS) {
@@ -639,7 +614,6 @@ public class Controller implements Initializable {
 			allSelectedSS = false;
 		}
 	}
-
 	public void selectAllSCheckboxes() {
 
 		if (!allSelectedS) {
@@ -662,7 +636,6 @@ public class Controller implements Initializable {
 			allSelectedS = false;
 		}
 	}
-
 	public void deselectAllCheckboxes() {
 
 		for (Node node : sssCharSelectionPane.getChildren()) {
@@ -690,6 +663,12 @@ public class Controller implements Initializable {
 
 	}
 
+	public void ruinsVisible() { // methods button use to the the main ruins feature pane visible
+		ruinsPane.setVisible(true);
+		comparisonPane.setVisible(false);
+		brooksCalcPane.setVisible(false);
+		setSailCalcPane.setVisible(false);
+	}
 	public void sssPaneVisible() {
 		sssCharSelectionPane.setVisible(true);
 		sssCharSelectionScrollPane.setVisible(true);
@@ -699,7 +678,6 @@ public class Controller implements Initializable {
 		currentPane = sssCharSelectionPane;
 		updateToggleButtonStyle();
 	}
-
 	public void ssPaneVisible() {
 		ssCharSelectionPane.setVisible(true);
 		orderAZButton.setVisible(true);
@@ -708,7 +686,6 @@ public class Controller implements Initializable {
 		currentPane = ssCharSelectionPane;
 		updateToggleButtonStyle();
 	}
-
 	public void sPaneVisible() {
 		sCharSelectionPane.setVisible(true);
 		orderAZButton.setVisible(true);
@@ -717,16 +694,13 @@ public class Controller implements Initializable {
 		currentPane = sCharSelectionPane;
 		updateToggleButtonStyle();
 	}
-
 	public void sssPaneInvisible() {
 		sssCharSelectionPane.setVisible(false);
 		sssCharSelectionScrollPane.setVisible(false);
 	}
-
 	public void ssPaneInvisible() {
 		ssCharSelectionPane.setVisible(false);
 	}
-
 	public void sPaneInvisible() {
 		sCharSelectionPane.setVisible(false);
 	}
@@ -735,10 +709,9 @@ public class Controller implements Initializable {
 		for (int i = 0; i < charList.size(); i++) {
 			String name = charList.get(i);
 			characterList.add(findUnit(name, unitList));
-			characterList.get(i).setdPower(characterList.get(i).getDefaultPower()); //settings their power to the default one
+			//characterList.get(i).setdPower(characterList.get(i).getDefaultPower()); //settings their power to the default one
 		}
 	}
-
 	public void changeDPower() { // method to run after selecting the characters
 
 		charsSelected.clear();
@@ -765,7 +738,6 @@ public class Controller implements Initializable {
 				charsSelected.add(element.getTooltipText());
 			}
 		}
-
 		// only load the selected chars if the number selected is higher than the min number of members a team must have
 		if (charsSelected.size() <= Main.numMembers) {
 			showErrorPopup("Error", "Not enough characters selected!");
@@ -780,7 +752,6 @@ public class Controller implements Initializable {
 			missionPowerTextField.setVisible(true);
 		}
 	}
-
 	public void changeLevel() { // method to run after selecting the characters and choosing to change the level
 
 		charsSelected.clear();
@@ -822,7 +793,6 @@ public class Controller implements Initializable {
 			missionPowerTextField.setVisible(true);
 		}
 	}
-
 	public void loadSelectedChars() { // loading page with the selected characters and their powers that can be changed
 
 		toggleRuinsPane("off");
@@ -835,7 +805,7 @@ public class Controller implements Initializable {
 		changeDPowerButton.setVisible(false);
 		changeLevelButton.setVisible(false);
 		backToSelectionButton.setVisible(true);
-
+		
 		int numElements = charsSelected.size();
 		String name[] = new String[numElements];
 		String defaultPower[] = new String[numElements];
@@ -845,6 +815,7 @@ public class Controller implements Initializable {
 		ImageView iconView[] = new ImageView[numElements];
 		VBox vbox[] = new VBox[numElements];
 
+		
 		// loop creating each imagecheckbox and the textfield under it with the power
 		for (int i = 0; i < numElements; i++) { 
 
@@ -882,24 +853,14 @@ public class Controller implements Initializable {
 			iconView[i].setFitWidth(MAX_WIDTH);
 			iconView[i].setFitHeight(MAX_HEIGHT);
 
-			// Set default level if not loading levels from file
 			if (changeLevel) {
-				if (savedLevelChanged) {
-					powerTextField[i].setText(currentLevel[i]);
-				}
-				else {
-					powerTextField[i].setText("1");
-				}
+				powerTextField[i].setText(currentLevel[i]);
 			} 
-
-			// Set default dpower if not loading dpower from file
-			else if (changeDPower) {
-				if (savedDPowerChanged) {
-					powerTextField[i].setText(currentPower[i]);
-				}
-				else {
+			else {
+				if (currentPower[i].equals("0"))
 					powerTextField[i].setText(defaultPower[i]);
-				}
+				else
+					powerTextField[i].setText(currentPower[i]);
 			}
 
 			powerTextField[i].setAlignment(Pos.CENTER);
@@ -907,7 +868,6 @@ public class Controller implements Initializable {
 			changeDPowerPane.getChildren().add(vbox[i]);
 		}
 	}
-
 	private void updateUI() { // update the UI after finishing calculating the best team  
 
 		Platform.runLater(() -> {
@@ -990,19 +950,15 @@ public class Controller implements Initializable {
 		alert.setContentText(content);
 		alert.showAndWait();
 	}
-
 	public static void showInformationPopup(String title, String content) {
 		showAlert(AlertType.INFORMATION, title, content);
 	}
-
 	public static void showWarningPopup(String title, String content) {
 		showAlert(AlertType.WARNING, title, content);
 	}
-
 	public static void showErrorPopup(String title, String content) {
 		showAlert(AlertType.ERROR, title, content);
 	}
-
 	public static void showConfirmationPopup(String title, String content) {
 		showAlert(AlertType.CONFIRMATION, title, content);
 	}
@@ -1081,8 +1037,7 @@ public class Controller implements Initializable {
 		// making sure to go back to the last selected pane
 		if (currentPane != null) {		
 			if (currentPane == sssCharSelectionPane) {
-				sssCharSelectionPane.setVisible(true);
-				sssCharSelectionScrollPane.setVisible(true);
+				sssPaneVisible();
 			}
 			else
 				currentPane.setVisible(true);
@@ -1111,19 +1066,17 @@ public class Controller implements Initializable {
 			}
 		}
 	}
-
 	public void backToSubmission() {
 
 		backToSubmissionButton.setVisible(false);
 		bestTeamAnchorPane.setVisible(false);
 		changeDPowerScrollPane.setVisible(true);
 
-		characterList.clear();
-		convertCharsSelected(charsSelected);
+		//characterList.clear();
+		//convertCharsSelected(charsSelected);
 		removeAllChildren(changeDPowerPane);
 		removeAllChildren(bestTeamPane);
 		loadSelectedChars(); 
-
 		changeAllTextField.clear();
 		changeAllTextField.setVisible(true);
 		changeAllLevelsButton.setVisible(true);
@@ -1286,7 +1239,6 @@ public class Controller implements Initializable {
 			}
 		}
 	}
-
 	private void updateToggleButtonStyle() { // making sure the button toggle status and color is set correctly while switching panes
 
 		if (sssToggled && currentPane == sssCharSelectionPane && !green) {
@@ -1361,7 +1313,6 @@ public class Controller implements Initializable {
 			taskThread.start();
 		}
 	}
-
 	private class CalculationRunnable implements Runnable {
 		private CountDownLatch latch;
 
@@ -1381,7 +1332,6 @@ public class Controller implements Initializable {
 					float tempPower =  Float.parseFloat(powerTextField[i].getText());
 					charLevel[i] = powerTextField[i].getText();
 					character[i].setLevel(Integer.parseInt(charLevel[i])); // set character levels
-
 					if (tempPower == 1) {
 						character[i].setdPower(character[i].getDefaultPower());		
 					}
@@ -1434,7 +1384,6 @@ public class Controller implements Initializable {
 			showErrorPopup("Error", "Not enough characters to compare!");
 		}
 	}
-
 	public void findAlternativeTeam() {
 		TeamCalculator.resetBest();
 		removeAllChildren(bestTeamPane);
@@ -1442,7 +1391,6 @@ public class Controller implements Initializable {
 		previousBestTeamButton.setVisible(true);
 		bestTeamPageCounter = TeamCalculator.bestTeamCounter;
 	}
-
 	public void showPreviousBestTeam() {
 
 		bestTeamPageCounter--;
@@ -1520,7 +1468,6 @@ public class Controller implements Initializable {
 
 		nextBestTeamButton.setVisible(true);
 	}
-
 	public void showNextBestTeam() {
 
 		bestTeamPageCounter++;
@@ -1604,7 +1551,6 @@ public class Controller implements Initializable {
 		loadLastFile = true;
 		loadChars(); 
 	}
-
 	public void loadChars() { // loading chars and their dpower from SER file user may have saved.
 
 		CharSelection selection = new CharSelection();
@@ -1624,7 +1570,7 @@ public class Controller implements Initializable {
 				changeLevel = true;
 				changeDPower = false;
 			}
-			else {
+			else if (selection.dPowerSaved == 1) {
 				savedLevelChanged = false;
 				savedDPowerChanged = true;
 				changeLevel = false;
@@ -1655,7 +1601,6 @@ public class Controller implements Initializable {
 			loadSelectedChars();
 		}
 	}
-
 	public void saveChars() { // saving chars and their dpower to SER file
 
 		int levelSaved;
@@ -1694,7 +1639,6 @@ public class Controller implements Initializable {
 			powerTextField[i].setText(changeAllTarget);
 		}
 	}
-
 	public void changeAlldPowers() {
 
 		String changeAllTarget = changeAllTextField.getText();
@@ -1708,7 +1652,11 @@ public class Controller implements Initializable {
 		System.exit(0);
 	}
 
-	//Char comparison feature stars here
+	//
+	//
+	// SKILL COMPARISON START HERE
+	//
+	//
 	@FXML
 	AnchorPane comparisonPane, splitPaneA, splitPaneB;
 	@FXML
@@ -1750,7 +1698,6 @@ public class Controller implements Initializable {
 
 	final int SKILL_MAX_HEIGHT = 110;
 	final int SKILL_MAX_WIDTH= 130;
-
 
 	String[] sssSkillIcons = { "Prime Whitebeard skill 1", "Prime Whitebeard skill 2", "Prime Whitebeard skill 3", "Prime Whitebeard skill 4", "Zephyr skill 1", "Zephyr skill 2",
 			"Zephyr skill 3", "Zephyr skill 4", "Robin - Christmas skill 1", "Robin - Christmas skill 2", "Robin - Christmas skill 3", "Robin - Christmas skill 4", 
@@ -2168,7 +2115,11 @@ public class Controller implements Initializable {
 		});
 	}
 
-	// Event Calculators starts here
+	//
+	//
+	// EVENT CALCULATORS START HERE
+	//
+	//
 	@FXML 
 	AnchorPane brooksCalcPane, setSailCalcPane;
 	@FXML
@@ -2177,7 +2128,7 @@ public class Controller implements Initializable {
 	DatePicker brooksEndDate, setSailEndDate;
 	@FXML
 	CheckBox dailiesDoneCheckbox, dailyBenefitsDoneCheckbox, dailyRewardClaimedCheckbox, 
-	valuePack5Box, valuePack10Box, valuePack15Box, valuePack30Box, valuePack50Box, breakPacksBox, valuesPrioBox;
+	valuePack5Box, valuePack10Box, valuePack15Box, valuePack30Box, valuePack50Box, breakPacksBox;
 	@FXML
 	TextField currentGemsTextfield, currentWinesTextfield, extraInstancesTextfield, wineGoalTextfield,
 	textfield1k, textfield5k, textfield299, textfield999, textfield2999, textfield9999, 
@@ -2197,7 +2148,7 @@ public class Controller implements Initializable {
 	Boolean bTimerStopped = true;
 	Boolean ssTimerStopped = true;
 
-	// brooks variables
+	// BROOKS VARIABLES
 	int totalWine, totalIdlingWines, totalDailiesWines, totalGemsWines, totalPacksWines, currentWines, currentGems, wineGoal;
 	int extraInstanceChances = 0;
 	int sssCost = 10000;
@@ -2208,7 +2159,7 @@ public class Controller implements Initializable {
 	int pack2999 = 1080;
 	int pack9999 = 4000;
 
-	// set sail variable
+	// SET SAIL VARIABLES
 	int totalIdlingMaps, currentMap, currentTelescope, currentRum, mapGoal, telescopeGoal, rumGoal, totalMap, totalTelescope, totalRum,
 	valuePack5, valuePack10, valuePack15, valuePack30, valuePack50, totalTelescopePurchased, totalRumPurchased;	
 	int dailyBenefitMaps = 200;
@@ -2219,7 +2170,6 @@ public class Controller implements Initializable {
 	String[] priorityNames = new String[4];
 	boolean allPacksBought;
 	boolean allValuePacksBought;
-	int pack5added;
 	int pack10added;
 	int pack15added;
 	int pack30added;
@@ -2231,6 +2181,17 @@ public class Controller implements Initializable {
 	int breakPack100;
 	int finalCost;
 
+	boolean value5Available;
+	boolean value10Available;
+	boolean value15Available;
+	boolean value30Available;
+	boolean value50Available;
+	boolean value100Available;
+	boolean break15Available;
+	boolean break30Available;
+	boolean break50Available;
+	boolean break100Available;
+	
 	public void brooksCalculatorsVisible() {
 		brooksCalcPane.setVisible(true);
 		setSailCalcPane.setVisible(false);
@@ -2244,6 +2205,7 @@ public class Controller implements Initializable {
 		ruinsPane.setVisible(false);
 	}
 
+	// BROOKS CALC METHODS
 	public void calculateBrooks() {
 
 		int instanceChances = 12;
@@ -2406,10 +2368,22 @@ public class Controller implements Initializable {
 		textfield2999.setText("0");
 		textfield9999.setText("0");
 	}
-	
-	//main set sail methods
-	// Set sail calculator methods
+
+	// MAIN SET SAIL METHODS
 	public void calculateSetSail() throws Exception {
+
+		// Initialize event packs
+		packs = new Pack[10];		
+		packs[0] = new Pack("value5", "ssValue", 5, "Rum", 16, "Telescope", 10);
+		packs[1] = new Pack("value10", "ssValue", 10, "Rum", 30, "Telescope", 20);
+		packs[2] = new Pack("value15", "ssValue", 15, "Rum", 40, "Telescope", 30);
+		packs[3] = new Pack("value30", "ssValue", 30, "Rum", 80, "Telescope", 40);
+		packs[4] = new Pack("value50", "ssValue", 50, "Rum", 120, "Telescope", 60);
+		packs[5] = new Pack("value100", "ssValue", 100, "Rum", 240, "Telescope", 120);
+		packs[6] = new Pack("break15", "ssBreak", 15, "Rum", 30, "Telescope", 5);
+		packs[7] = new Pack("break30", "ssBreak", 30, "Rum", 60, "Telescope", 10);
+		packs[8] = new Pack("break50", "ssBreak", 50, "Rum", 90, "Telescope", 15);
+		packs[9] = new Pack("break100", "ssBreak", 100, "Rum", 160, "Telescope", 30);
 
 		totalTelescopePurchased = 0;
 		totalRumPurchased = 0;
@@ -2471,30 +2445,31 @@ public class Controller implements Initializable {
 		int marketPurchaseDone = marketPurchaseBox.getSelectionModel().getSelectedIndex();
 		switch (marketPurchaseDone) {
 		case 0:
+			totalMap += 32;
+			totalTelescope += 32;
 			break;
 		case 1:
-			totalMap += 3;
-			totalTelescope += 3;
+			totalMap += 24;
+			totalTelescope += 24;
 			break;
 		case 2:
-			totalMap += 6;
-			totalTelescope += 6;
+			totalMap += 16;
+			totalTelescope += 16;
+
 			break;
 		case 3:
 			totalMap += 11;
 			totalTelescope += 11;
 			break;
 		case 4:
-			totalMap += 16;
-			totalTelescope += 16;
+			totalMap += 6;
+			totalTelescope += 6;
 			break;
 		case 5:
-			totalMap += 24;
-			totalTelescope += 24;
+			totalMap += 3;
+			totalTelescope += 3;
 			break;
-		case 6:
-			totalMap += 32;
-			totalTelescope += 32;
+		case 6:		
 			break;
 		}
 
@@ -2502,26 +2477,26 @@ public class Controller implements Initializable {
 		int skypieaChallengeDone = skypieaChallengeBox.getSelectionModel().getSelectedIndex();
 		switch (skypieaChallengeDone) {
 		case 0:
+			totalMap += 24;
+			totalTelescope += 24;
 			break;
 		case 1:
-			totalMap += 3;
-			totalTelescope += 3;
-			break;
-		case 2:
-			totalMap += 6;
-			totalTelescope += 6;
-			break;
-		case 3:
-			totalMap += 11;
-			totalTelescope += 11;
-			break;
-		case 4:
 			totalMap += 16;
 			totalTelescope += 16;
 			break;
+		case 2:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 3:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 4:
+			totalMap += 3;
+			totalTelescope += 3;
+			break;
 		case 5:
-			totalMap += 24;
-			totalTelescope += 24;
 			break;
 		}
 
@@ -2529,26 +2504,26 @@ public class Controller implements Initializable {
 		int rankingLikeDone = rankingLikeBox.getSelectionModel().getSelectedIndex();
 		switch (rankingLikeDone) {
 		case 0:
+			totalMap += 24;
+			totalTelescope += 24;
 			break;
 		case 1:
-			totalMap += 3;
-			totalTelescope += 3;
-			break;
-		case 2:
-			totalMap += 6;
-			totalTelescope += 6;
-			break;
-		case 3:
-			totalMap += 11;
-			totalTelescope += 11;
-			break;
-		case 4:
 			totalMap += 16;
 			totalTelescope += 16;
 			break;
+		case 2:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 3:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 4:
+			totalMap += 3;
+			totalTelescope += 3;
+			break;
 		case 5:
-			totalMap += 24;
-			totalTelescope += 24;
 			break;
 		}
 
@@ -2556,26 +2531,27 @@ public class Controller implements Initializable {
 		int bountyQuestDone = bountyQuestBox.getSelectionModel().getSelectedIndex();
 		switch (bountyQuestDone) {
 		case 0:
+			totalMap += 24;
+			totalTelescope += 24;
 			break;
 		case 1:
-			totalMap += 3;
-			totalTelescope += 3;
-			break;
-		case 2:
-			totalMap += 6;
-			totalTelescope += 6;
-			break;
-		case 3:
-			totalMap += 11;
-			totalTelescope += 11;
-			break;
-		case 4:
 			totalMap += 16;
 			totalTelescope += 16;
 			break;
+		case 2:
+			totalMap += 11;
+			totalTelescope += 11;
+			break;
+		case 3:
+			totalMap += 6;
+			totalTelescope += 6;
+			break;
+		case 4:
+			totalMap += 3;
+			totalTelescope += 3;
+
+			break;
 		case 5:
-			totalMap += 24;
-			totalTelescope += 24;
 			break;
 		} 
 
@@ -2584,226 +2560,116 @@ public class Controller implements Initializable {
 			totalRum += 10 * topupDaysNumber;
 			totalTelescope += 10 * topupDaysNumber;
 		}
-		
+
 		totalRum += currentRum;
 		totalTelescope += currentTelescope;
 		totalMap += currentMap;
 		setSailResultCalculation();
 	}
 	public void setSailResultCalculation () throws Exception {
+
 		finalCost = 0;
-		breakPack15 = 0;
-		breakPack30 = 0;
-		breakPack50 = 0;
-		breakPack100 = 0;
-		pack100added = 0;
-		pack5added = 0;
-		pack10added = 0;
-		pack15added = 0;
-		pack30added = 0;
-		pack50added = 0;
 		allPacksBought = false;
 		mapGoal = Integer.parseInt(mapGoalTextfield.getText());
 		telescopeGoal = Integer.parseInt(telescopeGoalTextfield.getText());		
 		rumGoal = Integer.parseInt(rumGoalTextfield.getText());
 		int bestPack;		
-		int bought100packs = valuePack100Box.getValue();
 		priorityConverting();			
-				
+
 		for (int i = 0; i < totals.length; i++) {
 
 			checkGoal(i);
 
 			while (!priorityGoalReached[i]) {
 				// Add Value Pack 5 logic
-				if(!priorityGoalReached[i] && pack5added < 1 && !valuePack5Box.isSelected()) {							
-					addValuePack(5);
-					pack5added++;
-					finalCost += 5;
+				if(!priorityGoalReached[i] && value5Available) {											
+					addPack("value5");
 					priorityConverting();				
 				}
 				// Add Value Pack 10 logic
 				checkGoal(i);	
-				if (!priorityGoalReached[i] && pack10added < 1 && !valuePack10Box.isSelected() && (pack5added == 1 || valuePack5Box.isSelected())) {
-					addValuePack(10);
-					pack10added++;
-					finalCost += 10;
+				if (!priorityGoalReached[i] && !value5Available && value10Available) {
+					addPack("value10");
 					priorityConverting();
 				}
 				// Add Value Pack 15 logic
 				checkGoal(i);	
-				if (!priorityGoalReached[i] && pack15added < 1 && !valuePack15Box.isSelected() && (pack10added == 1 || valuePack10Box.isSelected())) {
-					addValuePack(15);
-					pack15added++;
-					finalCost += 15;
+				if (!priorityGoalReached[i] && !value10Available && value15Available) {
+					addPack("value15");
 					priorityConverting();
 				}
-				// Add Value Pack 30 or Break Pack 15 logic
+				// Add Value Pack 30 or Break Packs
 				checkGoal(i);	
 				if (!priorityGoalReached[i]) {
-
-					if (breakPack15 < 2 && breakPacksBox.isSelected()) {		
-						bestPack = checkBestPack(30, 915);
-						if (bestPack == 30 && pack30added < 1 && !valuePack30Box.isSelected() && (pack15added == 1 || valuePack15Box.isSelected())) {
-							pack30added++;
-							addValuePack(30);	
-							finalCost += 30;
-						}
-						else if (valuesPrioBox.isSelected() && pack30added < 1 && !valuePack30Box.isSelected() && pack15added == 1) {
-							pack30added++;
-							addValuePack(30);	
-							finalCost += 30;
-						}
-						else {
-							breakPack15++;
-							addBreakPack(915);
-							finalCost += 15;
-						}
-					}
-					else if (breakPack15 == 2 && pack30added < 1 && !valuePack30Box.isSelected() && (pack15added == 1 || valuePack15Box.isSelected())) {
-						pack30added++;
-						addValuePack(30);
-						finalCost += 30;
-					}
-					else if (pack30added < 1 && !valuePack30Box.isSelected() && (pack15added == 1 || valuePack15Box.isSelected())){
-						pack30added++;
-						addValuePack(30);
-						finalCost += 30;
-					}
-					priorityConverting();
-				}
-				// Add Value Pack 50 or Break Pack 30 logic
-				checkGoal(i);	
-				if (!priorityGoalReached[i]) {
-
-					if (breakPack30 < 6 && breakPacksBox.isSelected()) {				
-						bestPack = checkBestPack(50, 930);
-						if (bestPack == 50 && pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
-							pack50added++;
-							addValuePack(50);	
-							finalCost += 50;
-						}
-						else if (valuesPrioBox.isSelected() && pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
-							pack50added++;
-							addValuePack(50);	
-							finalCost += 50;
-						}
-						else {							
-							breakPack30++;
-							addBreakPack(930);
-							finalCost += 30;
-						}
-					}
-					else if (breakPack30 == 6 && pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
-						pack50added++;
-						addValuePack(50);
-						finalCost += 50;
-					}
-					else if (pack50added < 1 && !valuePack50Box.isSelected() && (pack30added == 1 || valuePack30Box.isSelected())) {
-						pack50added++;
-						addValuePack(50);
-						finalCost += 50;
-					}
-					priorityConverting();
-				}
-				// Add Value Pack 100 or Break Pack 50 logic
-				checkGoal(i);	
-				if (!priorityGoalReached[i]) {
-
-					if (breakPack50 < 12 && breakPacksBox.isSelected()) {				
-						bestPack = checkBestPack(100, 950);
-						if (bestPack == 100 && pack100added < 5 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
-							pack100added++;
-							addValuePack(100);	
-							finalCost += 100;
-						}
-						else if (valuesPrioBox.isSelected() && pack100added < 5 - bought100packs && pack50added == 1) {
-							pack100added++;
-							addValuePack(100);	
-							finalCost += 100;
-						}
-						else {
-							breakPack50++;
-							addBreakPack(950);
-							finalCost += 50;
-						}
-					}
-					else if (breakPack50 == 12 && pack100added < 5 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
-						pack100added++;
-						addValuePack(100);
-						finalCost += 100;
-					}
-
-					else if (breakPack50 < 12 && pack100added == 5 && breakPacksBox.isSelected()) {
-						breakPack50++;
-						addBreakPack(950);
-						finalCost += 50;
-					}
 					
-					else if (breakPack50 == 12 && pack100added == 5 && breakPack100 < 99 && breakPacksBox.isSelected()) {
-						breakPack100++;
-						addBreakPack(9100);
-						finalCost += 100;
-					}
-					else if (pack100added < 5 - bought100packs && (pack50added == 1 || valuePack50Box.isSelected())) {
-						pack100added++;
-						addValuePack(100);
-						finalCost += 100;
-					}
-					else if (!breakPacksBox.isSelected() && (pack100added == 5 || valuePack100Box.getValue() == 5)) {
+					int[] compPacks = packsAvailableForComp();
+					if (compPacks[1] == 0)
+						allPacksBought = true;
+					
+					bestPack = checkBestPack(compPacks);
+							
+					if (packs[0].getAdded() == 1  && packs[1].getAdded() == 1 && packs[2].getAdded() == 1 && packs[3].getAdded() == 1 && 
+							packs[4].getAdded() == 1 && packs[5].getAdded() == 5 && 
+							packs[6].getAdded() == 2 && packs[7].getAdded() == 6 && packs[7].getAdded() == 12 && packs[8].getAdded() == 99 || allPacksBought) {
+						allPacksBought = true;
 						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
 						break;
 					}
-					priorityConverting();
+					else if (!breakPacksBox.isSelected() && packs[0].getAdded() == 1 && packs[1].getAdded() == 1 && packs[2].getAdded() == 1 && packs[3].getAdded() == 1 && 
+							packs[4].getAdded() == 1 && packs[5].getAdded() == 5 && (!priorityGoalReached[0] || !priorityGoalReached[1] || !priorityGoalReached[2])) {
+						allValuePacksBought = true;
+						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
+						break;
+					}
+					else if (bestPack == 3 && !value15Available && value30Available)
+						addPack("value30");	
+					else if (bestPack == 4 && !value30Available && value50Available)
+						addPack("value50");	
+					else if (bestPack == 5 && !value50Available && value100Available)
+						addPack("value100");	
+					else if (!breakPacksBox.isSelected() && !value100Available) {
+						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
+						break;
+					}
+					else
+						addPack(breakPackFinder(bestPack));				
 				}
-
-				if (pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
-						pack50added  == 1 && pack100added == 5 && 
-						breakPack15 == 2 && breakPack30 == 6 && breakPack50 == 12 && breakPack100 == 99) {
-					allPacksBought = true;
-					break;
-				}
-				checkGoal(i);
-				if (!breakPacksBox.isSelected() && pack5added == 1 && pack10added == 1 && pack15added == 1 && pack30added == 1 && 
-						pack50added  == 1 && pack100added == 5 && (!priorityGoalReached[0] || !priorityGoalReached[1] || !priorityGoalReached[2])) {
-					allValuePacksBought = true;
-					showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
-					break;
-				}
+				
+				priorityConverting();
+				checkGoal(i);		
+				
 			}
 		}
-		
+
 		// flash the result pane
 		resultGridPane.setVisible(false);
 		Timeline timeline = new Timeline(
-		    new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
-		        @Override
-		        public void handle(ActionEvent event) {
-		            // After 1 second, make the GridPane visible again
-		            resultGridPane.setVisible(true);
-		        }
-		    })
-		);
-
-		// Play the timeline
+				new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						// After 1 second, make the GridPane visible again
+						resultGridPane.setVisible(true);
+					}
+				})
+				);
 		timeline.play();
-		
+
 		totalRumLabel.setText(""+totalRum);
 		totalTelescopeLabel.setText(""+totalTelescope);
 		totalMapLabel.setText(""+totalMap);
-		
-		valuePack5Label.setText(""+pack5added);
-		valuePack10Label.setText(""+pack10added);
-		valuePack15Label.setText(""+pack15added);
-		valuePack30Label.setText(""+pack30added);
-		valuePack50Label.setText(""+pack50added);
-		valuePack100Label.setText(""+pack100added);
-		
-		breakPack15Label.setText(""+breakPack15);
-		breakPack30Label.setText(""+breakPack30);
-		breakPack50Label.setText(""+breakPack50);
-		breakPack100Label.setText(""+breakPack100);
-		
+
+		valuePack5Label.setText(""+packs[0].getAdded());
+		valuePack10Label.setText(""+packs[1].getAdded());
+		valuePack15Label.setText(""+packs[2].getAdded());
+		valuePack30Label.setText(""+packs[3].getAdded());
+		valuePack50Label.setText(""+packs[4].getAdded());
+		valuePack100Label.setText(""+packs[5].getAdded());
+
+		breakPack15Label.setText(""+packs[6].getAdded());
+		breakPack30Label.setText(""+packs[7].getAdded());
+		breakPack50Label.setText(""+packs[8].getAdded());
+		breakPack100Label.setText(""+packs[9].getAdded());
+
 		totalCostLabel.setText("$" + finalCost);
 	}
 	public void priorityConverting () throws Exception {
@@ -2885,160 +2751,261 @@ public class Controller implements Initializable {
 		}	
 		totals = getTotals(priorityNames);
 	}
-	// additional calculation methods
-	// additional methods for calculation
-	public int goalTotalDifference(int amount, int goal) {
-		int difference;
+	
+	// ADDITIONAL CALCULATION METHODS
+	public int[] packsAvailableForComp () {
+		int[] packs = new int[0];
+		int vPack = 0;
 
-		difference = amount - goal;
-
-		return difference;
+		if (value30Available || value50Available || value100Available) {
+			if (value30Available)
+				vPack = 3;
+			else if (value50Available)
+				vPack = 4;
+			else if (value100Available)
+				vPack = 5;
+			
+			if (break15Available && break30Available && break50Available) 
+				packs = new int[] {vPack, 6, 7, 8};			
+			else if (!break15Available && break30Available && break50Available) 
+				packs = new int[] {vPack, 7, 8};			
+			else if (break15Available && !break30Available && break50Available)
+				packs = new int[] {vPack, 6, 8};			
+			else if (break15Available && break30Available && !break50Available)
+				packs = new int[] {vPack, 6, 7};			
+			else if (!break15Available && break30Available && !break50Available)
+				packs = new int[] {vPack, 7};			
+			else if (break15Available && !break30Available && !break50Available)
+				packs = new int[] {vPack, 6};			
+			else if (!break15Available && !break30Available && break50Available)
+				packs = new int[] {vPack, 8};			
+			else if (break100Available)
+				packs = new int[] {vPack, 9};
+		}
+		else {
+			if (break15Available && break30Available && break50Available) 
+				packs = new int[] {6, 7, 8};			
+			else if (!break15Available && break30Available && break50Available) 
+				packs = new int[] {7, 8};			
+			else if (break15Available && !break30Available && break50Available)
+				packs = new int[] {6, 8};			
+			else if (break15Available && break30Available && !break50Available)
+				packs = new int[] {6, 7};			
+			else if (!break15Available && break30Available && !break50Available)
+				packs = new int[] {7, 7};			
+			else if (break15Available && !break30Available && !break50Available)
+				packs = new int[] {6, 6};			
+			else if (!break15Available && !break30Available && break50Available)
+				packs = new int[] {8, 8};			
+			else if (!break15Available && !break30Available && !break50Available && break100Available)
+				packs = new int[] {9, 9};
+			else if (!break15Available && !break30Available && !break50Available && !break100Available)
+				packs = new int[] {0,0};
+		}
+		return packs;
+	}
+	public String breakPackFinder (int packIndex) {
+		String breakPack = "break15";
+		
+		switch (packIndex) {
+		case 6: 
+			breakPack = "break15";
+			break;
+		case 7: 
+			breakPack = "break30";
+			break;
+		case 8:
+			breakPack = "break50";
+			break;
+		case 9:
+			breakPack = "break100";
+			break;
+		}
+		
+		return breakPack;
 	}
 	public void checkGoal(int i) {
+
+		value5Available = packs[0].getAdded() < 1 && !valuePack5Box.isSelected();
+		value10Available = packs[1].getAdded() < 1 && !valuePack10Box.isSelected();
+		value15Available = packs[2].getAdded() < 1 && !valuePack15Box.isSelected();
+		value30Available = packs[3].getAdded() < 1 && !valuePack30Box.isSelected();
+		value50Available = packs[4].getAdded() < 1 && !valuePack50Box.isSelected();
+		value100Available = packs[5].getAdded() < 5 - valuePack100Box.getValue();
+		break15Available = packs[6].getAdded() < 2 && breakPacksBox.isSelected();
+		break30Available = packs[7].getAdded() < 6 && breakPacksBox.isSelected();
+		break50Available = packs[8].getAdded() < 12 && breakPacksBox.isSelected();
+		break100Available = packs[9].getAdded() < 99 && breakPacksBox.isSelected();
 
 		if (totals[i] >= priorityGoal[i] || priorityGoal[i] == 0 ) {
 			priorityGoalReached[i] = true;
 		}
 	}
-	public void addValuePack(int packPrice) {
+	public void addPack (String name) {
 
-		if (packPrice == 5) {
-			totalTelescope += 10;
-			totalRum += 16;
-		}
-		if (packPrice == 10) {
-			totalTelescope += 20;
-			totalRum += 30;
-		} 
-		if (packPrice == 15) {
-			totalTelescope += 30;
-			totalRum += 40;
-		} 
-		if (packPrice == 30) {
-			totalTelescope += 40;
-			totalRum += 80;
-		} 
-		if (packPrice == 50) {
-			totalTelescope += 60;
-			totalRum += 120;
-		}    
-		if (packPrice == 100) {
-			totalTelescope += 120;
-			totalRum += 240;
-		}    
+		for (int i = 0; i < packs.length; i++) {
+			if (name.equals(packs[i].name)) {			
+				packs[i].setAdded(packs[i].getAdded() + 1);
+				totalRum += packs[i].getRss1Amount();
+				totalTelescope += packs[i].getRss2Amount();
+				finalCost += packs[i].getPrice();		
+				break;
+			}
+		}	
 	}
-	public void addBreakPack(int packPrice) {
-
-		if (packPrice == 915) {
-			totalTelescope += 5;
-			totalRum += 30;
-		} 
-		if (packPrice == 930) {
-			totalTelescope += 10;
-			totalRum += 60;
-		} 
-		if (packPrice == 950) {
-			totalTelescope += 15;
-			totalRum += 90;
-		}    
-		if (packPrice == 9100) {
-			totalTelescope += 30;
-			totalRum += 160;
-		}    
-	}
-	public int checkBestPack(int pack1, int pack2) throws Exception {
-		
+	public int checkBestPack(int[] compPacks) throws Exception {
+	
 		// Save all originals before simulating packs for comparing
 		int[] ogTotals;
 		int ogTotalRum;
 		int ogTotalTelescope;
 		int ogTotalMap;
+		int ogFinalCost;
 		boolean[] ogPriorityGoalReached;
-
+		boolean[][] tempPriorityGoalReached;
 		ogTotals = Arrays.copyOf(totals, totals.length);
 		ogTotalRum = totalRum;
 		ogTotalTelescope = totalTelescope;
 		ogTotalMap = totalMap;
+		ogFinalCost = finalCost;
 		ogPriorityGoalReached = Arrays.copyOf(priorityGoalReached, priorityGoalReached.length);
-
-		int goalChecker1;
-		int goalChecker2;
-		int[] difference1;
-		int[] difference2;
-		int differencesWon1;
-		int differencesWon2;	
+				
+		int[] goalChecker;
+		int[][] difference;
+		int[] differencesWon;	
 		int chosenPack;
-
-		goalChecker1 = 0;
-		goalChecker2 = 0;
-		difference1 = new int[totals.length];
-		difference2 = new int[totals.length];
-		differencesWon1 = 0;
-		differencesWon2 = 0;	
+		int[] packsToCompare;
+		packsToCompare = Arrays.copyOf(compPacks, compPacks.length);
+		tempPriorityGoalReached = new boolean[packsToCompare.length][totals.length];
+		goalChecker = new int[packsToCompare.length];
+		difference = new int[packsToCompare.length][totals.length];
+		differencesWon = new int [packsToCompare.length];
 		chosenPack = 0;
+		int currentBest = 0;		
+		
+		// Add all packs and save how many goals each one reaches and the differences to the goals
+		for (int i = 0; i < packsToCompare.length; i++) {
+			totalRum += packs[packsToCompare[i]].getRss1Amount();
+			totalTelescope += packs[packsToCompare[i]].getRss2Amount();
+			finalCost += packs[packsToCompare[i]].getPrice();	
+			priorityConverting();
 
-		// Add pack1 and save how many goals it reaches and the differences to the goals
-		addValuePack(pack1);			
-		priorityConverting();	
-		for (int i = 0; i < totals.length; i++) {		
-			difference1[i] = goalTotalDifference(totals[i], priorityGoal[i]);
-			checkGoal(i);
-			if (priorityGoalReached[i])
-				goalChecker1++;
-		}	
-		// reset everything back to the originals
-		totals = Arrays.copyOf(ogTotals, ogTotals.length);;
-		totalRum = ogTotalRum;
-		totalTelescope = ogTotalTelescope;
-		totalMap = ogTotalMap;
-		priorityGoalReached = Arrays.copyOf(ogPriorityGoalReached, ogPriorityGoalReached.length);
+			// check if any goals were reached
+			for (int j = 0; j < totals.length; j++) {		
+				difference[i][j] = totals[j] - priorityGoal[j];
+				checkGoal(j);	
+				//System.out.println("Pack: " + i + " - " + difference[i][j]);
+				tempPriorityGoalReached[i][j] = priorityGoalReached[j];
 
-		// Add pack2 and save how many goals it reaches and the differences to the goals
-		addBreakPack(pack2);			
-		priorityConverting();		
-		for (int i = 0; i < totals.length; i++) {		
-			difference2[i] = goalTotalDifference(totals[i], priorityGoal[i]);
-			checkGoal(i);
-			if (priorityGoalReached[i])
-				goalChecker2++;
+				if (tempPriorityGoalReached[i][j])
+					goalChecker[i]++;
+			}	
+			// reset everything back to the originals
+			totals = Arrays.copyOf(ogTotals, ogTotals.length);;
+			totalRum = ogTotalRum;
+			totalTelescope = ogTotalTelescope;
+			totalMap = ogTotalMap;
+			finalCost = ogFinalCost;
+			priorityGoalReached = Arrays.copyOf(ogPriorityGoalReached, ogPriorityGoalReached.length);
 		}
 
 		// Choose pack based on the number of goals reached first
 		// If equals, check the differences
 		// The closest to the goal, or with the least resources wasted, wins
-		if (goalChecker1 > goalChecker2) {
-			chosenPack = pack1;
-		}		
-		else if (goalChecker1 < goalChecker2)
-			chosenPack = pack2;
-		else {
-			for (int i = 0; i < totals.length; i++) {			
-				if (difference1[i] < difference2[i]) {					
-					if (priorityGoalReached[i])
-						differencesWon1++;
-					else 
-						differencesWon2++;
+		// if tied, the cheapest wins	
+		for (int i = 0; i < packsToCompare.length-1; i++) {			
+			
+			// Choose value pack if both are the same price
+			if ( packs[packsToCompare[currentBest]].getPrice() == packs[packsToCompare[i+1]].getPrice()
+					&& packs[packsToCompare[currentBest]].getType() == "ssValue" && packs[packsToCompare[i+1]].getType() == "ssBreak")
+				chosenPack = packsToCompare[currentBest];				
+
+			else {
+				if (goalChecker[currentBest] > goalChecker[i+1]) {
 				}
+
+				else if (goalChecker[currentBest] < goalChecker[i+1])
+					currentBest = i+1;
+
 				else {
-					if (priorityGoalReached[i])
-						differencesWon2++;
-					else 
-						differencesWon1++;
-				}										
+					// test all 3 resources and find the pack with the best value
+					for (int j = 0; j < totals.length; j++) {
+						checkGoal(j);
+						if (tempPriorityGoalReached[currentBest][j]) {
+							if (difference[currentBest][j] < difference[i+1][j] || (!tempPriorityGoalReached[i+1][j])) {
+								differencesWon[currentBest]++;
+							}
+							else if (difference[currentBest][j] > difference[i+1][j]) {
+								differencesWon[i+1]++;
+							}
+							else {
+								if (packs[packsToCompare[currentBest]].getPrice() < packs[packsToCompare[i+1]].getPrice()) 
+									differencesWon[currentBest]++;
+								else
+									differencesWon[i+1]++;
+							}
+						}
+						else {
+							Pack winner = (getPackRatio(packs[packsToCompare[currentBest]], packs[packsToCompare[i+1]], j));
+							
+							if (winner == packs[packsToCompare[currentBest]]) {
+								differencesWon[currentBest]++;
+							}
+							else {
+								differencesWon[i+1]++;
+							}
+						}
+					}			
+					// current best stays the same replace if new best found
+					currentBest = (differencesWon[currentBest] > differencesWon[i+1]) ? currentBest : i+1;
+				}
+				chosenPack = packsToCompare[currentBest];
 			}
-			if (differencesWon1 > differencesWon2)
-				chosenPack = pack1;
-			else
-				chosenPack = pack2;
 		}
 		// reset everything back to the originals
 		totals = Arrays.copyOf(ogTotals, ogTotals.length);;
 		totalRum = ogTotalRum;
 		totalTelescope = ogTotalTelescope;
 		totalMap = ogTotalMap;
+		finalCost = ogFinalCost;
 		priorityGoalReached = Arrays.copyOf(ogPriorityGoalReached, ogPriorityGoalReached.length);
 
 		return chosenPack;
+	}
+	public Pack getPackRatio(Pack pack1, Pack pack2, int rss) { // Find the best prices to resources ratio between 2 packs
+		double pack1Ratio = 0;
+		double pack2Ratio = 0;
+		
+		if (rss == 0) {
+			pack1Ratio = (double) pack1.getPrice() / pack1.getRss1Amount();
+			pack2Ratio = (double) pack2.getPrice() / pack2.getRss1Amount();
+		}
+		else if (rss == 1) {
+			pack1Ratio = (double) pack1.getPrice() / pack1.getRss2Amount();
+			pack2Ratio = (double)  pack2.getPrice() / pack2.getRss2Amount();
+		}
+		else if (rss == 2 && pack1.getRss3Amount() != 0 && pack2.getRss3Amount() != 0) {
+			pack1Ratio = (double) pack1.getPrice() / pack1.getRss3Amount();
+			pack2Ratio = (double) pack2.getPrice() / pack2.getRss3Amount();
+		}
+				
+		Pack winner;
+		
+		if (pack1Ratio < pack2Ratio)
+			winner = pack1;
+		else if (pack1Ratio > pack2Ratio)
+			winner = pack2;
+		else {
+			pack1Ratio = (double) pack1.getPrice() / pack1.getRss1Amount();
+			pack2Ratio = (double) pack2.getPrice() / pack2.getRss1Amount();
+			
+			if (pack1Ratio < pack2Ratio)
+				winner = pack1;
+			else
+				winner = pack2;
+		}		 
+		return winner;
+				
 	}
 	public int[] getPriorityGoals(String[] priorityNames) {
 		int[] priority = new int[4];
@@ -3069,7 +3036,7 @@ public class Controller implements Initializable {
 		}			
 		return totals;
 	}
-	// set sail calc conversion methods
+	// SET SAIL CALC CONVERSION METHODS
 	public void convMapToRum (int rumGoal) {		
 
 		if (rumGoal == infiniteGoal) {
@@ -3149,7 +3116,7 @@ public class Controller implements Initializable {
 			totalMap += 20;
 		}
 	}
-	//Convert remaining items methods
+	// CONVERT REMAINING ITEMS METHODS
 	public void convRemRumToTelescope () {
 		if (totalRum > rumGoal) {
 			while (totalTelescope < telescopeGoal && totalRum >= rumGoal + 5) {
@@ -3202,27 +3169,17 @@ public class Controller implements Initializable {
 	public void resetSetSail() {
 		resultGridPane.setVisible(false);
 		Timeline timeline = new Timeline(
-		    new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
-		        @Override
-		        public void handle(ActionEvent event) {
-		            // After 1 second, make the GridPane visible again
-		            resultGridPane.setVisible(true);
-		        }
-		    })
-		);
+				new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						// After 1 second, make the GridPane visible again
+						resultGridPane.setVisible(true);
+					}
+				})
+				);
 		timeline.play();
-		
+
 		finalCost = 0;
-		breakPack15 = 0;
-		breakPack30 = 0;
-		breakPack50 = 0;
-		breakPack100 = 0;
-		pack100added = 0;
-		pack5added = 0;
-		pack10added = 0;
-		pack15added = 0;
-		pack30added = 0;
-		pack50added = 0;
 		allPacksBought = false;
 		totalTelescopePurchased = 0;
 		totalRumPurchased = 0;
@@ -3252,9 +3209,8 @@ public class Controller implements Initializable {
 		priority1box.setValue("Rum");
 		priority2box.setValue("Telescope");
 		priority3box.setValue("Map");
-		valuesPrioBox.setSelected(true);
 		breakPacksBox.setSelected(true);
-		
+
 		totalRumLabel.setText("");
 		totalTelescopeLabel.setText("");
 		totalMapLabel.setText("");

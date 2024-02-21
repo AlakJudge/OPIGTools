@@ -87,15 +87,14 @@ public class Controller implements Initializable {
 	TextField[] powerTextField;
 
 	ArrayList<CheckBoxImage> originalOrderSSS, originalOrderSS, originalOrderS;
-
-	Character character[];
-
 	ArrayList<Character> characterList = new ArrayList<>();
 	ArrayList<Character> unitList = new ArrayList<>();
 	ArrayList<String> charsSelected = new ArrayList<>();
 	ArrayList<String> loadedCharsSelected = new ArrayList<>();
 	ArrayList<String> charNames = new ArrayList<>();
+	
 	static Character[] unit;
+	Character character[];
 	Pack[] packs;
 
 	boolean sssToggled = false;
@@ -2128,7 +2127,7 @@ public class Controller implements Initializable {
 	DatePicker brooksEndDate, setSailEndDate;
 	@FXML
 	CheckBox dailiesDoneCheckbox, dailyBenefitsDoneCheckbox, dailyRewardClaimedCheckbox, 
-	valuePack5Box, valuePack10Box, valuePack15Box, valuePack30Box, valuePack50Box, breakPacksBox;
+	valuePack5Box, valuePack10Box, valuePack15Box, valuePack30Box, valuePack50Box;
 	@FXML
 	TextField currentGemsTextfield, currentWinesTextfield, extraInstancesTextfield, wineGoalTextfield,
 	textfield1k, textfield5k, textfield299, textfield999, textfield2999, textfield9999, 
@@ -2605,7 +2604,7 @@ public class Controller implements Initializable {
 					int[] compPacks = packsAvailableForComp();
 					if (compPacks[1] == 0)
 						allPacksBought = true;
-					
+						
 					bestPack = checkBestPack(compPacks);
 							
 					if (packs[0].getAdded() == 1  && packs[1].getAdded() == 1 && packs[2].getAdded() == 1 && packs[3].getAdded() == 1 && 
@@ -2615,29 +2614,17 @@ public class Controller implements Initializable {
 						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
 						break;
 					}
-					else if (!breakPacksBox.isSelected() && packs[0].getAdded() == 1 && packs[1].getAdded() == 1 && packs[2].getAdded() == 1 && packs[3].getAdded() == 1 && 
-							packs[4].getAdded() == 1 && packs[5].getAdded() == 5 && (!priorityGoalReached[0] || !priorityGoalReached[1] || !priorityGoalReached[2])) {
-						allValuePacksBought = true;
-						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
-						break;
-					}
 					else if (bestPack == 3 && !value15Available && value30Available)
 						addPack("value30");	
 					else if (bestPack == 4 && !value30Available && value50Available)
 						addPack("value50");	
 					else if (bestPack == 5 && !value50Available && value100Available)
 						addPack("value100");	
-					else if (!breakPacksBox.isSelected() && !value100Available) {
-						showAlert(AlertType.INFORMATION, "Not enough resources", "Goal not reached with available packs :(");
-						break;
-					}
 					else
 						addPack(breakPackFinder(bestPack));				
-				}
-				
+				}				
 				priorityConverting();
-				checkGoal(i);		
-				
+				checkGoal(i);					
 			}
 		}
 
@@ -2751,7 +2738,6 @@ public class Controller implements Initializable {
 		}	
 		totals = getTotals(priorityNames);
 	}
-	
 	// ADDITIONAL CALCULATION METHODS
 	public int[] packsAvailableForComp () {
 		int[] packs = new int[0];
@@ -2832,10 +2818,10 @@ public class Controller implements Initializable {
 		value30Available = packs[3].getAdded() < 1 && !valuePack30Box.isSelected();
 		value50Available = packs[4].getAdded() < 1 && !valuePack50Box.isSelected();
 		value100Available = packs[5].getAdded() < 5 - valuePack100Box.getValue();
-		break15Available = packs[6].getAdded() < 2 && breakPacksBox.isSelected();
-		break30Available = packs[7].getAdded() < 6 && breakPacksBox.isSelected();
-		break50Available = packs[8].getAdded() < 12 && breakPacksBox.isSelected();
-		break100Available = packs[9].getAdded() < 99 && breakPacksBox.isSelected();
+		break15Available = packs[6].getAdded() < 2;
+		break30Available = packs[7].getAdded() < 6;
+		break50Available = packs[8].getAdded() < 12;
+		break100Available = packs[9].getAdded() < 99;
 
 		if (totals[i] >= priorityGoal[i] || priorityGoal[i] == 0 ) {
 			priorityGoalReached[i] = true;
@@ -3192,10 +3178,10 @@ public class Controller implements Initializable {
 		currentRumTextfield.setText("0");		
 		dailyBenefitsDoneCheckbox.setSelected(false);
 		dailyRewardClaimedCheckbox.setSelected(false);
-		marketPurchaseBox.setValue(marketPurchase[marketPurchase.length-1]);
-		skypieaChallengeBox.setValue(skypieaChallenge[skypieaChallenge.length-1]);
-		rankingLikeBox.setValue(rankingLike[rankingLike.length-1]);
-		bountyQuestBox.setValue(bountyQuest[bountyQuest.length-1]);
+		marketPurchaseBox.setValue(marketPurchase[0]);
+		skypieaChallengeBox.setValue(skypieaChallenge[0]);
+		rankingLikeBox.setValue(rankingLike[0]);
+		bountyQuestBox.setValue(bountyQuest[0]);
 		valuePack5Box.setSelected(false);
 		valuePack10Box.setSelected(false);
 		valuePack15Box.setSelected(false);
@@ -3209,7 +3195,6 @@ public class Controller implements Initializable {
 		priority1box.setValue("Rum");
 		priority2box.setValue("Telescope");
 		priority3box.setValue("Map");
-		breakPacksBox.setSelected(true);
 
 		totalRumLabel.setText("");
 		totalTelescopeLabel.setText("");
